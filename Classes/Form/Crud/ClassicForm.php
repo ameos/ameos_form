@@ -7,11 +7,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ClassicForm extends \Ameos\AmeosForm\Form\Crud {
 	
 	/**
-	 * @var array $errors errors
-	 */
-	protected $errors = [];
-
-	/**
 	 * @var int $recordIdentifier
 	 */
 	protected $recordIdentifier = FALSE;

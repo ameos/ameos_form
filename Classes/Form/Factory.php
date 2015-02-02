@@ -27,6 +27,10 @@ class Factory {
 			}
 		}
 
+		if(sizeof($arguments) == 1) {
+			return GeneralUtility::makeInstance('\\Ameos\\AmeosForm\\Form\\Crud', $arguments[0]);
+		}
+
 		throw new \Exception('Impossible to make the form with these arguments');
 	}
 	

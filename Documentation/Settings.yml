@@ -1,0 +1,18 @@
+# This is the project specific Settings.yml file.
+# Place Sphinx specific build information here.
+# Settings given here will replace the settings of 'conf.py'.
+
+# Below is an example of intersphinx mapping declaration
+# Add more mappings depending on what manual you want to link to
+# Remove entirely if you don't need cross-linking
+
+---
+conf.py:
+  copyright: 2014-2015
+  project: Ameos Form
+  version: 1.0
+  release: 1.0.0
+  html_theme_options:
+    github_repository: ameos/ameos_form
+    github_branch: master
+...

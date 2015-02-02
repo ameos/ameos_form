@@ -8,16 +8,6 @@ use Ameos\AmeosForm\Utility\Events;
 class ExtbaseForm extends \Ameos\AmeosForm\Form\Crud {
 	
 	/**
-	 * @var array $errors errors
-	 */
-	protected $errors = [];
-
-	/**
-	 * @var array $errorsByElement errorsByElement
-	 */
-	protected $errorsByElement = [];
-
-	/**
 	 * @var \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $model model
 	 */
 	protected $model;

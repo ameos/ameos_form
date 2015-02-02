@@ -8,6 +8,27 @@ use Ameos\AmeosForm\Utility\Events;
 class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 
 	/**
+	 * @var array $errors errors
+	 */
+	protected $errors = [];
+	
+	/**
+	 * @var array $errorsByElement errorsByElement
+	 */
+	protected $errorsByElement = [];
+	
+	/**
+	 * @constuctor
+	 *
+	 * @param	string $identifier form identifier
+	 * @param	\TYPO3\CMS\Extbase\DomainObject\AbstractEntity $model model
+	 */
+	public function __construct($identifier) {
+		parent::__construct($identifier);
+		$this->mode = 'crud/manual';
+	}
+	
+	/**
 	 * add validator
 	 * 
 	 * @param	string	$elementName element name

@@ -22,6 +22,10 @@ class FormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 		$action  = $action  == '' ? '' : ' action="' . $action .'"';
 		$class   = $class   == '' ? '' : ' class="' . $class . '"';
 		$id      = $id      == '' ? '' : ' id="' . $id . '"';
+
+		if(!is_object($form)) {
+			return 'Form is not valid. May be it\'s not assigned to the view.';
+		}
 		
 		foreach($form->getElements() as $elementName => $element) {
 			$this->templateVariableContainer->add($elementName, $element);

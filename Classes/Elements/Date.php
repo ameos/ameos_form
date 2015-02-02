@@ -18,6 +18,16 @@ class Date extends ElementAbstract {
 	 * @var string $valueDay current day value
 	 */
 	protected $valueDay = '';
+	
+	/**
+	 * @var int $yearMinimumLimit 
+	 */
+	protected $yearMinimumLimit;
+	
+	/**
+	 * @var int $yearMaximumLimit 
+	 */
+	protected $yearMaximumLimit;
 
 	/**
 	 * @constuctor
@@ -35,6 +45,14 @@ class Date extends ElementAbstract {
 		if(!isset($this->configuration['format-display'])) {
 			$this->configuration['format-display'] = 'dmy';
 		}
+
+		$this->yearMinimumLimit = isset($this->configuration['year-minimum-limit'])
+			? (int)$this->configuration['year-minimum-limit']
+			: 1900;
+
+		$this->yearMaximumLimit = isset($this->configuration['year-maximum-limit'])
+			? (int)$this->configuration['year-maximum-limit']
+			: date('Y') + 20;
 	}
 
 	/**
@@ -151,7 +169,7 @@ class Date extends ElementAbstract {
 		}
 		*/
 		$years = [''] ;
-		for($year = date('Y') + 20; $year >= 1900; $year--) {
+		for($year = $this->yearMaximumLimit; $year >= $this->yearMinimumLimit; $year--) {
 			$years[] = $year;
 		}
 		return $years;
