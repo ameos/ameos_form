@@ -35,6 +35,10 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 					return $query->logicalAnd($subclauses);
 				}
 				break;
+
+			case 'logicalNot':
+				return $query->logicalNot($this->getQueryClause($clause['clause'], $query));
+				break;
 				
 			default:
 				return $query->$clause['type']($clause['field'], $clause['value']);
