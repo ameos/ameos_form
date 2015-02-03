@@ -34,5 +34,27 @@ class Dropdown extends ElementAbstract {
 		}
 		$output.= '</select>';
 		return $output;
-	}	
+	}
+	
+	/**
+	 * return where clause
+	 *
+	 * @return	bool|array FALSE if no search. Else array with search type and value
+	 */
+	public function getClause() {
+		if($this->getValue() != '') {
+			if($this->overrideClause !== FALSE) {
+				return parent::getClause();
+			} else {
+				return [
+					'elementname'  => $this->getName(),
+					'elementvalue' => $this->getValue(),
+					'field' => $this->getSearchField(),
+					'type'  => 'equals',
+					'value' => $this->getValue()
+				];
+			}
+		}
+		return FALSE;
+	}
 }
