@@ -47,6 +47,7 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 					case 'fileextension': $validator = GeneralUtility::makeInstance('\\Ameos\\AmeosForm\\Validators\\Fileextension', $message, $configuration, $this->getElement($elementName), $this); break;
 					case 'filesize':      $validator = GeneralUtility::makeInstance('\\Ameos\\AmeosForm\\Validators\\Filesize',      $message, $configuration, $this->getElement($elementName), $this); break;
 					case 'captcha':       $validator = GeneralUtility::makeInstance('\\Ameos\\AmeosForm\\Validators\\Captcha',       $message, $configuration, $this->getElement($elementName), $this); break;
+					case 'custom':        $validator = GeneralUtility::makeInstance('\\Ameos\\AmeosForm\\Validators\\Custom',      $message, $configuration, $this->getElement($elementName), $this); break;
 					case 'required':
 					default:              $validator = GeneralUtility::makeInstance('\\Ameos\\AmeosForm\\Validators\\Required',      $message, $configuration, $this->getElement($elementName), $this); break;
 				}
