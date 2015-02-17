@@ -55,7 +55,7 @@ abstract class ElementAbstract implements ElementInterface {
 	protected $searchable = TRUE;
 
 	/**
-	 * @var	mixed $overrideClause override clause function
+	 * @var	bool|callable $overrideClause override clause function
 	 */
 	protected $overrideClause = FALSE;
 	

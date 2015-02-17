@@ -5,7 +5,7 @@ namespace Ameos\AmeosForm\Form;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
 
-class Search extends \Ameos\AmeosForm\Form\AbstractForm {
+abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm {
 	
 	/**
 	 * @constuctor

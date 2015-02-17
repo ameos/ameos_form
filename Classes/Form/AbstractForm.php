@@ -52,7 +52,7 @@ abstract class AbstractForm {
 	/**
 	 * return eleemnt
 	 * @param	string $name element name
-	 * @return 	\\Ameos\\AmeosForm\\Elements\\InterfaceElement
+	 * @return 	\Ameos\AmeosForm\Elements\ElementInterface
 	 */
 	public function getElement($name) {
 		return array_key_exists($name, $this->elements) ? $this->elements[$name] : FALSE;

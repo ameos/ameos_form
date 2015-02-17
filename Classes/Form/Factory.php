@@ -8,6 +8,8 @@ class Factory {
 
 	/**
 	 * create and return FORM
+	 * @return AbstractForm the form
+	 * @throws \Exception
 	 */
 	public static function make() {
 		$arguments = func_get_args();

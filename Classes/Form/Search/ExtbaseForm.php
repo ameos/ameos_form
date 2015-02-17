@@ -37,6 +37,8 @@ class ExtbaseForm extends \Ameos\AmeosForm\Form\Search {
 	/**
 	 * return extbase query result
 	 *
+	 * @param string|bool $orderby
+	 * @param string|bool $direction
 	 * @return Object
 	 */
 	public function getResults($orderby = FALSE, $direction = 'ASC') {

@@ -8,7 +8,7 @@ use Ameos\AmeosForm\Utility\Events;
 class RecordList {
 
 	/**
-	 * @var \Ameos\AmeosForm\Form\AbstractForm searchform
+	 * @var \Ameos\AmeosForm\Form\Search searchform
 	 */
 	protected $searchform;
 
