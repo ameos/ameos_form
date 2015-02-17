@@ -32,9 +32,11 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Search {
 	/**
 	 * return extbase query result
 	 *
-	 * @return Object
+	 * @param string|bool $orderby
+	 * @param string|bool $direction
+	 * @return resource
 	 */
-	public function getResults() {
+	public function getResults($orderby = FALSE, $direction = 'ASC') {
 		foreach($this->elements as $element) {
 			if($element->isSearchable()) {
 				if($element->getValue() == '') {
@@ -53,8 +55,14 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Search {
 		foreach($this->clauses as $clause) {
 			$clauses.= ' AND ' . $this->makeWhereClause($clause);
 		}
-		
-		return $GLOBALS['TYPO3_DB']->sql_query($this->query . $clauses . $this->querylimit);
+
+		if($orderby) {
+			$order = ' ORDER BY ' . $orderby . ' ' . $direction;
+		} else {
+			$order = '';
+		}
+
+		return $GLOBALS['TYPO3_DB']->sql_query($this->query . $clauses . $order . $this->querylimit);
 	}
 
 	/**
