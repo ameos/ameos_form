@@ -11,38 +11,40 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	 * @return object
 	 */	 
 	protected function getQueryClause($clause, $query) {
-		switch($clause['type']) {
-			case 'contains':
-				return $query->$clause['type']($clause['field'], $clause['value']);
-				break;
-			
-			case 'logicalOr':
-				if(is_array($clause['clauses'])) {
-					$subclauses = [];
-					foreach($clause['clauses'] as $subclause) {
-						$subclauses[] = $this->getQueryClause($subclause, $query);
-					}
-					return $query->logicalOr($subclauses);
-				}
-				break;
-				
-			case 'logicalAnd':
-				if(is_array($clause['clauses'])) {
-					$subclauses = [];
-					foreach($clause['clauses'] as $subclause) {
-						$subclauses[] = $this->getQueryClause($subclause, $query);
-					}
-					return $query->logicalAnd($subclauses);
-				}
-				break;
+		if(is_array($clause)) {
+			switch($clause['type']) {
+				case 'contains':
+					return $query->$clause['type']($clause['field'], $clause['value']);
+					break;
 
-			case 'logicalNot':
-				return $query->logicalNot($this->getQueryClause($clause['clause'], $query));
-				break;
-				
-			default:
-				return $query->$clause['type']($clause['field'], $clause['value']);
-				break;
+				case 'logicalOr':
+					if(is_array($clause['clauses'])) {
+						$subclauses = [];
+						foreach($clause['clauses'] as $subclause) {
+							$subclauses[] = $this->getQueryClause($subclause, $query);
+						}
+						return $query->logicalOr($subclauses);
+					}
+					break;
+
+				case 'logicalAnd':
+					if(is_array($clause['clauses'])) {
+						$subclauses = [];
+						foreach($clause['clauses'] as $subclause) {
+							$subclauses[] = $this->getQueryClause($subclause, $query);
+						}
+						return $query->logicalAnd($subclauses);
+					}
+					break;
+
+				case 'logicalNot':
+					return $query->logicalNot($this->getQueryClause($clause['clause'], $query));
+					break;
+
+				default:
+					return $query->$clause['type']($clause['field'], $clause['value']);
+					break;
+			}
 		}
 	}
 

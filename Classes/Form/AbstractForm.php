@@ -128,6 +128,8 @@ abstract class AbstractForm {
 		foreach($this->elements as $elementName => $element) {			
 			if(array_key_exists($elementName, $requestDatas)) {
 				$element->setValue($requestDatas[$elementName]);
+			} else {
+				$element->setValue('');
 			}
 		}
 		
