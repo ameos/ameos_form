@@ -4,6 +4,7 @@ namespace Ameos\AmeosForm\Form\Search;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
+use Ameos\AmeosForm\Utility\UserUtility;
 
 class ExtbaseForm extends \Ameos\AmeosForm\Form\Search {
 
@@ -52,8 +53,12 @@ class ExtbaseForm extends \Ameos\AmeosForm\Form\Search {
 				}
 			}
 		}
-		
-		$GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
+
+		if(UserUtility::isLogged()) {
+			$GLOBALS['TSFE']->fe_user->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
+		} else {
+			$GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
+		}
 		$GLOBALS['TSFE']->storeSessionData();
 		
 		$clauses = array_merge($this->clauses, $this->defaultClause);		
@@ -63,7 +68,7 @@ class ExtbaseForm extends \Ameos\AmeosForm\Form\Search {
 	/**
 	 * add where clause
 	 * @param array $clause where clause
-	 * return Ameos\AmeosForm\Form\Search this
+	 * @return Ameos\AmeosForm\Form\Search this
 	 */
 	public function addWhereClause($clause) {
 		$this->defaultClause[] = $clause;

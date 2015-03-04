@@ -4,6 +4,7 @@ namespace Ameos\AmeosForm\Form;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
+use Ameos\AmeosForm\Utility\UserUtility;
 
 abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm {
 	
@@ -14,7 +15,12 @@ abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm {
 	 */
 	public function __construct($identifier) {
 		parent::__construct($identifier);
-		$this->clauses = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->getIdentifier() . '-clauses');
+		if(UserUtility::isLogged()) {
+			$this->clauses = $GLOBALS['TSFE']->fe_user->getKey('user', 'form-' . $this->getIdentifier() . '-clauses');
+		} else {
+			$this->clauses = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->getIdentifier() . '-clauses');
+		}
+
 		if(!is_array($this->clauses)) {
 			$this->clauses = [];
 		}
@@ -25,7 +31,7 @@ abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * 
 	 * @param	string	$type element type
 	 * @param	string	$name element name
-	 * @param	string	$configuration element configuration
+	 * @param	array	$configuration element configuration
 	 * @return	\Ameos\AmeosForm\Form this
 	 */
 	public function add($name, $type = '', $configuration = [], $overrideFunction = FALSE) {
