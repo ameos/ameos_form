@@ -82,6 +82,7 @@ abstract class ElementAbstract implements ElementInterface {
 	public function getAttributes() {
 		$output = '';
 		$output.= isset($this->configuration['placeholder']) ? ' placeholder="' . $this->configuration['placeholder'] . '"' : '';
+		$output.= isset($this->configuration['style']) ? ' style="' . $this->configuration['style'] . '"' : '';
 		$output.= isset($this->configuration['disabled']) && $this->configuration['disabled'] == TRUE ? ' disabled="disabled"' : '';
 		$output.= isset($this->configuration['title']) ? ' title="' . $this->configuration['title'] . '"' : '';
 		$output.= isset($this->configuration['datalist']) ? ' list="' . $this->getHtmlId() . '-datalist"' : '';
