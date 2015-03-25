@@ -50,12 +50,41 @@ abstract class AbstractForm {
 	}
 
 	/**
-	 * return eleemnt
+	 * return element
 	 * @param	string $name element name
 	 * @return 	\Ameos\AmeosForm\Elements\ElementInterface
 	 */
 	public function getElement($name) {
-		return array_key_exists($name, $this->elements) ? $this->elements[$name] : FALSE;
+		return $this->hasElement($name) ? $this->elements[$name] : FALSE;
+	}
+
+	/**
+	 * return TRUE if element exist
+	 * @param	string $name element name
+	 * @return 	bool
+	 */
+	public function hasElement($name) {
+		return array_key_exists($name, $this->elements);
+	}
+
+	/**
+	 * return element
+	 * @alias getElement
+	 * @param	string $name element name
+	 * @return 	\Ameos\AmeosForm\Elements\ElementInterface
+	 */
+	public function get($name) {
+		return $this->getElement($name);
+	}
+
+	/**
+	 * return TRUE if element exist
+	 * @alias hasElement
+	 * @param	string $name element name
+	 * @return 	bool
+	 */
+	public function has($name) {
+		return $this->hasElement($name);
 	}
 
 	/**

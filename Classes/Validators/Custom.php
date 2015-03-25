@@ -16,6 +16,6 @@ class Custom extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
 		if(!isset($this->configuration['method']) && !is_callable($this->configuration['method'])) {
 			throw new \Exception('Custom validator must have a callable method for validation');
 		}
-		return $this->configuration['method']($value);
+		return $this->configuration['method']($value, $this->form);
 	}
 }

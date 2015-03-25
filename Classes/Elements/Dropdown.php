@@ -3,6 +3,19 @@
 namespace Ameos\AmeosForm\Elements;
 
 class Dropdown extends ElementAbstract {
+
+	/**
+	 * @constuctor
+	 *
+	 * @param	string	$absolutename absolutename
+	 * @param	string	$name name
+	 * @param	array	$configuration configuration
+	 * @param	\Ameos\AmeosForm\Form $form form
+	 */
+	public function __construct($absolutename, $name, $configuration = [], $form) {
+		parent::__construct($absolutename, $name, $configuration, $form);
+		if(!isset($this->configuration['optionValueField'])) $this->configuration['optionValueField'] = 'uid';
+	}
 	
 	/**
 	 * form to html
@@ -25,6 +38,13 @@ class Dropdown extends ElementAbstract {
 			$currentValue = [$currentValue];
 		}
 		if(is_array($this->configuration['items'])) {
+			$optionValueFieldMethod = 'get' . ucfirst($this->configuration['optionValueField']);
+			foreach($currentValue as $currentValueKey => $currentValueItem) {
+				if(is_a($currentValueItem, '\\TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity')) {					
+					$currentValue[$currentValueKey] = $currentValueItem->$optionValueFieldMethod();
+				}
+			}
+
 			foreach($this->configuration['items'] as $value => $label) {
 				$selected = in_array($value, $currentValue) ? ' selected="selected"' : '';
 				$output.= '<option value="' . $value . '"' . $selected . '>' . $label . '</option>';

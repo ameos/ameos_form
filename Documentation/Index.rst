@@ -1,13 +1,3 @@
-.. ==================================================
-.. FOR YOUR INFORMATION
-.. --------------------------------------------------
-.. -*- coding: utf-8 -*- with BOM.
-
-.. include:: Includes.txt
-
-
-.. _start:
-
 =============================================================
 Ameos Form
 =============================================================
@@ -18,7 +8,7 @@ Ameos Form
 		ameos_form
 
 	:Version:
-		|1.0.0|
+		1.0.0
 
 	:Language:
 		en
@@ -33,7 +23,7 @@ Ameos Form
 		2015
 
 	:Author:
-		Stéphane Fillion
+		Ameos team
 
 	:Email:
 		typo3dev@ameos.com
@@ -59,5 +49,6 @@ Ameos Form
 	Introduction/Index
 	Forms/Index
 	Elements/Index
-	Validation/Index
+	Validators/Index
+	Templating/Index
 	ToDoList/Index
