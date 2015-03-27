@@ -23,7 +23,7 @@ Ameos Form
 		2015
 
 	:Author:
-		Ameos team
+		`Ameos team <http://www.ameos.com/>`_
 
 	:Email:
 		typo3dev@ameos.com
