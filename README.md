@@ -3,8 +3,6 @@ Form api for extbase and TYPO3
 
 ## Example
 
-::
-
 	$mymodel = $this->myModelRepository->findByUid($modelIdentifier);
 
 	$form = \Ameos\AmeosForm\Form\Factory::make('tx_myplugin', $mymodel);
