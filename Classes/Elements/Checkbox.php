@@ -12,12 +12,16 @@ class Checkbox extends ElementAbstract {
 	 * @return	string the html
 	 */
 	public function toHtml() {
-		$cssclass = isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
+		$attributes = '';
+		$attributes.= isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
+		$attributes.= isset($this->configuration['style']) ? ' style="' . $this->configuration['style'] . '"' : '';
+		$attributes.= isset($this->configuration['disabled']) && $this->configuration['disabled'] == TRUE ? ' disabled="disabled"' : '';
+		$attributes.= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
 
 		$output = '';
 		foreach($this->configuration['items'] as $value => $label) {
 			$checked = in_array($value, $this->getValue()) ? ' checked="checked"' : '';
-			$output.= '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '[]" type="checkbox" value="' . $value . '"' . $checked . $class . ' />' . 
+			$output.= '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '[]" type="checkbox" value="' . $value . '"' . $checked . $attributes . ' />' . 
 				'<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label><br />';
 		}
 		return $output;
