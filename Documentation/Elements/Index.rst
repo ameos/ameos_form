@@ -37,6 +37,7 @@ disabled      true if the html field is disabled   false                   true 
 title         html tag title                                               my field title
 custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 label         label of the button                                          click me!
 ============  ===================================  ======================  ===================================================
 
@@ -61,8 +62,9 @@ placeholder   place holder for the html tag                                Enter
 style         css style for the html tag                                   width: 150px;
 disabled      true if the html field is disabled   false                   true or false
 title         html tag title                                               my field title
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 errormessage  Message if the captcha is not valid  Captcha is not valid    Captcha is not valid
 ============  ===================================  ======================  ===================================================
 
@@ -90,9 +92,36 @@ disabled      true if the html field is disabled   false                   true 
 title         html tag title                                               my field title
 custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 items         avalaible choice for checkbox                                array('1' => 'Item 1', '2' => 'Item 2');
 ============  ===================================  ======================  ===================================================
 
+
+.. _elements-checksingle:
+
+Checksingle
+-----------
+
+.. figure:: ../Images/checksingle.png
+   
+You can add a checksingle (yes/no choice) like this
+
+::
+
+	$form->add('istrue', 'checksingle', $configuration);
+
+Available configuration
+
+============  ===================================  ======================  ===================================================
+Property      Description                          Default value           Example
+============  ===================================  ======================  ===================================================
+style         css style for the html tag                                   width: 150px;
+disabled      true if the html field is disabled   false                   true or false
+title         html tag title                                               my field title
+custom        custom html attribute                                        customattr="customvalue"
+class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
+============  ===================================  ======================  ===================================================
 
 
 .. _elements-color:
@@ -117,8 +146,9 @@ placeholder   place holder for the html tag                                my fi
 style         css style for the html tag                                   width: 150px;
 disabled      true if the html field is disabled   false                   true or false
 title         html tag title                                               my field title
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 ============  ===================================  ======================  ===================================================
 
 
@@ -141,11 +171,41 @@ Available configuration
 Property             Description                                        Default value           Example
 ===================  =================================================  ======================  ===================================================
 class                css class for the html tag                                                 big
+errorclass           css class when there is an error                                           error
 format-display       sort field.d for day, m for month and y for year   dmy                     dmy, mdy, ymd 
 year-minimum-limit   minimum availaible year                            1900                    1970
 year-maximum-limit   maximum availaible year                            current year + 20       2050
 format-output        format of the result                               timestamp               timestamp or format compatible with strftime
 ===================  =================================================  ======================  ===================================================
+
+
+.. _elements-datepicker:
+
+Datepicker
+----------
+
+.. figure:: ../Images/datepicker.png
+
+You can add a date picker like this.
+
+::
+
+	$form->add('startdate', 'datepicker', $configuration);
+
+Available configuration
+
+===================  ============================================================  ======================  ===================================================
+Property             Description                                                    Default value           Example
+===================  ============================================================  ======================  ===================================================
+format               date format (http://momentjs.com/docs/#/displaying/format/)   D MMM YYYY              MMM D YYYY
+placeholder          place holder for the html tag                                                         my firstname
+style                css style for the html tag                                                            width: 150px;
+disabled             true if the html field is disabled                            false                   true or false
+title                html tag title                                                                        my field title
+custom               custom html attribute                                                                 customattr="customvalue"
+class                css class for the html tag                                                            big
+errorclass           css class when there is an error                                                      error
+===================  ============================================================  ======================  ===================================================
 
 
 .. _elements-dropdown:
@@ -171,6 +231,7 @@ disabled      true if the html field is disabled   false                   true 
 title         html tag title                                               my field title
 custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 items         avalaible choice for checkbox                                array('1' => 'Item 1', '2' => 'Item 2') or a repository result ($this->myrepo->findAll())
 ============  ===================================  ======================  ===================================================
 
@@ -197,8 +258,9 @@ placeholder   place holder for the html tag                                my fi
 style         css style for the html tag                                   width: 150px;
 disabled      true if the html field is disabled   false                   true or false
 title         html tag title                                               my field title
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 ============  ===================================  ======================  ===================================================
 
 
@@ -222,8 +284,9 @@ placeholder   place holder for the html tag                                my fi
 style         css style for the html tag                                   width: 150px;
 disabled      true if the html field is disabled   false                   true or false
 title         html tag title                                               my field title
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 ============  ===================================  ======================  ===================================================
 
 
@@ -249,8 +312,9 @@ placeholder   place holder for the html tag                                my fi
 style         css style for the html tag                                   width: 150px;
 disabled      true if the html field is disabled   false                   true or false
 title         html tag title                                               my field title
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 min           minimum number                                               10
 max           maximum number                                               100
 step          increment step between each number   1                       10
@@ -279,8 +343,9 @@ placeholder   place holder for the html tag                                my fi
 style         css style for the html tag                                   width: 150px;
 disabled      true if the html field is disabled   false                   true or false
 title         html tag title                                               my field title
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 ============  ===================================  ======================  ===================================================
 
 
@@ -308,6 +373,7 @@ disabled      true if the html field is disabled   false                   true 
 title         html tag title                                               my field title
 custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 items         avalaible choice for checkbox                                array('1' => 'Item 1', '2' => 'Item 2');
 ============  ===================================  ======================  ===================================================
 
@@ -334,8 +400,9 @@ placeholder   place holder for the html tag                                my fi
 style         css style for the html tag                                   width: 150px;
 disabled      true if the html field is disabled   false                   true or false
 title         html tag title                                               my field title
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 min           minimum number                                               10
 max           maximum number                                               100
 step          increment step between each number   1                       10
@@ -365,6 +432,7 @@ disabled      true if the html field is disabled   false                   true 
 title         html tag title                                               my field title
 custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 label         label of the button                                          click me!
 ============  ===================================  ======================  ===================================================
 
@@ -394,8 +462,9 @@ style         css style for the html tag                                   width
 disabled      true if the html field is disabled   false                   true or false
 title         html tag title                                               my field title
 datalist      datalist for autocomplete                                    array('key-1' => 'value 1', 'key-2' => 'value 2')
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 ============  ===================================  ======================  ===================================================
 
 
@@ -420,8 +489,9 @@ Property      Description                          Default value           Examp
 placeholder   place holder for the html tag                                my firstname
 style         css style for the html tag                                   width: 150px;
 title         html tag title                                               my field title
-custom        cutsom html attribute                                        customattr="customvalue"
+custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
 ============  ===================================  ======================  ===================================================
 
 
@@ -446,8 +516,9 @@ Property      Description                            Default value           Exa
 placeholder   place holder for the html tag                                  my firstname
 style         css style for the html tag                                     width: 150px;
 title         html tag title                                                 my field title
-custom        cutsom html attribute                                          customattr="customvalue"
+custom        custom html attribute                                          customattr="customvalue"
 class         css class for the html tag                                     big
+errorclass    css class when there is an error                               error
 directory     target upload directory                                        fileadmin/user_upload/my_ext/
 filename      target upload file name                                        my-file.pdf
 canoverwrite  if true, overwrite existing file                               true or false
