@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="fr" datatype="plaintext" original="messages" date="2012-09-13T15:40:13Z" product-name="ameos_form">
+		<header/>
+		<body>
+			<trans-unit id="error.date.valid" xml:space="preserve">
+				<source>Date is not valid</source>
+				<target>La date n'est pas valide</target>
+			</trans-unit>
+			
+			<trans-unit id="months.1" xml:space="preserve"><source>January</source><target>Janvier</target></trans-unit>
+			<trans-unit id="months.2" xml:space="preserve"><source>February</source><target>Février</target></trans-unit>
+			<trans-unit id="months.3" xml:space="preserve"><source>March</source><target>Mars</target></trans-unit>
+			<trans-unit id="months.4" xml:space="preserve"><source>April</source><target>Avril</target></trans-unit>
+			<trans-unit id="months.5" xml:space="preserve"><source>May</source><target>Mai</target></trans-unit>
+			<trans-unit id="months.6" xml:space="preserve"><source>June</source><target>Juin</target></trans-unit>
+			<trans-unit id="months.7" xml:space="preserve"><source>July</source><target>Juillet</target></trans-unit>
+			<trans-unit id="months.8" xml:space="preserve"><source>August</source><target>Aout</target></trans-unit>
+			<trans-unit id="months.9" xml:space="preserve"><source>September</source><target>Septembre</target></trans-unit>
+			<trans-unit id="months.10" xml:space="preserve"><source>October</source><target>Octobre</target></trans-unit>
+			<trans-unit id="months.11" xml:space="preserve"><source>November</source><target>Novembre</target></trans-unit>
+			<trans-unit id="months.12" xml:space="preserve"><source>December</source><target>Décembre</target></trans-unit>
+
+			<trans-unit id="weekdays.1" xml:space="preserve"><source>Sunday</source><target>Dimanche</target></trans-unit>
+			<trans-unit id="weekdays.2" xml:space="preserve"><source>Monday</source><target>Lundi</target></trans-unit>
+			<trans-unit id="weekdays.3" xml:space="preserve"><source>Tuesday</source><target>Mardi</target></trans-unit>
+			<trans-unit id="weekdays.4" xml:space="preserve"><source>Wednesday</source><target>Mercredi</target></trans-unit>
+			<trans-unit id="weekdays.5" xml:space="preserve"><source>Thursday</source><target>Jeudi</target></trans-unit>
+			<trans-unit id="weekdays.6" xml:space="preserve"><source>Friday</source><target>Vendredi</target></trans-unit>
+			<trans-unit id="weekdays.7" xml:space="preserve"><source>Saturday</source><target>Samedi</target></trans-unit>
+
+			<trans-unit id="weekdaysShort.1" xml:space="preserve"><source>Sun</source><target>Dim</target></trans-unit>
+			<trans-unit id="weekdaysShort.2" xml:space="preserve"><source>Mon</source><target>Lun</target></trans-unit>
+			<trans-unit id="weekdaysShort.3" xml:space="preserve"><source>Tue</source><target>Mar</target></trans-unit>
+			<trans-unit id="weekdaysShort.4" xml:space="preserve"><source>Wed</source><target>Mer</target></trans-unit>
+			<trans-unit id="weekdaysShort.5" xml:space="preserve"><source>Thu</source><target>Jeu</target></trans-unit>
+			<trans-unit id="weekdaysShort.6" xml:space="preserve"><source>Fri</source><target>Ven</target></trans-unit>
+			<trans-unit id="weekdaysShort.7" xml:space="preserve"><source>Sat</source><target>Sam</target></trans-unit>
+
+			<trans-unit id="previousMonth" xml:space="preserve"><source>Previous month</source><target>Mois précédent</target></trans-unit>
+			<trans-unit id="nextMonth" xml:space="preserve"><source>Next month</source><target>Mois suivant</target></trans-unit>
+		</body>
+	</file>
+</xliff>

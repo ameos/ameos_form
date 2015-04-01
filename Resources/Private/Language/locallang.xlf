@@ -3,9 +3,39 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2012-09-13T15:40:13Z" product-name="ameos_form">
 		<header/>
 		<body>
-			<trans-unit id="error.date.valid" xml:space="preserve">
-				<source>Date is not valid</source>
-			</trans-unit>
+			<trans-unit id="error.date.valid" xml:space="preserve"><source>Date is not valid</source></trans-unit>
+			
+			<trans-unit id="months.1" xml:space="preserve"><source>January</source></trans-unit>
+			<trans-unit id="months.2" xml:space="preserve"><source>February</source></trans-unit>
+			<trans-unit id="months.3" xml:space="preserve"><source>March</source></trans-unit>
+			<trans-unit id="months.4" xml:space="preserve"><source>April</source></trans-unit>
+			<trans-unit id="months.5" xml:space="preserve"><source>May</source></trans-unit>
+			<trans-unit id="months.6" xml:space="preserve"><source>June</source></trans-unit>
+			<trans-unit id="months.7" xml:space="preserve"><source>July</source></trans-unit>
+			<trans-unit id="months.8" xml:space="preserve"><source>August</source></trans-unit>
+			<trans-unit id="months.9" xml:space="preserve"><source>September</source></trans-unit>
+			<trans-unit id="months.10" xml:space="preserve"><source>October</source></trans-unit>
+			<trans-unit id="months.11" xml:space="preserve"><source>November</source></trans-unit>
+			<trans-unit id="months.12" xml:space="preserve"><source>December</source></trans-unit>
+
+			<trans-unit id="weekdays.1" xml:space="preserve"><source>Sunday</source></trans-unit>
+			<trans-unit id="weekdays.2" xml:space="preserve"><source>Monday</source></trans-unit>
+			<trans-unit id="weekdays.3" xml:space="preserve"><source>Tuesday</source></trans-unit>
+			<trans-unit id="weekdays.4" xml:space="preserve"><source>Wednesday</source></trans-unit>
+			<trans-unit id="weekdays.5" xml:space="preserve"><source>Thursday</source></trans-unit>
+			<trans-unit id="weekdays.6" xml:space="preserve"><source>Friday</source></trans-unit>
+			<trans-unit id="weekdays.7" xml:space="preserve"><source>Saturday</source></trans-unit>
+
+			<trans-unit id="weekdaysShort.1" xml:space="preserve"><source>Sun</source></trans-unit>
+			<trans-unit id="weekdaysShort.2" xml:space="preserve"><source>Mon</source></trans-unit>
+			<trans-unit id="weekdaysShort.3" xml:space="preserve"><source>Tue</source></trans-unit>
+			<trans-unit id="weekdaysShort.4" xml:space="preserve"><source>Wed</source></trans-unit>
+			<trans-unit id="weekdaysShort.5" xml:space="preserve"><source>Thu</source></trans-unit>
+			<trans-unit id="weekdaysShort.6" xml:space="preserve"><source>Fri</source></trans-unit>
+			<trans-unit id="weekdaysShort.7" xml:space="preserve"><source>Sat</source></trans-unit>
+
+			<trans-unit id="previousMonth" xml:space="preserve"><source>Previous month</source></trans-unit>
+			<trans-unit id="nextMonth" xml:space="preserve"><source>Next month</source></trans-unit>
 		</body>
 	</file>
 </xliff>
