@@ -81,6 +81,9 @@ You can associate a list with a search form.
 For templaing list, see :ref:`Templating with fluid <templating>` part.
 
 
+The repository used by the seach form must extends \\Ameos\\AmeosForm\\Domain\\Repository\\SearchableRepository
+
+
 .. _forms-other:
 
 Other form
