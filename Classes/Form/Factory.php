@@ -17,6 +17,10 @@ class Factory {
 			return GeneralUtility::makeInstance('\\Ameos\\AmeosForm\\Form\\Search\\ExtbaseForm', $arguments[0], $arguments[1]);
 		}
 
+		if(is_string($arguments[0]) && is_a($arguments[1], '\\TYPO3\\CMS\\Extbase\\Persistence\\Repository')) {
+			throw new \Exception('Your repository must extends \\Ameos\\AmeosForm\\Domain\\Repository\\SearchableRepository');
+		}
+
 		if(is_string($arguments[0]) && is_a($arguments[1], '\\TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity')) {
 			return GeneralUtility::makeInstance('\\Ameos\\AmeosForm\\Form\\Crud\\ExtbaseForm', $arguments[0], $arguments[1]);
 		}
