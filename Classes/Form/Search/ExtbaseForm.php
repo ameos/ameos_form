@@ -54,12 +54,14 @@ class ExtbaseForm extends \Ameos\AmeosForm\Form\Search {
 			}
 		}
 
-		if(UserUtility::isLogged()) {
-			$GLOBALS['TSFE']->fe_user->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
-		} else {
-			$GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
+		if($this->storeSearchInSession === TRUE) {
+			if(UserUtility::isLogged()) {
+				$GLOBALS['TSFE']->fe_user->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
+			} else {
+				$GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
+			}
+			$GLOBALS['TSFE']->storeSessionData();
 		}
-		$GLOBALS['TSFE']->storeSessionData();
 		
 		$clauses = array_merge($this->clauses, $this->defaultClause);		
 		return $this->repository->findByClausesArray($clauses, $orderby, $direction);

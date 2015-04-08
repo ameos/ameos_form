@@ -7,6 +7,11 @@ use Ameos\AmeosForm\Utility\Events;
 use Ameos\AmeosForm\Utility\UserUtility;
 
 abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm {
+
+	/**
+	 * @var bool $storeSearchInSession
+	 */
+	protected $storeSearchInSession = TRUE;
 	
 	/**
 	 * @constuctor
@@ -24,6 +29,16 @@ abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm {
 		if(!is_array($this->clauses)) {
 			$this->clauses = [];
 		}
+	}
+
+	/**
+	 * set if the search criterias are stored in session
+	 * @param	bool	$storeSearchInSession
+	 * @return	\Ameos\AmeosForm\Form this
+	 */
+	public function storeSearchInSession($storeSearchInSession = TRUE) {
+		$this->storeSearchInSession = $storeSearchInSession;
+		return $this;
 	}
 	
 	/**
