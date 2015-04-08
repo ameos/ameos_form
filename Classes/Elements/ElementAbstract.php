@@ -117,6 +117,18 @@ abstract class ElementAbstract implements ElementInterface {
 	/**
 	 * add configuration
 	 *
+	 * @alias	addConfiguration
+	 * @param	string	$key configuration key
+	 * @param	string	$value value
+	 * @return 	\Ameos\AmeosForm\Elements\ElementAbstract this
+	 */
+	public function with($key, $value) {
+		return $this->addConfiguration($key, $value);
+	}
+
+	/**
+	 * add configuration
+	 *
 	 * @param	string	$key configuration key
 	 * @param	string	$value value
 	 * @return 	\Ameos\AmeosForm\Elements\ElementAbstract this
