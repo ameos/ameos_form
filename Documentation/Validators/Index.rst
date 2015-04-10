@@ -76,7 +76,7 @@ Custom validator. You can add this validator like this.
 .. _validators-filesize:
 
 Filesize
-------
+--------
 
 For upload element. Check the upload file max size. You can add this validator like this.
 
