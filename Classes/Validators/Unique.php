@@ -16,8 +16,8 @@ class Unique extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
 		if($value == ''){
 			return true;
 		}
-		$objectManager = GeneralUtility::makeInstance('\\TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		$defaultQuerySettings = $objectManager->get('\\TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Typo3QuerySettings');
+		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		$defaultQuerySettings = $objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Typo3QuerySettings');
 		$defaultQuerySettings->setRespectStoragePage(FALSE);
 		$this->configuration['repository']->setDefaultQuerySettings($defaultQuerySettings);
 		

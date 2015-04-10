@@ -69,7 +69,7 @@ class RecordList {
 	 * initialize the view
 	 */ 
 	protected function initializeView(){
-		$this->view = GeneralUtility::makeInstance('\\TYPO3\\CMS\\Fluid\\View\\StandaloneView');	
+		$this->view = GeneralUtility::makeInstance('TYPO3\\CMS\\Fluid\\View\\StandaloneView');	
 		$this->view->setControllerContext($this->context);
 		$this->view->setTemplatePathAndFilename($this->template);
 	}

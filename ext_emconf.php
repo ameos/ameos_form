@@ -19,10 +19,9 @@ $EM_CONF[$_EXTKEY] = [
 	'lockType'         => '',
 	'version'          => '1.0.0',
 	'constraints'      => [
-		'depends'   => [
-			'extbase' => '',
-			'fluid'   => '',
-			'typo3'   => '',
+		'depends' => [
+			'typo3' => '6.2.0-7.99.99',
+			'php'   => '5.4.1-5.6.99'
 		],
 		'conflicts' => [],
 		'suggests'  => [],
