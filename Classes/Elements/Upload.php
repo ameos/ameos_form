@@ -23,16 +23,17 @@ class Upload extends ElementAbstract {
 	 * @return	string the html
 	 */
 	public function toHtml() {
-		$output = '<input type="file" id="' . $this->getHtmlId() . '-upload" name="' . $this->absolutename . '[upload]"' . $this->getAttributes() . ' />';
-
-		if(!(isset($this->configuration['show_link']) && (bool)$this->configuration['show_link'] === FALSE)) {
+		$output = '';
+		if($this->getValue() && !(isset($this->configuration['show_link']) && (bool)$this->configuration['show_link'] === FALSE)) {
 			if($this->uploadState == 'temporary-upload') {
-				$output.= '<a target="_blank" href="/typo3temp/ameos_form/tempupload/' . $this->getValue() . '">Voir le fichier</a>';
-				$output.= '<input type="hidden" value="' . $this->getValue() . '" id="' . $this->getHtmlId() . '-temporary" name="' . $this->absolutename . '[temporary]" />';
+				$output .= '<a target="_blank" href="/typo3temp/ameos_form/tempupload/' . $this->getValue() . '">Voir le fichier</a>';
+				$output .= '<input type="hidden" value="' . $this->getValue() . '" id="' . $this->getHtmlId() . '-temporary" name="' . $this->absolutename . '[temporary]" />';
+				
 			} else {
-				$output.= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $this->getValue() . '">Voir le fichier</a>';
+				$output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $this->getValue() . '">Voir le fichier</a>';
 			}	
 		}
+		$output .= '<input type="file" id="' . $this->getHtmlId() . '-upload" name="' . $this->absolutename . '[upload]"' . $this->getAttributes() . ' />';
 		return $output;
 	}
 
