@@ -64,7 +64,7 @@ class Upload extends ElementAbstract {
 
 		if(is_array($value)) {
 			if(isset($value['upload']) && is_array($value['upload']) && $value['upload']['error'] == 0) {
-				
+				$this->value = $value;
 				$this->determineErrors();
 				if($this->isValid()) {
 					$directory = $this->getUploadDirectory();
@@ -81,6 +81,8 @@ class Upload extends ElementAbstract {
 					$this->uploadState = 'temporary-upload';
 			
 					parent::setValue(basename($temporaryFilepath));
+				} else {
+					$this->value = null;
 				}
 			} elseif(isset($value['temporary'])) {
 				$directory = $this->getUploadDirectory();
