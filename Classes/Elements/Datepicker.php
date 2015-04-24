@@ -87,33 +87,12 @@ class Datepicker extends ElementAbstract {
 	}
 
 	/**
-	 * Return value to display
-	 *
-	 * @return string
-	 */
-	public function getValueToDisplay() {
-		$value = $this->getValue();
-		if($value == '0' || $value == '') {
-			return '';
-		}
-		
-		if(is_numeric($value)) {
-			return strftime($this->configuration['format'], $value);
-		}
-		
-		return $value;
-	}
-
-	/**
 	 * set the value
 	 * 
 	 * @param	string	$value value
 	 * @return 	\Ameos\AmeosForm\Elements\ElementAbstract this
 	 */
 	public function setValue($value) {
-		if(!is_numeric($value)) {
-			$value = \Ameos\AmeosForm\Utility\Date::dateToTimestamp($value, $this->configuration['format']);
-		}
 		if($value == 0) {
 			$value = '';
 		}
