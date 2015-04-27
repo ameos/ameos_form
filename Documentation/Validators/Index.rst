@@ -68,7 +68,7 @@ Custom validator. You can add this validator like this.
 
 ::
 
-	$form->validator('username', 'unique', 'Custom validation not valid', array('method' => function($value, $form) {
+	$form->validator('username', 'custom', 'Custom validation not valid', array('method' => function($value, $form) {
 		// your code here. return true if result is valid. Else, false
 	}));
 
