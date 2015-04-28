@@ -22,3 +22,9 @@ Form api for extbase and TYPO3
 	}
 
 	$this->view->assign('form', $form);
+
+## Documentation
+
+You can find all the documentation on the typo3 extension repository
+
+http://docs.typo3.org/typo3cms/extensions/ameos_form/
