@@ -16,6 +16,7 @@ namespace Ameos\AmeosForm\Elements;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
+use Ameos\AmeosForm\Utility\String as StringUtility;
 
 class Upload extends ElementAbstract {
 	
@@ -28,6 +29,21 @@ class Upload extends ElementAbstract {
 	 * @var string $uploadState etat de l'upload ( no-upload, temporary-upload, upload )
 	 */
 	protected $uploadState = 'no-upload';
+	
+	/**
+	 * @constuctor
+	 *
+	 * @param	string	$absolutename absolutename
+	 * @param	string	$name name
+	 * @param	array	$configuration configuration
+	 * @param	\Ameos\AmeosForm\Form $form form
+	 */
+	public function __construct($absolutename, $name, $configuration = [], $form) {
+		parent::__construct($absolutename, $name, $configuration, $form);
+		if(isset($this->configuration['directory'])) {
+			$this->configuration['directory'] = $this->form->stringUtility->smart($this->configuration['directory']);
+		}
+	}
 
 	/**
 	 * form to html

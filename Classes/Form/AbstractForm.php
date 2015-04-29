@@ -26,6 +26,11 @@ abstract class AbstractForm {
 	protected $identifier;
 
 	/**
+	 * @var string $extensionName extension name
+	 */
+	protected $extensionName;
+
+	/**
 	 * @var array $elements elements
 	 */
 	protected $elements;
@@ -36,6 +41,11 @@ abstract class AbstractForm {
 	protected $mode;
 	
 	/**
+	 * @var Ameos\AmeosForm\Utility\String $stringUtility 
+	 */
+	public $stringUtility;
+	
+	/**
 	 * @constuctor
 	 *
 	 * @param	string $identifier form identifier
@@ -43,6 +53,7 @@ abstract class AbstractForm {
 	public function __construct($identifier) {
 		$this->elements   = [];
 		$this->identifier = $identifier;
+		$this->stringUtility = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\String', $this);
 	}
 	
 	/**
@@ -51,6 +62,24 @@ abstract class AbstractForm {
 	 */
 	public function getIdentifier() {
 		return $this->identifier;
+	}
+
+	/**
+	 * set extension name
+	 * @param string $extensionName extension name
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function setExtensionName($extensionName)  {
+		$this->extensionName = $extensionName;
+		return $this;
+	}
+	
+	/**
+	 * return extension name
+	 * @return string extension name
+	 */
+	public function getExtensionName() {
+		return $this->extensionName;
 	}
 	
 	/**

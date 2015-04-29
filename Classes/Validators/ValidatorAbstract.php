@@ -44,7 +44,7 @@ abstract class ValidatorAbstract implements \Ameos\AmeosForm\Validators\Validato
 	 */
 	public function __construct($message, $configuration = [], $element, $form) {
 		$this->configuration = $configuration;
-		$this->message       = $message;
+		$this->message       = $form->stringUtility->smart($message);
 		$this->element       = $element;
 		$this->form          = $form;
 	}
