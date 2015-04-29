@@ -346,6 +346,8 @@ title         html tag title                                               my fi
 custom        custom html attribute                                        customattr="customvalue"
 class         css class for the html tag                                   big
 errorclass    css class when there is an error                             error
+encrypt       if true, password is encrypt         false                   true
+fill_value    if true, add current value in html   false                   true
 ============  ===================================  ======================  ===================================================
 
 
