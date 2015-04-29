@@ -13,6 +13,10 @@ namespace Ameos\AmeosForm\Elements;
  *
  * The TYPO3 project - inspiring people to share!
  */
+ 
+use TYPO3\CMS\Saltedpasswords\Utility\SaltedPasswordsUtility;
+use TYPO3\CMS\Saltedpasswords\Salt\SaltFactory;
+use Ameos\AmeosForm\Utility\Events;
 
 class Password extends ElementAbstract {
 	
@@ -22,12 +26,32 @@ class Password extends ElementAbstract {
 	protected $searchable = FALSE;
 	
 	/**
+	 * @constuctor
+	 *
+	 * @param	string	$absolutename absolutename
+	 * @param	string	$name name
+	 * @param	array	$configuration configuration
+	 * @param	\Ameos\AmeosForm\Form $form form
+	 */
+	public function __construct($absolutename, $name, $configuration = [], $form) {
+		parent::__construct($absolutename, $name, $configuration, $form);
+		$this->configuration['encrypt'] = isset($configuration['encrypt']) ? (bool)$configuration['encrypt'] : FALSE;
+		$this->configuration['fill_value'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value'] : FALSE;
+		$this->configuration['fill_value_iferror'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value_iferror'] : TRUE;
+	}
+	
+	/**
 	 * form to html
 	 *
 	 * @return	string the html
 	 */
 	public function toHtml() {
-		return '<input type="password" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
+		$attributes = $this->getAttributes();
+		if($this->configuration['fill_value']
+		  || ($this->form->isSubmitted() && !$this->form->isValid() && $this->configuration['fill_value_iferror'])) {
+			$attributes.= ' value="' . $this->getValue() . '"';
+		}
+		return '<input type="password" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '"' . $attributes . ' />';
 	}
 
 	/**
@@ -36,23 +60,42 @@ class Password extends ElementAbstract {
 	 * @param	string	$value value
 	 * @return 	\Ameos\AmeosForm\Elements\ElementAbstract this
 	 */
-	public function setValue($value) {
+	public function setValue($value) {		
+		if($this->configuration['encrypt']) {
+			Events::getInstance($this->form->getIdentifier())->registerEvent('form_is_valid', [$this, 'encryptPassword'], [
+				'password' => $value,
+			]);
+		}
+		
 		$this->valueSetted = TRUE;
 		$this->value = $value;
-		
-		if($this->form->getMode() == 'crud/extbase' && $value != '') {
-			$method = 'set' . \Ameos\AmeosForm\Utility\String::camelCase($this->name);
-			if(method_exists($this->form->getModel(), $method)) {
-				$this->form->getModel()->$method($value);
-			}
-		}
 
-		if($this->form->getMode() == 'crud/classic' && $value != '') {
-			if($this->form->hasData($this->name)) {
-				$this->form->setData($this->name, $value);
+		if($this->form !== FALSE) {
+			if($this->form->getMode() == 'crud/extbase' && $value != '') {
+				$method = 'set' . \Ameos\AmeosForm\Utility\String::camelCase($this->name);
+				if(method_exists($this->form->getModel(), $method)) {
+					$this->form->getModel()->$method($value);
+				}
+			}
+
+			if($this->form->getMode() == 'crud/classic' && $value != '') {
+				if($this->form->hasData($this->name)) {
+					$this->form->setData($this->name, $value);
+				}
 			}
 		}
 
 		return $this;
+	}
+
+	/**
+	 * encrypt password
+	 * @param string $password password
+	 */
+	public function encryptPassword($password) {
+		if(SaltedPasswordsUtility::isUsageEnabled() && $password != '') {
+			$password = SaltFactory::getSaltingInstance(NULL)->getHashedPassword($password);
+			$this->setValue($password);
+		}
 	}
 }
