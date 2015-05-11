@@ -14,21 +14,22 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class CustomTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 */
-	public function sameasIsValid() {
+	public function customIsValid() {
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->add('input-text-1', 'text');
-		$form->add('input-text-2', 'text');
-		$form->validator('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
+		$form->add('input-text', 'text');
+		$form->addConstraint('input-text', 'custom', 'custom error', ['method' => function($value, $form) {
+			return $value == 'test';
+		}]);
 
 		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 		
-		$form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'test'));
-		$result = $form->get('input-text-2')->isValid();
+		$form->bindRequest(array('input-text' => 'test'));
+		$result = $form->get('input-text')->isValid();
 
 		$this->assertTrue($result);
 	}
@@ -36,16 +37,17 @@ class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function sameasIsNotValid() {
+	public function customIsNotValid() {
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->add('input-text-1', 'text');
-		$form->add('input-text-2', 'text');
-		$form->validator('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
+		$form->add('input-text', 'text');
+		$form->addConstraint('input-text', 'custom', 'custom error', ['method' => function($value, $form) {
+			return $value == 'test';
+		}]);
 
 		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 		
-		$form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'othervalue'));
-		$result = $form->get('input-text-2')->isValid();
+		$form->bindRequest(array('input-text' => 'othervalue'));
+		$result = $form->get('input-text')->isValid();
 
 		$this->assertFalse($result);
 	}
