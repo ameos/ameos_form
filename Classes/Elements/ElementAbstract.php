@@ -113,12 +113,10 @@ abstract class ElementAbstract implements ElementInterface {
 	 * @return string html datalist
 	 */
 	public function getDatalist() {
-		if(isset($this->configuration['datalist'])) {
-			$output = '<datalist id="' . $this->getHtmlId() . '-datalist' . '">';
-			if(is_array($this->configuration['datalist'])) {
-				foreach($this->configuration['datalist'] as $value => $label) {
-					$output.= '<option value="' . $value . '">' . $label . '</option>';
-				}
+		if(isset($this->configuration['datalist']) && is_array($this->configuration['datalist'])) {
+			$output = '<datalist id="' . $this->getHtmlId() . '-datalist">';
+			foreach($this->configuration['datalist'] as $value => $label) {
+				$output.= '<option value="' . $value . '" label="' . $label . '">' . $label . '</option>';
 			}
 			$output.= '</datalist>';
 			return $output;
