@@ -144,17 +144,17 @@ For example : $form->add('my-radiobutton', 'radio', array('items' => array('valu
 All elements are detailled on :ref:`Elements <elements>` part.
 
 
-.. _forms-addvalidator:
+.. _forms-addconstraint:
 
-Add an validator to the form
+Add a constraint to the form
 ----------------------------
 
-After the creation of your form, you add validator easily.
+After the creation of your form, you add constraint easily.
 
 ::
 
-	$form->validator($field, $type, $message, $configuration); //  $configuration is optional. Depends the type of validator
+	$form->addConstraint($field, $type, $message, $configuration); //  $configuration is optional. Depends the type of validator
 
-For example : $form->validator('my_field', 'required', LocalizationUtility::translate('my_field.required', 'ExtensionKey'));
+For example : $form->addConstraint('my_field', 'required', LocalizationUtility::translate('my_field.required', 'ExtensionKey'));
 
-All validators are detailled on :ref:`Validators <validators>` part.
+All constraints are detailled on :ref:`Constraints <constraints>` part.

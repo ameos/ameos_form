@@ -14,6 +14,20 @@ Elements
 
 .. _elements-button:
 
+The configuration of the element can be set with a table when creating the element
+
+::
+
+	$form->add('my-element', 'text', array('placeholder' => 'My placeholder', 'class' => 'my-css-class'));
+	
+Or after instanciation 
+
+::
+	
+	$form->add('my-element', 'text');
+	$form->get('my-element')->with('placeholder', 'My placeholder');
+
+
 Button
 ------
 
