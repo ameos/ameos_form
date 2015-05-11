@@ -439,6 +439,38 @@ label         label of the button                                          click
 ============  ===================================  ======================  ===================================================
 
 
+.. _elements-tel:
+
+Tel
+---
+
+An input telephone field
+
+.. figure:: ../Images/tel.png
+
+You can add a input tel like this
+
+::
+
+	$form->add('my-tel', 'tel', $configuration);
+
+Available configuration
+
+============  ===================================  ======================  =============================================================================================================
+Property      Description                          Default value           Example
+============  ===================================  ======================  =============================================================================================================
+placeholder   place holder for the html tag                                Your telephone
+style         css style for the html tag                                   width: 150px;
+disabled      true if the html field is disabled   false                   true or false
+title         html tag title                                               my field title
+datalist      datalist for autocomplete                                    array('key-1' => 'value 1', 'key-2' => 'value 2')
+custom        custom html attribute                                        customattr="customvalue"
+class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
+pattern       regex for field control                                      ^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$
+============  ===================================  ======================  =============================================================================================================
+
+
 .. _elements-text:
 
 Text
