@@ -1,5 +1,5 @@
 <?php
-namespace Ameos\AmeosForm\Validators;
+namespace Ameos\AmeosForm\Constraints;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -14,20 +14,17 @@ namespace Ameos\AmeosForm\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Required extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+class Sameas extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 
 	/**
-	 * return true if the element is valide
+	 * return true if the element is sameas an another value
 	 *
 	 * @param	string $value value to test
 	 * @return	bool true if the element is valide
 	 */
 	public function isValid($value) {
-		if(is_a($this->element, '\\Ameos\\AmeosForm\\Elements\\Upload')) {
-			if(is_array($value) && array_key_exists('upload', $value) && is_array($value['upload'])) {
-				return TRUE;
-			}
-		}
-		return !(trim($value) == '');
+		return $value == $this->form->getElement($this->configuration['sameas'])->getValue();
 	}
 }

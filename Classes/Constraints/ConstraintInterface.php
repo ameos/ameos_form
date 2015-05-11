@@ -1,5 +1,5 @@
 <?php
-namespace Ameos\AmeosForm\Validators;
+namespace Ameos\AmeosForm\Constraints;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -14,19 +14,20 @@ namespace Ameos\AmeosForm\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-use \TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+interface ConstraintInterface {
 
-class Captcha extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
-	
 	/**
 	 * return true if the element is valide
 	 *
 	 * @param	string $value value to test
 	 * @return	bool true if the element is valide
 	 */
-	public function isValid($value) {
-		require_once(ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/SecureImage/securimage.php');
-		$securimage = new \Securimage();
-		return $securimage->check($value);
-	}
+	public function isValid($value);
+
+	/**
+	 * return the message
+	 * 
+	 * @return	string the message
+	 */
+	public function getMessage();
 }

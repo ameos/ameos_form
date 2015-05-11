@@ -1,5 +1,5 @@
 <?php
-namespace Ameos\AmeosForm\Validators;
+namespace Ameos\AmeosForm\Constraints;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -14,7 +14,7 @@ namespace Ameos\AmeosForm\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-interface ValidatorInterface {
+class Required extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 
 	/**
 	 * return true if the element is valide
@@ -22,12 +22,12 @@ interface ValidatorInterface {
 	 * @param	string $value value to test
 	 * @return	bool true if the element is valide
 	 */
-	public function isValid($value);
-
-	/**
-	 * return the message
-	 * 
-	 * @return	string the message
-	 */
-	public function getMessage();
+	public function isValid($value) {
+		if(is_a($this->element, '\\Ameos\\AmeosForm\\Elements\\Upload')) {
+			if(is_array($value) && array_key_exists('upload', $value) && is_array($value['upload'])) {
+				return TRUE;
+			}
+		}
+		return !(trim($value) == '');
+	}
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Ameos\AmeosForm\Validators;
+namespace Ameos\AmeosForm\Constraints;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -16,7 +16,7 @@ namespace Ameos\AmeosForm\Validators;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Filesize extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
+class Filesize extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 
 	/**
 	 * return true if the element is valide

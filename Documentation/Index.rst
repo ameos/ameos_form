@@ -49,6 +49,6 @@ Ameos Form
 	Introduction/Index
 	Forms/Index
 	Elements/Index
-	Validators/Index
+	Constraints/Index
 	Templating/Index
 	ToDoList/Index

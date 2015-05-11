@@ -52,9 +52,9 @@ abstract class ElementAbstract implements ElementInterface {
 	protected $systemerror = [];
 	
 	/**
-	 * @var array $validators validator
+	 * @var array $constraints constraints
 	 */
-	protected $validators = [];
+	protected $constraints = [];
 
 	/**
 	 * @var \Ameos\AmeosForm\Form $form form
@@ -279,11 +279,22 @@ abstract class ElementAbstract implements ElementInterface {
 	/**
 	 * add validator
 	 * 
-	 * @param	\Ameos\AmeosForm\Validators\ValidatorInterface	$validator
+	 * @param	\Ameos\AmeosForm\Validators\ValidatorInterface $constraint
+	 * @return	\Ameos\AmeosForm\Form this
+	 * @alias	addConstraint
+	 */
+	public function validator($constraint) {
+		return $this->addConstraint($constraint);
+	}
+	
+	/**
+	 * add constraint
+	 * 
+	 * @param	\Ameos\AmeosForm\Validators\ValidatorInterface $constraint
 	 * @return	\Ameos\AmeosForm\Form this
 	 */
-	public function validator($validator) {
-		$this->validators[] = $validator;
+	public function addConstraint($constraint) {
+		$this->constraints[] = $constraint;
 		return $this;
 	}
 
@@ -297,9 +308,9 @@ abstract class ElementAbstract implements ElementInterface {
 			$this->errors = array();
 			if($this->form !== FALSE && $this->form->isSubmitted()) {
 				$value = $this->getValue();			
-				foreach($this->validators as $validator) {
-					if(!$validator->isValid($value)) {
-						$this->errors[] = $validator->getMessage();
+				foreach($this->constraints as $constraint) {
+					if(!$constraint->isValid($value)) {
+						$this->errors[] = $constraint->getMessage();
 					}
 				}
 				foreach($this->systemerror as $error) {				

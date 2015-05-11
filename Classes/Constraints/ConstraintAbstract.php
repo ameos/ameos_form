@@ -1,5 +1,5 @@
 <?php
-namespace Ameos\AmeosForm\Validators;
+namespace Ameos\AmeosForm\Constraints;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -14,7 +14,7 @@ namespace Ameos\AmeosForm\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-abstract class ValidatorAbstract implements \Ameos\AmeosForm\Validators\ValidatorInterface {
+abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\ConstraintInterface {
 
 	/**
 	 * @var string $message message

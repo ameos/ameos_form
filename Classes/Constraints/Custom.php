@@ -1,5 +1,5 @@
 <?php
-namespace Ameos\AmeosForm\Validators;
+namespace Ameos\AmeosForm\Constraints;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -16,7 +16,7 @@ namespace Ameos\AmeosForm\Validators;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Custom extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
+class Custom extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 
 	/**
 	 * return true if the element is valide
@@ -26,7 +26,7 @@ class Custom extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
 	 */
 	public function isValid($value) {
 		if(!isset($this->configuration['method']) && !is_callable($this->configuration['method'])) {
-			throw new \Exception('Custom validator must have a callable method for validation');
+			throw new \Exception('Custom constraint must have a callable method for validation');
 		}
 		return $this->configuration['method']($value, $this->form);
 	}

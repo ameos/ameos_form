@@ -30,8 +30,8 @@ class Captcha extends ElementAbstract {
 		parent::__construct($absolutename, $name, $configuration, $form);
 
 		$errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'Captcha is not valid';
-		$validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Captcha', $errorMessage, [], $this, $form);
-		$this->validator($validator);
+		$constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Captcha', $errorMessage, [], $this, $form);
+		$this->addConstraint($constraint);
 	}
 	
 	/**

@@ -48,24 +48,36 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * @param	string	$message message
 	 * @param	array	$configuration configuration
 	 * @return	\Ameos\AmeosForm\Form this
+	 * @alias 	addConstraint
 	 */
 	public function validator($elementName, $type, $message, $configuration = []) {
-		foreach($this->elements as $elementKey => $element) {
-			if($elementName == $elementKey) {
-				switch($type) {
-					case 'email':         $validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Email',         $message, $configuration, $this->getElement($elementName), $this); break;
-					case 'sameas':        $validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Sameas',        $message, $configuration, $this->getElement($elementName), $this); break;
-					case 'unique':        $validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Unique',        $message, $configuration, $this->getElement($elementName), $this); break;
-					case 'fileextension': $validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Fileextension', $message, $configuration, $this->getElement($elementName), $this); break;
-					case 'filesize':      $validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Filesize',      $message, $configuration, $this->getElement($elementName), $this); break;
-					case 'captcha':       $validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Captcha',       $message, $configuration, $this->getElement($elementName), $this); break;
-					case 'custom':        $validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Custom',        $message, $configuration, $this->getElement($elementName), $this); break;
-					case 'required':
-					default:              $validator = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Validators\\Required',      $message, $configuration, $this->getElement($elementName), $this); break;
-				}
-		
-				$element->validator($validator);
+		return $this->addConstraint($elementName, $type, $message, $configuration);
+	}
+	
+	/**
+	 * add element constraint
+	 * 
+	 * @param	string	$elementName element name
+	 * @param	string	$type constraint type	 
+	 * @param	string	$message message
+	 * @param	array	$configuration configuration
+	 * @return	\Ameos\AmeosForm\Form this
+	 */
+	public function addConstraint($elementName, $type, $message, $configuration = []) {
+		if($this->has($elementName)) {
+			switch($type) {
+				case 'email':         $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Email',         $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'sameas':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Sameas',        $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'unique':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Unique',        $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'fileextension': $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Fileextension', $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'filesize':      $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Filesize',      $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'captcha':       $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Captcha',       $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'custom':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Custom',        $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'required':
+				default:              $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Required',      $message, $configuration, $this->getElement($elementName), $this); break;
 			}
+			
+			$this->get($elementName)->addConstraint($constraint);
 		}
 		
 		return $this;

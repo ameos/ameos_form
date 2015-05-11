@@ -1,5 +1,5 @@
 <?php
-namespace Ameos\AmeosForm\Validators;
+namespace Ameos\AmeosForm\Constraints;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -16,7 +16,7 @@ namespace Ameos\AmeosForm\Validators;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Email extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
+class Fileextension extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 
 	/**
 	 * return true if the element is valide
@@ -25,7 +25,19 @@ class Email extends \Ameos\AmeosForm\Validators\ValidatorAbstract {
 	 * @return	bool true if the element is valide
 	 */
 	public function isValid($value) {
-		if($value == '') return TRUE;
-		return GeneralUtility::validEmail($value);
+		if(!is_array($value) && empty($value)) {
+			return TRUE;
+		}
+
+		if(!is_array($value) || !array_key_exists('upload', $value) || !is_array($value['upload'])) {
+			return TRUE;
+		}
+		
+		if(is_array($value['upload'])) {
+			$pathfinfo = pathinfo($value['upload']['name']);
+			return GeneralUtility::inList($this->configuration['allowed'], strtolower($pathfinfo['extension']));	
+		}
+
+		return FALSE;
 	}
 }
