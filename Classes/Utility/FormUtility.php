@@ -50,9 +50,10 @@ class FormUtility {
 			case 'range':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Range',       $absolutename, $name, $configuration, $form); break;
 			case 'number':      $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Number',      $absolutename, $name, $configuration, $form); break;
 			case 'email':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Email',       $absolutename, $name, $configuration, $form); break;
+			case 'url':         $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Url',         $absolutename, $name, $configuration, $form); break;
 			
 			default:
-			case 'text':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Text',       $absolutename, $name, $configuration, $form); break;
+			case 'text':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Text',         $absolutename, $name, $configuration, $form); break;
 		}
 
 		if(!is_a($element, '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {

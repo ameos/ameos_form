@@ -527,3 +527,33 @@ canoverwrite  if true, overwrite existing file                               tru
 show_link     if true, display an link to the file                           true or false
 ============  =====================================  ======================  ===================================================
 
+
+.. _elements-url:
+
+Url
+---
+
+An input url field
+
+.. figure:: ../Images/url.png
+
+You can add a input url like this
+
+::
+
+	$form->add('my-url', 'url', $configuration);
+
+Available configuration
+
+============  ===================================  ======================  ===================================================
+Property      Description                          Default value           Example
+============  ===================================  ======================  ===================================================
+placeholder   place holder for the html tag                                Your website
+style         css style for the html tag                                   width: 150px;
+disabled      true if the html field is disabled   false                   true or false
+title         html tag title                                               my field title
+datalist      datalist for autocomplete                                    array('key-1' => 'value 1', 'key-2' => 'value 2')
+custom        custom html attribute                                        customattr="customvalue"
+class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
+============  ===================================  ======================  ===================================================
