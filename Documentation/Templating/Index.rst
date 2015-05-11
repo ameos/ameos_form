@@ -24,8 +24,8 @@ Php code
 	
 	$mymodel = $this->myModelRepository->findByUid($modelIdentifier);
 	$form = \Ameos\AmeosForm\Form\Factory::make('tx_myplugin', $mymodel);
-	$form->add('name', 'text')->validator('name', 'required', 'Name is mandatory');
-	$form->add('email', 'email')->validator('email', 'email', 'Email is not valid');
+	$form->add('name', 'text')->addConstraint('name', 'required', 'Name is mandatory');
+	$form->add('email', 'email')->addConstraint('email', 'email', 'Email is not valid');
 	$form->add('submit', 'submit', array('label' => 'Send'));
 	$this->view->assign('form', $form);
 
