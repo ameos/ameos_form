@@ -165,9 +165,13 @@ abstract class AbstractForm {
 	 * @return	string the html
 	 */
 	public function toHtml() {
-		$csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-		$GLOBALS['TSFE']->fe_user->setKey('ses', $this->getIdentifier() . '-csrftoken', $csrftoken);
-		$GLOBALS['TSFE']->storeSessionData();
+		if(!$this->isSubmitted()) {
+			$csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->getIdentifier() . '-csrftoken', $csrftoken);
+			$GLOBALS['TSFE']->storeSessionData();
+		} else {
+			$csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken');
+		}
 		
 		$html = '<form method="post">';
 		foreach($this->elements as $element) {
@@ -185,16 +189,16 @@ abstract class AbstractForm {
 	 * @return	\Ameos\AmeosForm\Form this 
 	 */ 
 	public function bindRequest($request) {
-		if(!is_array($request) && !is_a($request, '\\TYPO3\\CMS\\Extbase\\Mvc\\Request')) {
-			throw new \Exception('request must be an array or an extbase request (\\TYPO3\\CMS\\Extbase\\Mvc\\Request)');
+		if(!is_array($request) && !is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request')) {
+			throw new \Exception('request must be an array or an extbase request (TYPO3\\CMS\\Extbase\\Mvc\\Request)');
 		}
-	/*
-		good idea : but problem with double posting. May be add a simple message and not an exception
-		if($request->getArgument('csrftoken') != $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken')) {
-			throw new \Exception('Forbidden: invalid csrf token');
-		}	*/
 
-		$requestDatas = is_a($request, '\\TYPO3\\CMS\\Extbase\\Mvc\\Request') ? $request->getArguments() : $request;
+		$requestDatas = is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request') ? $request->getArguments() : $request;
+		
+		if($requestDatas['csrftoken'] == '' || $requestDatas['csrftoken'] != $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken')) {
+			throw new \Exception('Forbidden: invalid csrf token');
+		}
+
 		foreach($this->elements as $elementName => $element) {			
 			if(array_key_exists($elementName, $requestDatas)) {
 				$element->setValue($requestDatas[$elementName]);

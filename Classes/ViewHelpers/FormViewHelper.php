@@ -58,10 +58,15 @@ class FormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 		if(strpos($form->getMode(), 'crud') !== FALSE && !empty($errors)) {
 			$this->templateVariableContainer->remove('errors');
 		}
+		
+		if(!$form->isSubmitted()) {
+			$csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+			$GLOBALS['TSFE']->fe_user->setKey('ses', $form->getIdentifier() . '-csrftoken', $csrftoken);
+			$GLOBALS['TSFE']->storeSessionData();
+		} else {
+			$csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $form->getIdentifier() . '-csrftoken');
+		}
 
-		$csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-		$GLOBALS['TSFE']->fe_user->setKey('ses', $form->getIdentifier() . '-csrftoken', $csrftoken);
-		$GLOBALS['TSFE']->storeSessionData(); 
 		return '<form method="' . $method . '" ' . $id . $enctype . $class . $action . '>' . $output . '
 			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" value="1" name="' . $form->getIdentifier() . '[issubmitted]" />
 			<input type="hidden" id="' . $form->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $form->getIdentifier() . '[csrftoken]" />
