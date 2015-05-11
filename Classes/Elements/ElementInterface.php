@@ -15,6 +15,16 @@ namespace Ameos\AmeosForm\Elements;
  */
 
 interface ElementInterface {
+	
+	/**
+	 * @constuctor
+	 *
+	 * @param	string	$absolutename absolutename
+	 * @param	string	$name name
+	 * @param	array	$configuration configuration
+	 * @param	\Ameos\AmeosForm\Form $form form
+	 */
+	public function __construct($absolutename, $name, $configuration = [], $form);
 
 	/**
 	 * form to html
@@ -87,5 +97,12 @@ interface ElementInterface {
 	 *
 	 * @return	array errors
 	 */
-	public function  getErrors();
+	public function getErrors();
+
+	/**
+	 * return rendering information
+	 *
+	 * @return	array rendering information
+	 */
+	public function getRenderingInformation();
 }

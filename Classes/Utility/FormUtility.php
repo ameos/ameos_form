@@ -54,7 +54,12 @@ class FormUtility {
 			case 'tel':         $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Tel',         $absolutename, $name, $configuration, $form); break;
 			
 			default:
-			case 'text':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Text',         $absolutename, $name, $configuration, $form); break;
+				if($type != '' && $type != 'text' && class_exists($type)) {
+					$element = GeneralUtility::makeInstance($type, $absolutename, $name, $configuration, $form);
+				} else {
+					$element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Text', $absolutename, $name, $configuration, $form);
+				}
+				break;
 		}
 
 		if(!is_a($element, '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {

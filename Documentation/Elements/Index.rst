@@ -589,3 +589,21 @@ custom        custom html attribute                                        custo
 class         css class for the html tag                                   big
 errorclass    css class when there is an error                             error
 ============  ===================================  ======================  ===================================================
+
+.. _elements-custom
+
+Custom
+------
+
+You can also create your own form element.
+
+::
+	
+	$form->add('my-custom', 'Vendor\\Extension\\FormElements\\MyElement', $configuration)
+
+Your php class must implement : 
+
+::
+
+	Ameos\AmeosForm\Elements\ElementInterface
+
