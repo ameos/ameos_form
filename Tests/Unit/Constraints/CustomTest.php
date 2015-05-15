@@ -21,7 +21,7 @@ class CustomTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 */
 	public function customIsValid() {
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->add('input-text', 'text');
+		$form->disableCsrftoken()->add('input-text', 'text');
 		$form->addConstraint('input-text', 'custom', 'custom error', ['method' => function($value, $form) {
 			return $value == 'test';
 		}]);
@@ -39,7 +39,7 @@ class CustomTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 */
 	public function customIsNotValid() {
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->add('input-text', 'text');
+		$form->disableCsrftoken()->add('input-text', 'text');
 		$form->addConstraint('input-text', 'custom', 'custom error', ['method' => function($value, $form) {
 			return $value == 'test';
 		}]);

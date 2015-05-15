@@ -21,6 +21,7 @@ class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 */
 	public function sameasIsValid() {
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+		$form->disableCsrftoken();
 		$form->add('input-text-1', 'text');
 		$form->add('input-text-2', 'text');
 		$form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
@@ -38,6 +39,7 @@ class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 */
 	public function sameasIsNotValid() {
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+		$form->disableCsrftoken();
 		$form->add('input-text-1', 'text');
 		$form->add('input-text-2', 'text');
 		$form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);

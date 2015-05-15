@@ -39,6 +39,11 @@ abstract class AbstractForm {
 	 * @var string $mode mode
 	 */
 	protected $mode;
+
+	/**
+	 * @var bool $enableCrsftoken enable crsf token
+	 */
+	protected $enableCsrftoken = TRUE;
 	
 	/**
 	 * @var Ameos\AmeosForm\Utility\String $stringUtility 
@@ -54,6 +59,7 @@ abstract class AbstractForm {
 		$this->elements   = [];
 		$this->identifier = $identifier;
 		$this->stringUtility = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\String', $this);
+		$this->enableCsrftoken = TRUE;
 	}
 	
 	/**
@@ -62,6 +68,32 @@ abstract class AbstractForm {
 	 */
 	public function getIdentifier() {
 		return $this->identifier;
+	}
+
+	/**
+	 * enable csrf token
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function enableCsrftoken() {
+		$this->enableCsrftoken = TRUE;
+		return $this;
+	}
+
+	/**
+	 * disable csrf token
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function disableCsrftoken() {
+		$this->enableCsrftoken = FALSE;
+		return $this;
+	}
+
+	/**
+	 * return TRUE if csrf token is enabled
+	 * @return bool
+	 */
+	public function csrftokenIsEnabled() {
+		return $this->enableCsrftoken;
 	}
 
 	/**
@@ -178,7 +210,9 @@ abstract class AbstractForm {
 			$html.= $element->toHtml();
 		}
 		$html.= '<input type="hidden" id="' . $this->getIdentifier() . '-issubmitted" value="1" name="' . $this->getIdentifier() . '[issubmitted]" />';
-		$html.= '<input type="hidden" id="' . $this->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $this->getIdentifier() . '[csrftoken]" />';
+		if($this->csrftokenIsEnabled()) {
+			$html.= '<input type="hidden" id="' . $this->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $this->getIdentifier() . '[csrftoken]" />';	
+		}
 		$html.= '</form>';
 		return $html;
 	}
@@ -195,8 +229,10 @@ abstract class AbstractForm {
 
 		$requestDatas = is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request') ? $request->getArguments() : $request;
 		
-		if($requestDatas['csrftoken'] == '' || $requestDatas['csrftoken'] != $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken')) {
-			throw new \Exception('Forbidden: invalid csrf token');
+		if($this->csrftokenIsEnabled()) {
+			if($requestDatas['csrftoken'] == '' || $requestDatas['csrftoken'] != $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken')) {
+				throw new \Exception('Forbidden: invalid csrf token');
+			}
 		}
 
 		foreach($this->elements as $elementName => $element) {			

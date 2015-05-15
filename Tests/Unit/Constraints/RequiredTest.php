@@ -21,7 +21,7 @@ class RequiredTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 */
 	public function requiredIsValid() {
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->add('input-text', 'text')->addConstraint('input-text', 'required', 'field mandatory');
+		$form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'required', 'field mandatory');
 
 		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 		
@@ -36,7 +36,7 @@ class RequiredTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 */
 	public function requiredIsNotValid() {
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->add('input-text', 'text')->addConstraint('input-text', 'required', 'field mandatory');
+		$form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'required', 'field mandatory');
 
 		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 		

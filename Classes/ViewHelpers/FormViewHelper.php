@@ -66,10 +66,14 @@ class FormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 		} else {
 			$csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $form->getIdentifier() . '-csrftoken');
 		}
-
-		return '<form method="' . $method . '" ' . $id . $enctype . $class . $action . '>' . $output . '
-			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" value="1" name="' . $form->getIdentifier() . '[issubmitted]" />
-			<input type="hidden" id="' . $form->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $form->getIdentifier() . '[csrftoken]" />
-			</form>';
-    }
+		
+		$output = '<form method="' . $method . '" ' . $id . $enctype . $class . $action . '>' . $output . '
+			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" value="1" name="' . $form->getIdentifier() . '[issubmitted]" />';
+		
+		if($form->csrftokenIsEnabled()) {
+			$output.= '<input type="hidden" id="' . $form->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $form->getIdentifier() . '[csrftoken]" />';
+		}
+		$output.= '</form>';
+		return $output;
+	}
 }
