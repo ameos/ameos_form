@@ -72,6 +72,11 @@ abstract class ElementAbstract implements ElementInterface {
 	protected $overrideClause = FALSE;
 	
 	/**
+	 * @var bool $elementConstraintsAreChecked true if element constraints are checked
+	 */
+	protected $elementConstraintsAreChecked = FALSE;
+	
+	/**
 	 * @constuctor
 	 *
 	 * @param	string	$absolutename absolutename
@@ -304,18 +309,18 @@ abstract class ElementAbstract implements ElementInterface {
 	 * @return	\Ameos\AmeosForm\Form this
 	 */
 	public function determineErrors() {
-		if($this->errors === null) {
-			$this->errors = array();
+		if($this->elementConstraintsAreChecked === FALSE) {
 			if($this->form !== FALSE && $this->form->isSubmitted()) {
 				$value = $this->getValue();			
 				foreach($this->constraints as $constraint) {
 					if(!$constraint->isValid($value)) {
-						$this->errors[] = $constraint->getMessage();
+						$this->form->getErrorManager()->add($constraint->getMessage(), $this);
 					}
 				}
 				foreach($this->systemerror as $error) {				
-					$this->errors[] = $error;
+					$this->form->getErrorManager()->add($error, $this);
 				}
+				$this->elementConstraintsAreChecked = TRUE;
 			}
 		}
 		return $this;
@@ -327,8 +332,7 @@ abstract class ElementAbstract implements ElementInterface {
 	 * @return	bool true if the element is valide
 	 */
 	public function isValid() {
-		$this->determineErrors();
-		return sizeof($this->errors) === 0;
+		return $this->form->getErrorManager()->elementIsValid($this);
 	}
 
 	/**
@@ -337,8 +341,7 @@ abstract class ElementAbstract implements ElementInterface {
 	 * @return	array errors
 	 */
 	public function  getErrors() {
-		$this->determineErrors();
-		return $this->errors;
+		return $this->form->getErrorManager()->getErrors($this);
 	}
 
 	/**

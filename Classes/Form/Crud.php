@@ -20,9 +20,14 @@ use Ameos\AmeosForm\Utility\Events;
 class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 
 	/**
-	 * @var array $errors errors
+	 * @var Ameos\AmeosForm\Utility\ErrorManager $errorManager error manager
 	 */
-	protected $errors = [];
+	protected $errorManager;
+	
+	/**
+	 * @var bool $elementsConstraintsAreChecked true if elements constraints are checked
+	 */
+	protected $elementsConstraintsAreChecked = FALSE;
 	
 	/**
 	 * @var array $errorsByElement errorsByElement
@@ -38,6 +43,15 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	public function __construct($identifier) {
 		parent::__construct($identifier);
 		$this->mode = 'crud/manual';
+		$this->errorManager = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\ErrorManager', $this);
+	}
+	
+	/**
+	 * return error manager instance
+	 * @return Ameos\AmeosForm\Utility\ErrorManager
+	 */
+	public function getErrorManager() {
+		return $this->errorManager;
 	}
 	
 	/**
@@ -89,20 +103,11 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * @return 	bool true if is a valid form
 	 */
 	public function isValid() {
-		$hasError = FALSE;
-		foreach($this->elements as $element) {
-			if(!$element->isValid()) {
-				$hasError = TRUE;
-				$this->errors = array_merge($this->errors, $element->getErrors());
-				$this->errorsByElement[$element->getName()] = $element->getErrors();
-			}
-		}
-
-		if(!$hasError) {
+		if($this->errorManager->isValid()) {
 			Events::getInstance($this->getIdentifier())->trigger('form_is_valid');
 		}
-		
-		return !$hasError;
+
+		return $this->errorManager->isValid();
 	}
 
 	/**
@@ -111,9 +116,7 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * @return	array errors
 	 */
 	public function getErrors() {
-		// voir pour un ErrorManager accessible depuis les validateurs et tout ça. Un truc plus propre que transmettre des tableeau
-		// du genre une classe ErrorManager avec un méthode add error, une methode get, une methode hasError pour une condiion fluid. Un truc simple
-		return $this->errors;
+		return $this->errorManager->getAllErrorsMerged();
 	}
 
 	/**
@@ -122,7 +125,7 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * @return	array errors
 	 */
 	public function getErrorsByElement() {
-		return $this->errorsByElement;
+		return $this->errorManager->getAllErrors();
 	}
 
 	/**
@@ -131,9 +134,6 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * @return	array errors
 	 */
 	public function getErrorsFormElement($elementName) {
-		if(array_key_exists($elementName, $this->errorsByElement)) {
-			return $this->errorsByElement[$elementName];
-		}
-		return FALSE;
+		return $this->errorManager->getErrors($elementName);
 	}
 }
