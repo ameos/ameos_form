@@ -32,6 +32,11 @@ class ErrorManager {
 	protected $elementsConstraintsAreChecked;
 	
 	/**
+	 * @var bool $mustCheckConstraints
+	 */
+	protected $checkConstraints;
+	
+	/**
 	 * @constructor
 	 */
 	public function __construct($form) {
@@ -65,6 +70,10 @@ class ErrorManager {
 	 * @return array
 	 */
 	public function getErrors($element = NULL) {
+		if(!$this->checkConstraints()) {
+			return array();
+		}
+		
 		if($element === NULL) {
 			return $this->getAllErrors();
 		}
@@ -85,6 +94,10 @@ class ErrorManager {
 	 * @return array
 	 */
 	public function getAllErrors() {
+		if(!$this->checkConstraints()) {
+			return array();
+		}
+		
 		$this->determineErrors();
 		
 		return $this->errors;
@@ -95,6 +108,10 @@ class ErrorManager {
 	 * @return array
 	 */
 	public function getAllErrorsMerged() {
+		if(!$this->checkConstraints()) {
+			return array();
+		}
+		
 		$this->determineErrors();
 		
 		$errors = [];
@@ -109,6 +126,10 @@ class ErrorManager {
 	 * @return bool
 	 */ 
 	public function isValid() {
+		if(!$this->checkConstraints()) {
+			return TRUE;
+		}
+		
 		$this->determineErrors();
 		
 		return empty($this->errors);
@@ -120,6 +141,10 @@ class ErrorManager {
 	 * @return bool
 	 */
 	public function elementIsValid($element) {
+		if(!$this->checkConstraints()) {
+			return TRUE;
+		}
+		
 		$this->determineErrorsForElement($element);
 		
 		$elementName = is_string($element) ? $element : $element->getName();		
@@ -155,5 +180,21 @@ class ErrorManager {
 			$this->form->get($elementName)->determineErrors();
 			$this->elementsConstraintsAreChecked[] = $elementName;
 		}
+	}
+	
+	/**
+	 * return true if must check constraints
+	 * @return bool
+	 */
+	protected function checkConstraints() {
+		if($this->checkConstraints === NULL) {
+			$submitter = $this->form->getSubmitter();
+			if(is_object($submitter)) {
+				$this->checkConstraints = $submitter->checkConstraints();
+			} else {
+				$this->checkConstraints = TRUE;	
+			}			
+		}
+		return $this->checkConstraints;
 	}
 }

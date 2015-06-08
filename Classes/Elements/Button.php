@@ -29,6 +29,26 @@ class Button extends ElementAbstract {
 	public function toHtml() {
 		$label = isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
 		
-		return '<input type="button" id="' . $this->getHtmlId() . '" value="' . $label . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
-	}	
+		return '<input type="button" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
+	}
+	
+	/**
+	 * return label
+	 * @return string the label
+	 */
+	public function getLabel() {
+		return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
+	}
+	
+	/**
+	 * return true if the button is clicked
+	 * @return bool
+	 */
+	public function isClicked() {
+		if($this->form->isSubmitted()) {
+			$post = GeneralUtility::_POST($this->form->getIdentifier());
+			return isset($post[$this->getName()]) && $post[$this->getName()] == $this->getLabel();
+		}
+		return FALSE;
+	}
 }

@@ -268,4 +268,20 @@ abstract class AbstractForm {
 		$post = GeneralUtility::_POST($this->identifier);
 		return isset($post['issubmitted']) && $post['issubmitted'] == 1;
 	}
+	
+	/**
+	 * return submitter
+	 * @return Ameos\AmeosForm\Elements\Submit|FALSE
+	 */
+	public function getSubmitter() {
+		if($this->isSubmitted()) {
+			foreach($this->getElements() as $element) {
+				if(is_a($element, 'Ameos\\AmeosForm\\Elements\\Submit') && $element->isClicked()) {
+					return $element;
+				}
+			}
+		}
+		
+		return FALSE;
+	}
 }
