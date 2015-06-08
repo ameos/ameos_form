@@ -18,11 +18,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
 
 class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
-
-	/**
-	 * @var Ameos\AmeosForm\Utility\ErrorManager $errorManager error manager
-	 */
-	protected $errorManager;
 	
 	/**
 	 * @var bool $elementsConstraintsAreChecked true if elements constraints are checked
@@ -43,15 +38,6 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	public function __construct($identifier) {
 		parent::__construct($identifier);
 		$this->mode = 'crud/manual';
-		$this->errorManager = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\ErrorManager', $this);
-	}
-	
-	/**
-	 * return error manager instance
-	 * @return Ameos\AmeosForm\Utility\ErrorManager
-	 */
-	public function getErrorManager() {
-		return $this->errorManager;
 	}
 	
 	/**

@@ -21,6 +21,11 @@ use Ameos\AmeosForm\Utility\Events;
 abstract class AbstractForm {
 
 	/**
+	 * @var Ameos\AmeosForm\Utility\ErrorManager $errorManager error manager
+	 */
+	protected $errorManager;
+	
+	/**
 	 * @var string $identifer identifier
 	 */
 	protected $identifier;
@@ -60,6 +65,15 @@ abstract class AbstractForm {
 		$this->identifier = $identifier;
 		$this->stringUtility = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\String', $this);
 		$this->enableCsrftoken = TRUE;
+		$this->errorManager = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\ErrorManager', $this);
+	}
+	
+	/**
+	 * return error manager instance
+	 * @return Ameos\AmeosForm\Utility\ErrorManager
+	 */
+	public function getErrorManager() {
+		return $this->errorManager;
 	}
 	
 	/**
