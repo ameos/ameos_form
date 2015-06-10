@@ -64,7 +64,7 @@ abstract class AbstractForm {
 		$this->elements   = [];
 		$this->identifier = $identifier;
 		$this->stringUtility = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\String', $this);
-		$this->enableCsrftoken = TRUE;
+		$this->enableCsrftoken = TYPO3_MODE == 'FE' ? TRUE : FALSE;
 		$this->errorManager = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\ErrorManager', $this);
 	}
 	

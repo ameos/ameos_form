@@ -32,10 +32,12 @@ abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm {
 	 */
 	public function __construct($identifier) {
 		parent::__construct($identifier);
-		if(UserUtility::isLogged()) {
-			$this->clauses = $GLOBALS['TSFE']->fe_user->getKey('user', 'form-' . $this->getIdentifier() . '-clauses');
-		} else {
-			$this->clauses = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->getIdentifier() . '-clauses');
+		if(TYPO3_MODE == 'FE') {
+			if(UserUtility::isLogged()) {
+				$this->clauses = $GLOBALS['TSFE']->fe_user->getKey('user', 'form-' . $this->getIdentifier() . '-clauses');
+			} else {
+				$this->clauses = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->getIdentifier() . '-clauses');
+			}
 		}
 
 		if(!is_array($this->clauses)) {

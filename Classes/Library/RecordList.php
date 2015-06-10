@@ -90,8 +90,13 @@ class RecordList {
 	 * initialize sorting
 	 */ 
 	protected function initializeSorting() {
-		$defaultOrderby   = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->searchform->getIdentifier() . '-orderby');
-		$defaultDirection = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->searchform->getIdentifier() . '-direction');
+		if(TYPO3_MODE == 'FE') {
+			$defaultOrderby   = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->searchform->getIdentifier() . '-orderby');
+			$defaultDirection = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->searchform->getIdentifier() . '-direction');	
+		} else {
+			$defaultOrderby = $defaultDirection = NULL;
+		}
+		
 
 		if($defaultOrderby == NULL) { $defaultOrderby     = $this->defaultOrderby; }
 		if($defaultDirection == NULL) { $defaultDirection = $this->defaultDirection; }

@@ -59,12 +59,16 @@ class FormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 			$this->templateVariableContainer->remove('errors');
 		}
 		
-		if(!$form->isSubmitted()) {
-			$csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-			$GLOBALS['TSFE']->fe_user->setKey('ses', $form->getIdentifier() . '-csrftoken', $csrftoken);
-			$GLOBALS['TSFE']->storeSessionData();
+		if(TYPO3_MODE == 'FE') {
+			if(!$form->isSubmitted()) {
+				$csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+				$GLOBALS['TSFE']->fe_user->setKey('ses', $form->getIdentifier() . '-csrftoken', $csrftoken);
+				$GLOBALS['TSFE']->storeSessionData();
+			} else {
+				$csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $form->getIdentifier() . '-csrftoken');
+			}
 		} else {
-			$csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $form->getIdentifier() . '-csrftoken');
+			$csrftoken = 'notoken';
 		}
 		
 		$output = '<form method="' . $method . '" ' . $id . $enctype . $class . $action . '>' . $output . '
