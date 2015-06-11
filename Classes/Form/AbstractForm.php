@@ -19,7 +19,12 @@ use Ameos\AmeosForm\Utility\FormUtility;
 use Ameos\AmeosForm\Utility\Events;
 
 abstract class AbstractForm {
-
+	
+	/**
+	 * @var TYPO3\CMS\Extbase\Object\ObjectManager $objectManager
+	 */
+	protected $objectManager;
+	
 	/**
 	 * @var Ameos\AmeosForm\Utility\ErrorManager $errorManager error manager
 	 */
@@ -63,9 +68,12 @@ abstract class AbstractForm {
 	public function __construct($identifier) {
 		$this->elements   = [];
 		$this->identifier = $identifier;
-		$this->stringUtility = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\String', $this);
 		$this->enableCsrftoken = TYPO3_MODE == 'FE' ? TRUE : FALSE;
-		$this->errorManager = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Utility\\ErrorManager', $this);
+		
+		$this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		
+		$this->stringUtility = $this->objectManager->get('Ameos\\AmeosForm\\Utility\\String', $this);
+		$this->errorManager  = $this->objectManager->get('Ameos\\AmeosForm\\Utility\\ErrorManager', $this);
 	}
 	
 	/**
@@ -108,6 +116,32 @@ abstract class AbstractForm {
 	 */
 	public function csrftokenIsEnabled() {
 		return $this->enableCsrftoken;
+	}
+
+	/**
+	 * enable flash message
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function enableFlashMessage() {
+		$this->errorManager->enableFlashMessage();
+		return $this;
+	}
+
+	/**
+	 * disable flash message
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function disableFlashMessage() {
+		$this->errorManager->disableFlashMessage();
+		return $this;
+	}
+
+	/**
+	 * return TRUE if flash message is enabled
+	 * @return bool
+	 */
+	public function flashMessageIsEnabled() {
+		return $this->errorManager->flashMessageIsEnabled();
 	}
 
 	/**

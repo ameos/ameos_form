@@ -14,8 +14,22 @@ namespace Ameos\AmeosForm\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
+use \TYPO3\CMS\Core\Messaging\AbstractMessage;
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 class ErrorManager {
 
+	/**
+	 * @var \TYPO3\CMS\Core\Messaging\FlashMessageService
+	 * @inject
+	 */
+	protected $flashMessageService;
+	
+	/**
+	 * @var \TYPO3\CMS\Core\Messaging\FlashMessageQueue
+	 */
+	protected $flashMessageQueue;
+	
 	/**
 	 * @var array $errors
 	 */
@@ -37,12 +51,44 @@ class ErrorManager {
 	protected $checkConstraints;
 	
 	/**
+	 * @var bool $enableFlashMessage enable flash message
+	 */
+	protected $enableFlashMessage = TRUE;
+	
+	/**
 	 * @constructor
 	 */
 	public function __construct($form) {
 		$this->errors = [];
 		$this->elementsConstraintsAreChecked = [];
+		$this->enableFlashMessage = TRUE;
 		$this->form = $form;
+	}
+
+	/**
+	 * enable flash message
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function enableFlashMessage() {
+		$this->enableFlashMessage = TRUE;
+		return $this;
+	}
+
+	/**
+	 * disable flash message
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function disableFlashMessage() {
+		$this->enableFlashMessage = FALSE;
+		return $this;
+	}
+
+	/**
+	 * return TRUE if flash message is enabled
+	 * @return bool
+	 */
+	public function flashMessageIsEnabled() {
+		return $this->enableFlashMessage;
 	}
 
 	/**
@@ -62,6 +108,24 @@ class ErrorManager {
 		}
 
 		$this->errors[$elementName] = array_merge($this->errors[$elementName], $errors);
+		
+		if($this->flashMessageIsEnabled()) {
+			foreach($errors as $error) {
+				$flashMessage = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $error, '', AbstractMessage::ERROR);
+				$this->getFlashMessageQueue()->enqueue($flashMessage);
+			}
+		}
+	}
+	
+	/**
+	 * @return \TYPO3\CMS\Core\Messaging\FlashMessageQueue
+	 */
+	public function getFlashMessageQueue() {
+		if (!$this->flashMessageQueue instanceof \TYPO3\CMS\Core\Messaging\FlashMessageQueue) {
+			$this->flashMessageQueue = $this->flashMessageService->getMessageQueueByIdentifier('extbase.flashmessages.' . $this->form->getIdentifier());
+		}
+
+		return $this->flashMessageQueue;
 	}
 
 	/**
@@ -177,7 +241,7 @@ class ErrorManager {
 		$elementName = is_string($element) ? $element : $element->getName();		
 		
 		if(!in_array($elementName, $this->elementsConstraintsAreChecked)) {
-			$this->form->get($elementName)->determineErrors();
+			$this->form->get($elementName)->determineErrors();			
 			$this->elementsConstraintsAreChecked[] = $elementName;
 		}
 	}
