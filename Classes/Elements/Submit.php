@@ -29,7 +29,12 @@ class Submit extends ElementAbstract {
 	 * @return	string the html
 	 */
 	public function toHtml() {
-		return '<input type="submit" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
+		if(isset($this->configuration['src'])) {
+			return '<input type="image" src="' . $this->configuration['src'] . '" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
+		} else {
+			return '<input type="submit" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
+		}
+		
 	}
 	
 	/**
@@ -55,7 +60,7 @@ class Submit extends ElementAbstract {
 	public function isClicked() {
 		if($this->form->isSubmitted()) {
 			$post = GeneralUtility::_POST($this->form->getIdentifier());
-			return isset($post[$this->getName()]) && $post[$this->getName()] == $this->getLabel();
+			return isset($post[$this->getName()]);
 		}
 		return FALSE;
 	}
