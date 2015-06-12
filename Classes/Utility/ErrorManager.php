@@ -56,12 +56,18 @@ class ErrorManager {
 	protected $enableFlashMessage = TRUE;
 	
 	/**
+	 * @var bool $useLegacyFlashMessageHandling for TYPO3 6.0 (@deprecated since 6.1, will be removed 2 versions later)
+	 */
+	protected $useLegacyFlashMessageHandling = FALSE;
+	
+	/**
 	 * @constructor
 	 */
 	public function __construct($form) {
 		$this->errors = [];
 		$this->elementsConstraintsAreChecked = [];
 		$this->enableFlashMessage = TRUE;
+		$this->useLegacyFlashMessageHandling = FALSE;
 		$this->form = $form;
 	}
 
@@ -89,6 +95,24 @@ class ErrorManager {
 	 */
 	public function flashMessageIsEnabled() {
 		return $this->enableFlashMessage;
+	}
+	
+	/**
+	 * use Legacy Flash Message Handling
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function useLegacyFlashMessageHandling() {
+		$this->useLegacyFlashMessageHandling = TRUE;
+		return $this;
+	}
+	
+	/**
+	 * don't use Legacy Flash Message Handling
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function dontUseLegacyFlashMessageHandling() {
+		$this->useLegacyFlashMessageHandling = FALSE;
+		return $this;
 	}
 
 	/**
@@ -122,7 +146,11 @@ class ErrorManager {
 	 */
 	public function getFlashMessageQueue() {
 		if (!$this->flashMessageQueue instanceof \TYPO3\CMS\Core\Messaging\FlashMessageQueue) {
-			$this->flashMessageQueue = $this->flashMessageService->getMessageQueueByIdentifier('extbase.flashmessages.' . $this->form->getIdentifier());
+			if($this->useLegacyFlashMessageHandling) {
+				$this->flashMessageQueue = $this->flashMessageService->getMessageQueueByIdentifier();
+			} else {
+				$this->flashMessageQueue = $this->flashMessageService->getMessageQueueByIdentifier('extbase.flashmessages.' . $this->form->getIdentifier());	
+			}
 		}
 
 		return $this->flashMessageQueue;
