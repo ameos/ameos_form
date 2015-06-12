@@ -15,6 +15,7 @@ namespace Ameos\AmeosForm\Form;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use Ameos\AmeosForm\Utility\FormUtility;
 use Ameos\AmeosForm\Utility\Events;
 
@@ -313,6 +314,61 @@ abstract class AbstractForm {
 				if(is_a($element, 'Ameos\\AmeosForm\\Elements\\Submit') && $element->isClicked()) {
 					return $element;
 				}
+			}
+		}
+		
+		return FALSE;
+	}
+	
+	/**
+	 * call magic method
+	 * return element if exist
+	 * @param string $method method
+	 * @param array $parameters parameters
+	 * @return Ameos\AmeosForm\Elements\AbstractElement|FALSE
+	 */
+	public function __call($method, $parameters) {
+		if(StringUtility::beginsWith($method, 'get')) {
+			$elementName = substr($method, 3);
+			if($this->has($elementName)) {
+				return $this->get($elementName);
+			}
+			
+			$elementName = lcfirst($elementName);
+			if($this->has($elementName)) {
+				return $this->get($elementName);
+			}
+			
+			$elementName = GeneralUtility::camelCaseToLowerCaseUnderscored($elementName);
+			if($this->has($elementName)) {
+				return $this->get($elementName);
+			}
+			
+			$elementName = str_replace('_', '-', $elementName);
+			if($this->has($elementName)) {
+				return $this->get($elementName);
+			}
+		}
+		
+		if(StringUtility::beginsWith($method, 'with')) {
+			$elementName = substr($method, 4);
+			if($this->has($elementName)) {
+				return $this->get($elementName)->with($parameters[0], $parameters[1]);
+			}
+			
+			$elementName = lcfirst($elementName);
+			if($this->has($elementName)) {
+				return $this->get($elementName)->with($parameters[0], $parameters[1]);
+			}
+			
+			$elementName = GeneralUtility::camelCaseToLowerCaseUnderscored($elementName);
+			if($this->has($elementName)) {
+				return $this->get($elementName)->with($parameters[0], $parameters[1]);
+			}
+			
+			$elementName = str_replace('_', '-', $elementName);
+			if($this->has($elementName)) {
+				return $this->get($elementName)->with($parameters[0], $parameters[1]);
 			}
 		}
 		
