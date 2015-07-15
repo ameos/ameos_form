@@ -23,9 +23,11 @@ class ElementViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
      * @param string $class css class
      * @param string $errorClass css error class
      * @param string $placeholder placeholder
+     * @param string $style style
+     * @param string $custom custom
      * @return string html
      */
-    public function render($element, $class = '', $errorClass = '', $placeholder = '') {
+    public function render($element, $class = '', $errorClass = '', $placeholder = '', $style = '', $custom = '') {
 		if(!is_a($element, '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {
 			return '';
 		}
@@ -33,6 +35,8 @@ class ElementViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
 		if($class !== '')       { $element->addConfiguration('class', $class); }
 		if($errorClass !== '')  { $element->addConfiguration('errorClass', $errorClass); }
 		if($placeholder !== '') { $element->addConfiguration('placeholder', $placeholder); }
+		if($style !== '')       { $element->addConfiguration('style', $style); }
+		if($custom !== '')      { $element->addConfiguration('custom', $custom); }
 		
 		return $element->toHtml();
     }
