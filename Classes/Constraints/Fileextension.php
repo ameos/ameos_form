@@ -28,13 +28,9 @@ class Fileextension extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 		if(!is_array($value) && empty($value)) {
 			return TRUE;
 		}
-
-		if(!is_array($value) || !array_key_exists('upload', $value) || !is_array($value['upload'])) {
-			return TRUE;
-		}
 		
-		if(is_array($value['upload'])) {
-			$pathfinfo = pathinfo($value['upload']['name']);
+		if(is_array($value)) {
+			$pathfinfo = pathinfo($value['name']);
 			return GeneralUtility::inList($this->configuration['allowed'], strtolower($pathfinfo['extension']));	
 		}
 

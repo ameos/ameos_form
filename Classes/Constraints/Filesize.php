@@ -28,24 +28,20 @@ class Filesize extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 		if(!is_array($value) && empty($value)) {
 			return TRUE;
 		}
-
-		if(!is_array($value) || !array_key_exists('upload', $value) || !is_array($value['upload'])) {
-			return TRUE;
-		}
 	
-		if(is_array($value['upload'])) {
+		if(is_array($value)) {
 			$maxsize = (int)$this->configuration['maxsize'];
-			if(strtoupper(substr($this->configuration['maxsize'], -1)) == 'K' || strtoupper(substr($this->configuration['maxsize'], -1)) == 'KO') {
+			if(strtoupper(substr($this->configuration['maxsize'], -1)) == 'K' || strtoupper(substr($this->configuration['maxsize'], -2)) == 'KO') {
 				$maxsize = $maxsize * 1024;
 			}
-			if(strtoupper(substr($this->configuration['maxsize'], -1)) == 'M' || strtoupper(substr($this->configuration['maxsize'], -1)) == 'MO') {
+			if(strtoupper(substr($this->configuration['maxsize'], -1)) == 'M' || strtoupper(substr($this->configuration['maxsize'], -2)) == 'MO') {
 				$maxsize = $maxsize * 1024 * 1024;
 			}
-			if(strtoupper(substr($this->configuration['maxsize'], -1)) == 'G' || strtoupper(substr($this->configuration['maxsize'], -1)) == 'GO') {
+			if(strtoupper(substr($this->configuration['maxsize'], -1)) == 'G' || strtoupper(substr($this->configuration['maxsize'], -2)) == 'GO') {
 				$maxsize = $maxsize * 1024 * 1024 * 1024;
 			}
 
-			return (int)$value['upload']['size'] <= $maxsize;
+			return (int)$value['size'] <= $maxsize;
 		}
 		return FALSE;
 	}

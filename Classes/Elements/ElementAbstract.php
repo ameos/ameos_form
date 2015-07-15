@@ -311,7 +311,7 @@ abstract class ElementAbstract implements ElementInterface {
 	public function determineErrors() {
 		if($this->elementConstraintsAreChecked === FALSE) {
 			if($this->form !== FALSE && $this->form->isSubmitted()) {
-				$value = $this->getValue();			
+				$value = $this->getValue();
 				foreach($this->constraints as $constraint) {
 					if(!$constraint->isValid($value)) {
 						$this->form->getErrorManager()->add($constraint->getMessage(), $this);
