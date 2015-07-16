@@ -21,9 +21,9 @@ class DateTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	 */
 	public function dateToTimestamp() {
 		$expectedResult = [
-			'12/01/1985 21:15:30'   => '474412530',
-			'2005 12 24'            => '1135382400',
-			'10 Jan 2003'           => '1042156800',
+			'12/01/1985 21:15:30'   => '474408930',
+			'2005 12 24'            => '1135378800',
+			'10 Jan 2003'           => '1042153200',
 		];
 
 		$result = [
@@ -41,7 +41,7 @@ class DateTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	public function timestampToDate() {
 		$expectedResult = [
 			'1135582400' => '2005 12 26',
-			'1135882400' => '29/12/2005 - 18:53:20',
+			'1135882400' => '29/12/2005 - 19:53:20',
 			'1242156800' => '12/05/2009',
 		];
 
