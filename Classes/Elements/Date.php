@@ -141,7 +141,7 @@ class Date extends ElementAbstract {
 		foreach($availableMonths as $month) {
 			$selected = ($this->valueMonth == $month) ? ' selected="selected"' : '';
 			if($month != '') {
-				$outputMonths.= '<option value="' . $month . '"' . $selected . '>' . strftime('%B', mktime(0, 0, 0, $month)) . '</option>';
+				$outputMonths.= '<option value="' . $month . '"' . $selected . '>' . strftime('%B', mktime(0, 0, 0, (int)$month, 1)) . '</option>';
 			} else {
 				$outputMonths.= '<option value=""' . $selected . '></option>';
 			}
