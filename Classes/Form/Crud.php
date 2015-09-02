@@ -17,12 +17,13 @@ namespace Ameos\AmeosForm\Form;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
 
-class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
+class Crud extends \Ameos\AmeosForm\Form\AbstractForm 
+{
 	
 	/**
 	 * @var bool $elementsConstraintsAreChecked true if elements constraints are checked
 	 */
-	protected $elementsConstraintsAreChecked = FALSE;
+	protected $elementsConstraintsAreChecked = false;
 	
 	/**
 	 * @var array $errorsByElement errorsByElement
@@ -35,7 +36,8 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * @param	string $identifier form identifier
 	 * @param	\TYPO3\CMS\Extbase\DomainObject\AbstractEntity $model model
 	 */
-	public function __construct($identifier) {
+	public function __construct($identifier) 
+	{
 		parent::__construct($identifier);
 		$this->mode = 'crud/manual';
 	}
@@ -50,7 +52,8 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * @return	\Ameos\AmeosForm\Form this
 	 * @alias 	addConstraint
 	 */
-	public function validator($elementName, $type, $message, $configuration = []) {
+	public function validator($elementName, $type, $message, $configuration = []) 
+	{
 		return $this->addConstraint($elementName, $type, $message, $configuration);
 	}
 	
@@ -63,9 +66,10 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 * @param	array	$configuration configuration
 	 * @return	\Ameos\AmeosForm\Form this
 	 */
-	public function addConstraint($elementName, $type, $message, $configuration = []) {
-		if($this->has($elementName)) {
-			switch($type) {
+	public function addConstraint($elementName, $type, $message, $configuration = []) 
+	{
+		if ($this->has($elementName)) {
+			switch ($type) {
 				case 'email':         $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Email',         $message, $configuration, $this->getElement($elementName), $this); break;
 				case 'sameas':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Sameas',        $message, $configuration, $this->getElement($elementName), $this); break;
 				case 'unique':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Unique',        $message, $configuration, $this->getElement($elementName), $this); break;
@@ -73,7 +77,7 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 				case 'filesize':      $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Filesize',      $message, $configuration, $this->getElement($elementName), $this); break;
 				case 'captcha':       $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Captcha',       $message, $configuration, $this->getElement($elementName), $this); break;
 				case 'custom':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Custom',        $message, $configuration, $this->getElement($elementName), $this); break;
-				case 'required':
+				case 'required':      // no-break
 				default:              $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Required',      $message, $configuration, $this->getElement($elementName), $this); break;
 			}
 			
@@ -88,8 +92,10 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 *
 	 * @return 	bool true if is a valid form
 	 */
-	public function isValid() {
-		if($this->errorManager->isValid()) {
+	public function isValid() 
+	{
+		if ($this->errorManager->isValid()) 
+		{
 			Events::getInstance($this->getIdentifier())->trigger('form_is_valid');
 		}
 
@@ -101,7 +107,8 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 *
 	 * @return	array errors
 	 */
-	public function getErrors() {
+	public function getErrors() 
+	{
 		return $this->errorManager->getAllErrorsMerged();
 	}
 
@@ -110,7 +117,8 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 *
 	 * @return	array errors
 	 */
-	public function getErrorsByElement() {
+	public function getErrorsByElement() 
+	{
 		return $this->errorManager->getAllErrors();
 	}
 
@@ -119,7 +127,8 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm {
 	 *
 	 * @return	array errors
 	 */
-	public function getErrorsFormElement($elementName) {
+	public function getErrorsFormElement($elementName) 
+	{
 		return $this->errorManager->getErrors($elementName);
 	}
 }

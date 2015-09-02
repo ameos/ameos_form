@@ -16,7 +16,8 @@ namespace Ameos\AmeosForm\Elements;
  
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Captcha extends ElementAbstract {
+class Captcha extends ElementAbstract 
+{
 
 	/**
 	 * @constuctor
@@ -26,7 +27,8 @@ class Captcha extends ElementAbstract {
 	 * @param	array	$configuration configuration
 	 * @param	\Ameos\AmeosForm\Form $form form
 	 */
-	public function __construct($absolutename, $name, $configuration = [], $form) {
+	public function __construct($absolutename, $name, $configuration = [], $form) 
+	{
 		parent::__construct($absolutename, $name, $configuration, $form);
 
 		$errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'Captcha is not valid';
@@ -39,7 +41,8 @@ class Captcha extends ElementAbstract {
 	 *
 	 * @return	string the html
 	 */
-	public function toHtml() {
+	public function toHtml() 
+	{
 		$sid = md5(uniqid());
 		return $this->renderCaptchaPicture() . $this->renderCaptchaRefresh() . $this->renderCaptchaInput();
 	}
@@ -48,7 +51,8 @@ class Captcha extends ElementAbstract {
 	 * render captcha picture
 	 * @return string html
 	 */
-	protected function renderCaptchaPicture() {
+	protected function renderCaptchaPicture() 
+	{
 		return '<img id="' . $this->getHtmlId() . '-image" src="/typo3conf/ext/ameos_form/Resources/Public/Captcha/securimage_show.php?sid=' . $sid . '" alt="CAPTCHA Image" />';
 	}
 
@@ -56,7 +60,8 @@ class Captcha extends ElementAbstract {
 	 * render refresh captcha
 	 * @return string html
 	 */
-	protected function renderCaptchaRefresh() {
+	protected function renderCaptchaRefresh() 
+	{
 		return '<a href="#" title="Refresh Image" onclick="document.getElementById(\'' . $this->getHtmlId() . '-image\').src = \'/typo3conf/ext/ameos_form/Resources/Public/Captcha/securimage_show.php?sid=\' + Math.random(); this.blur(); return false">
 				<img src="/typo3conf/ext/ameos_form/Resources/Public/Captcha/images/refresh.png" alt="Reload Image" onclick="this.blur()" />
 			</a>';
@@ -66,7 +71,8 @@ class Captcha extends ElementAbstract {
 	 * render captcha picture
 	 * @return string html
 	 */
-	protected function renderCaptchaInput() {
+	protected function renderCaptchaInput() 
+	{
 		return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
 	}
 	
@@ -75,7 +81,8 @@ class Captcha extends ElementAbstract {
 	 *
 	 * @return	array rendering information
 	 */
-	public function getRenderingInformation() {
+	public function getRenderingInformation() 
+	{
 		$data = parent::getRenderingInformation();
 		$data['captcha'] = $this->renderCaptchaPicture();
 		$data['refresh'] = $this->renderCaptchaRefresh();

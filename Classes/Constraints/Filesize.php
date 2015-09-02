@@ -16,7 +16,8 @@ namespace Ameos\AmeosForm\Constraints;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Filesize extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
+class Filesize extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
+{
 
 	/**
 	 * return true if the element is valide
@@ -24,12 +25,13 @@ class Filesize extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 	 * @param	string $value value to test
 	 * @return	bool true if the element is valide
 	 */
-	public function isValid($value) {
-		if(!is_array($value) && empty($value)) {
-			return TRUE;
+	public function isValid($value) 
+	{
+		if (!is_array($value) && empty($value)) {
+			return true;
 		}
 	
-		if(is_array($value)) {
+		if (is_array($value)) {
 			$maxsize = (int)$this->configuration['maxsize'];
 			if(strtoupper(substr($this->configuration['maxsize'], -1)) == 'K' || strtoupper(substr($this->configuration['maxsize'], -2)) == 'KO') {
 				$maxsize = $maxsize * 1024;
@@ -43,6 +45,6 @@ class Filesize extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 
 			return (int)$value['size'] <= $maxsize;
 		}
-		return FALSE;
+		return false;
 	}
 }

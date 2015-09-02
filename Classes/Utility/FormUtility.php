@@ -16,7 +16,8 @@ namespace Ameos\AmeosForm\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class FormUtility {
+class FormUtility 
+{
 
 	/**
 	 * add element fo the form
@@ -28,8 +29,9 @@ class FormUtility {
 	 * @param	\Ameos\AmeosForm\Form	$form
 	 * @return	\Ameos\AmeosForm\Elements\InterfaceElement
 	 */
-	public static function makeElementInstance($absolutename, $name, $type = '', $configuration, $form = FALSE) {
-		switch($type) {
+	public static function makeElementInstance($absolutename, $name, $type = '', $configuration, $form = false) 
+	{
+		switch ($type) {
 			case 'textarea':    $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Textarea',    $absolutename, $name, $configuration, $form); break;
 			case 'password':    $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Password',    $absolutename, $name, $configuration, $form); break;
 			case 'dropdown':    $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Dropdown',    $absolutename, $name, $configuration, $form); break;
@@ -54,7 +56,7 @@ class FormUtility {
 			case 'tel':         $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Tel',         $absolutename, $name, $configuration, $form); break;
 			
 			default:
-				if($type != '' && $type != 'text' && class_exists($type)) {
+				if ($type != '' && $type != 'text' && class_exists($type)) {
 					$element = GeneralUtility::makeInstance($type, $absolutename, $name, $configuration, $form);
 				} else {
 					$element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Text', $absolutename, $name, $configuration, $form);
@@ -62,7 +64,7 @@ class FormUtility {
 				break;
 		}
 
-		if(!is_a($element, '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {
+		if (!is_a($element, '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {
 			throw new \Exception(get_class($element) . ' must implements \\Ameos\\AmeosForm\\Elements\\ElementInterface');
 		}
 

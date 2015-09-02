@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Domain\Repository;
  * The TYPO3 project - inspiring people to share!
  */
 
-class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository 
+{
 
 	/**
 	 * return query clause
@@ -22,9 +23,10 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	 * @param object $query query
 	 * @return object
 	 */	 
-	protected function getQueryClause($clause, $query) {
-		if(is_array($clause)) {
-			switch($clause['type']) {
+	protected function getQueryClause($clause, $query) 
+	{
+		if (is_array($clause)) {
+			switch ($clause['type']) {
 				case 'contains':
 					return $query->$clause['type']($clause['field'], $clause['value']);
 					break;
@@ -32,7 +34,7 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 				case 'logicalOr':
 					if(is_array($clause['clauses'])) {
 						$subclauses = [];
-						foreach($clause['clauses'] as $subclause) {
+						foreach ($clause['clauses'] as $subclause) {
 							$subclauses[] = $this->getQueryClause($subclause, $query);
 						}
 						return $query->logicalOr($subclauses);
@@ -42,7 +44,7 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 				case 'logicalAnd':
 					if(is_array($clause['clauses'])) {
 						$subclauses = [];
-						foreach($clause['clauses'] as $subclause) {
+						foreach ($clause['clauses'] as $subclause) {
 							$subclauses[] = $this->getQueryClause($subclause, $query);
 						}
 						return $query->logicalAnd($subclauses);
@@ -68,17 +70,18 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	 * @param	string	$direction direction
 	 * @return 	object
 	 */
-	public function findByClausesArray($clauses, $orderby = FALSE, $direction = 'ASC') {
+	public function findByClausesArray($clauses, $orderby = false, $direction = 'ASC') 
+	{
 		$query = $this->createQuery();
 		$objectsClauses = [];
-		foreach($clauses as $clause) {
+		foreach ($clauses as $clause) {
 			$objectsClauses[] = $this->getQueryClause($clause, $query);
 		}
-		if(!empty($objectsClauses)) {
+		if (!empty($objectsClauses)) {
 			$query->matching($query->logicalAnd($objectsClauses));
 		}
 
-		if($orderby !== FALSE) {
+		if ($orderby !== false) {
 			$query->setOrderings(array($orderby => $direction));
 		}
 		

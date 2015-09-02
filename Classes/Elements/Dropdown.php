@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Dropdown extends ElementAbstract {
+class Dropdown extends ElementAbstract 
+{
 
 	/**
 	 * @constuctor
@@ -24,9 +25,10 @@ class Dropdown extends ElementAbstract {
 	 * @param	array	$configuration configuration
 	 * @param	\Ameos\AmeosForm\Form $form form
 	 */
-	public function __construct($absolutename, $name, $configuration = [], $form) {
+	public function __construct($absolutename, $name, $configuration = [], $form) 
+	{
 		parent::__construct($absolutename, $name, $configuration, $form);
-		if(!isset($this->configuration['optionValueField'])) $this->configuration['optionValueField'] = 'uid';
+		if (!isset($this->configuration['optionValueField'])) $this->configuration['optionValueField'] = 'uid';
 	}
 	
 	/**
@@ -34,44 +36,45 @@ class Dropdown extends ElementAbstract {
 	 *
 	 * @return	string the html
 	 */
-	public function toHtml() {
-		if($this->isMultiple()) {
+	public function toHtml() 
+	{
+		if ($this->isMultiple()) {
 			$output = '<select id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '[]"' . $this->getAttributes() . '>';
 		} else {
 			$output = '<select id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . '>';
 		}
 
-		if(isset($this->configuration['placeholder'])) {
+		if (isset($this->configuration['placeholder'])) {
 			$output.= '<option value="">' . $this->configuration['placeholder'] . '</option>';
 		}
 
 		$currentValue = $this->getValue();
-		if(!is_array($currentValue)) {
+		if (!is_array($currentValue)) {
 			$currentValue = [$currentValue];
 		}
-		if(is_array($this->configuration['items'])) {
+		if (is_array($this->configuration['items'])) {
 			$optionValueFieldMethod = 'get' . ucfirst($this->configuration['optionValueField']);
-			foreach($currentValue as $currentValueKey => $currentValueItem) {
-				if(is_a($currentValueItem, '\\TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity')) {					
+			foreach ($currentValue as $currentValueKey => $currentValueItem) {
+				if (is_a($currentValueItem, '\\TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity')) {					
 					$currentValue[$currentValueKey] = $currentValueItem->$optionValueFieldMethod();
 				}
 			}
 
-			foreach($this->configuration['items'] as $value => $label) {
+			foreach ($this->configuration['items'] as $value => $label) {
 				$selected = in_array($value, $currentValue) ? ' selected="selected"' : '';
 				$output.= '<option value="' . $value . '"' . $selected . '>' . $label . '</option>';
 			}
-		} elseif(is_object($this->configuration['items']) && is_a($this->configuration['items'], '\\TYPO3\\CMS\\Extbase\\Persistence\\Generic\\QueryResult')) {
+		} elseif (is_object($this->configuration['items']) && is_a($this->configuration['items'], '\\TYPO3\\CMS\\Extbase\\Persistence\\Generic\\QueryResult')) {
 			$optionLabelFieldMethod = 'get' . ucfirst($this->configuration['optionLabelField']);
 			$optionValueFieldMethod = 'get' . ucfirst($this->configuration['optionValueField']);
 
-			foreach($currentValue as $key => $value) {
-				if(is_object($value) && is_a($value, '\\TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity')) {
+			foreach ($currentValue as $key => $value) {
+				if (is_object($value) && is_a($value, '\\TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity')) {
 					$currentValue[$key] = $this->getValue()->$optionValueFieldMethod();
 				}
 			}
 
-			foreach($this->configuration['items'] as $model) {				
+			foreach ($this->configuration['items'] as $model) {				
 				$selected = in_array($model->$optionValueFieldMethod(), $currentValue) ? ' selected="selected"' : '';
 				$output.= '<option value="' . $model->$optionValueFieldMethod() . '"' . $selected . '>' . $model->$optionLabelFieldMethod() . '</option>';
 			}			
@@ -84,9 +87,10 @@ class Dropdown extends ElementAbstract {
 	 * return html attribute
 	 * @return string html attribute
 	 */
-	public function getAttributes() {
+	public function getAttributes() 
+	{
 		$output = parent::getAttributes();
-		$output.= isset($this->configuration['multiple']) && $this->configuration['multiple'] == TRUE  ? ' multiple="multiple"' : 	'';
+		$output.= isset($this->configuration['multiple']) && $this->configuration['multiple'] == true  ? ' multiple="multiple"' : 	'';
 		return $output;
 	}
 
@@ -94,8 +98,9 @@ class Dropdown extends ElementAbstract {
 	 * return true if it's a multiple dropdown
 	 * @return bool
 	 */
-	public function isMultiple() {
-		return 	isset($this->configuration['multiple']) && $this->configuration['multiple'] == TRUE;
+	public function isMultiple() 
+	{
+		return 	isset($this->configuration['multiple']) && $this->configuration['multiple'] == true;
 	}
 	
 	/**
@@ -103,10 +108,11 @@ class Dropdown extends ElementAbstract {
 	 *
 	 * @return	bool|array FALSE if no search. Else array with search type and value
 	 */
-	public function getClause() {
+	public function getClause() 
+	{
 		$value = $this->getValue();
-		if(!empty($value)) {
-			if($this->overrideClause !== FALSE) {
+		if (!empty($value)) {
+			if ($this->overrideClause !== false) {
 				return parent::getClause();
 			} else {
 				if ($this->isMultiple()) {
@@ -128,6 +134,6 @@ class Dropdown extends ElementAbstract {
 				}
 			}
 		}
-		return FALSE;
+		return false;
 	}
 }

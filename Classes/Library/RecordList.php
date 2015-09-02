@@ -17,7 +17,8 @@ namespace Ameos\AmeosForm\Library;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
 
-class RecordList {
+class RecordList 
+{
 
 	/**
 	 * @var \Ameos\AmeosForm\Form\Search searchform
@@ -65,7 +66,8 @@ class RecordList {
 	 * @param string $template template path
 	 * @param \TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext $context
 	 */ 
-	public function __construct($searchform, $template, $context, $defaultOrderby = FALSE, $defaultDirection = 'ASC') {
+	public function __construct($searchform, $template, $context, $defaultOrderby = false, $defaultDirection = 'ASC') 
+	{
 		$this->searchform = $searchform;
 		$this->template = $template;
 		$this->context = $context;
@@ -80,7 +82,8 @@ class RecordList {
 	/**
 	 * initialize the view
 	 */ 
-	protected function initializeView(){
+	protected function initializeView()
+	{
 		$this->view = GeneralUtility::makeInstance('TYPO3\\CMS\\Fluid\\View\\StandaloneView');	
 		$this->view->setControllerContext($this->context);
 		$this->view->setTemplatePathAndFilename($this->template);
@@ -89,17 +92,18 @@ class RecordList {
 	/**
 	 * initialize sorting
 	 */ 
-	protected function initializeSorting() {
-		if(TYPO3_MODE == 'FE') {
+	protected function initializeSorting() 
+	{
+		if (TYPO3_MODE == 'FE') {
 			$defaultOrderby   = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->searchform->getIdentifier() . '-orderby');
 			$defaultDirection = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->searchform->getIdentifier() . '-direction');	
 		} else {
-			$defaultOrderby = $defaultDirection = NULL;
+			$defaultOrderby = $defaultDirection = null;
 		}
 		
 
-		if($defaultOrderby == NULL) { $defaultOrderby     = $this->defaultOrderby; }
-		if($defaultDirection == NULL) { $defaultDirection = $this->defaultDirection; }
+		if ($defaultOrderby == null) { $defaultOrderby     = $this->defaultOrderby; }
+		if ($defaultDirection == null) { $defaultDirection = $this->defaultDirection; }
 		
 		$this->orderby = $this->context->getRequest()->hasArgument('sort')
 			? $this->context->getRequest()->getArgument('sort')
@@ -110,10 +114,10 @@ class RecordList {
 			: $defaultDirection;
 
 		// store in session if needed
-		if($this->orderby != $defaultOrderby) {
+		if ($this->orderby != $defaultOrderby) {
 			$GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->searchform->getIdentifier() . '-orderby', $this->orderby);
 		}
-		if($this->direction != $defaultDirection) {
+		if ($this->direction != $defaultDirection) {
 			$GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->searchform->getIdentifier() . '-direction', $this->direction);
 		}
 	}
@@ -123,7 +127,8 @@ class RecordList {
 	 * @param string $key key
 	 * @param string $value the value
 	 */ 
-	public function assign($key, $value) {
+	public function assign($key, $value) 
+	{
 		$this->view->assign($key, $value);
 	}
 
@@ -131,7 +136,8 @@ class RecordList {
 	 * return html
 	 * @return string html
 	 */ 
-	public function render() {
+	public function render() 
+	{
 		$this->view->assign('records', $this->searchform->getResults($this->orderby, $this->direction));	
 		return $this->view->render();
 	}

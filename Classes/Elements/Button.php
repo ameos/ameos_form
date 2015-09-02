@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Button extends ElementAbstract {
+class Button extends ElementAbstract 
+{
 	
 	/**
 	 * @var bool $searchable searchable
@@ -26,7 +27,8 @@ class Button extends ElementAbstract {
 	 *
 	 * @return	string the html
 	 */
-	public function toHtml() {
+	public function toHtml() 
+	{
 		$label = isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
 		
 		return '<input type="button" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
@@ -36,7 +38,8 @@ class Button extends ElementAbstract {
 	 * return label
 	 * @return string the label
 	 */
-	public function getLabel() {
+	public function getLabel() 
+	{
 		return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
 	}
 	
@@ -44,11 +47,12 @@ class Button extends ElementAbstract {
 	 * return true if the button is clicked
 	 * @return bool
 	 */
-	public function isClicked() {
-		if($this->form->isSubmitted()) {
+	public function isClicked() 
+	{
+		if ($this->form->isSubmitted()) {
 			$post = GeneralUtility::_POST($this->form->getIdentifier());
 			return isset($post[$this->getName()]) && $post[$this->getName()] == $this->getLabel();
 		}
-		return FALSE;
+		return false;
 	}
 }

@@ -16,7 +16,8 @@ namespace Ameos\AmeosForm\Constraints;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Email extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
+class Email extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
+{
 
 	/**
 	 * return true if the element is valide
@@ -24,8 +25,9 @@ class Email extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 	 * @param	string $value value to test
 	 * @return	bool true if the element is valide
 	 */
-	public function isValid($value) {
-		if($value == '') return TRUE;
+	public function isValid($value) 
+	{
+		if ($value == '') return true;
 		return GeneralUtility::validEmail($value);
 	}
 }

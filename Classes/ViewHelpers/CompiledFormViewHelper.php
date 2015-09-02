@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
-class CompiledFormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class CompiledFormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
+{
 
     /**
      * Renders form
@@ -22,7 +23,8 @@ class CompiledFormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVi
      * @param \Ameos\AmeosForm\Form $form the form
      * @return string html
      */
-    public function render($form) {
+    public function render($form) 
+    {
 		return $form->toHtml();
     }
 }

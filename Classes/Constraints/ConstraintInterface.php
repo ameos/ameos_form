@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Constraints;
  * The TYPO3 project - inspiring people to share!
  */
 
-interface ConstraintInterface {
+interface ConstraintInterface 
+{
 
 	/**
 	 * return true if the element is valide

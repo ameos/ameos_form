@@ -14,14 +14,16 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Timepicker extends ElementAbstract {
+class Timepicker extends ElementAbstract 
+{
 	
 	/**
 	 * form to html
 	 *
 	 * @return	string the html
 	 */
-	public function toHtml() {
+	public function toHtml() 
+	{
 		return '<input type="time" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
 	}
 }

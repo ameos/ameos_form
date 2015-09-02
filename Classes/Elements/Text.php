@@ -14,14 +14,16 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Text extends ElementAbstract {
+class Text extends ElementAbstract 
+{
 	
 	/**
 	 * form to html
 	 *
 	 * @return	string the html
 	 */
-	public function toHtml() {
+	public function toHtml() 
+	{
 		return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />' . $this->getDatalist();
 	}
 }

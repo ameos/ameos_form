@@ -16,7 +16,8 @@ namespace Ameos\AmeosForm\Elements;
 
 use \TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-class Datepicker extends ElementAbstract {
+class Datepicker extends ElementAbstract 
+{
 
 	/**
 	 * @constuctor
@@ -26,9 +27,10 @@ class Datepicker extends ElementAbstract {
 	 * @param	array	$configuration configuration
 	 * @param	\Ameos\AmeosForm\Form $form form
 	 */
-	public function __construct($absolutename, $name, $configuration = [], $form) {
+	public function __construct($absolutename, $name, $configuration = [], $form) 
+	{
 		parent::__construct($absolutename, $name, $configuration, $form);
-		if(!isset($this->configuration['format'])) $this->configuration['format'] = 'D MMM YYYY';
+		if (!isset($this->configuration['format'])) $this->configuration['format'] = 'D MMM YYYY';
 
 		$GLOBALS['TSFE']->getPageRenderer()->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/css/pikaday.css');
 		$GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Momentjs/moment.js');
@@ -81,7 +83,8 @@ class Datepicker extends ElementAbstract {
 	 *
 	 * @return	string the html
 	 */
-	public function toHtml() {
+	public function toHtml() 
+	{
 		return '<input type="text" id="' . $this->getHtmlId() . '-datepicker" name="' . $this->absolutename . '-datepicker" ' . $this->getAttributes() . ' />'
 			. '<input type="hidden" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '" />';
 	}
@@ -92,12 +95,13 @@ class Datepicker extends ElementAbstract {
 	 * @param	string	$value value
 	 * @return 	\Ameos\AmeosForm\Elements\ElementAbstract this
 	 */
-	public function setValue($value) {
-		if($value == 0) {
+	public function setValue($value) 
+	{
+		if ($value == 0) {
 			$value = '';
 		}
 		parent::setValue($value);
-		if($value != '') {
+		if ($value != '') {
 			$GLOBALS['TSFE']->getPageRenderer()->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
 				if(document.getElementById("' . $this->getHtmlId() . '-datepicker")) {
 					document.getElementById("' . $this->getHtmlId() . '-datepicker").value = moment(' . $value . ', "X").format("' . $this->configuration['format'] . '");

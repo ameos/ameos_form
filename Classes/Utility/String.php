@@ -18,7 +18,8 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-class String {
+class String 
+{
 	
 	/**
 	 * @var \Ameos\AmeosForm\Form $form form
@@ -30,7 +31,8 @@ class String {
 	 *
 	 * @param	\Ameos\AmeosForm\Form $form form
 	 */
-	public function __construct($form) {
+	public function __construct($form) 
+	{
 		$this->form = $form;
 	}
 
@@ -39,9 +41,10 @@ class String {
 	 * @param string $string
 	 * @return string
      */
-	public static function camelCase($string) {
+	public static function camelCase($string) 
+	{
 		$output = '';
-		foreach( explode('_', $string) as $part) {
+		foreach (explode('_', $string) as $part) {
 			$output.= ucfirst($part);
 		}
 		return $output;
@@ -53,26 +56,27 @@ class String {
 	 * @param string $string the raw string
 	 * @return string eval string
 	 */ 
-	public function smart($string) {
+	public function smart($string) 
+	{
 		// if is callable function		
-		if(is_callable($string)) {
+		if (is_callable($string)) {
 			$string = call_user_func($string);
 		}
 		
 		// return locallang value
-		if(substr($string, 0, 4) === 'LLL:') {
+		if (substr($string, 0, 4) === 'LLL:') {
 			$string = str_replace('LLL:', '', $string);
 			$string = LocalizationUtility::translate($string, $this->form->getExtensionName());
 		}
 
 		// Search in typoscript configuration
-		if(substr($string, 0, 3) === 'TS:') {
+		if (substr($string, 0, 3) === 'TS:') {
 			$path = str_replace('TS:', '', $string);
 			$parts = GeneralUtility::trimExplode('.', $path);
 			$string = $GLOBALS['TSFE']->tmpl->setup;
 			$lastPart = array_pop($parts);
-			foreach($parts as $part) {
-				if(!isset($string[$part . '.'])) {
+			foreach ($parts as $part) {
+				if (!isset($string[$part . '.'])) {
 					$string = '';
 					break;
 				}				
@@ -83,12 +87,12 @@ class String {
 		}
 
 		// search in $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']
-		if(substr($string, 0, 8) === 'EXTCONF:') {
+		if (substr($string, 0, 8) === 'EXTCONF:') {
 			$path = str_replace('EXTCONF:', '', $string);
 			$parts = GeneralUtility::trimExplode('/', $path);
 			$string = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'];
-			foreach($parts as $part) {
-				if(!isset($string[$part])) {
+			foreach ($parts as $part) {
+				if (!isset($string[$part])) {
 					$string = '';
 					break;
 				}
@@ -97,7 +101,7 @@ class String {
 		}
 
 		// replace EXT:my_ext by ext path
-		if(substr($string, 0, 4) === 'EXT:') {
+		if (substr($string, 0, 4) === 'EXT:') {
 			$string = str_replace('EXT:', '', $string);
 			list($ext, $file) = explode('/', $string, 2);
 

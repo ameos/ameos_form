@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Constraints;
  * The TYPO3 project - inspiring people to share!
  */
 
-abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\ConstraintInterface {
+abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\ConstraintInterface 
+{
 
 	/**
 	 * @var string $message message
@@ -42,7 +43,8 @@ abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\Constr
 	 * @param	string	$message message
 	 * @param	\Ameos\AmeosForm\Form $form form
 	 */
-	public function __construct($message, $configuration = [], $element, $form) {
+	public function __construct($message, $configuration = [], $element, $form) 
+	{
 		$this->configuration = $configuration;
 		$this->message       = $form->stringUtility->smart($message);
 		$this->element       = $element;
@@ -54,7 +56,8 @@ abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\Constr
 	 * 
 	 * @return	string the message
 	 */
-	public function getMessage() {
+	public function getMessage() 
+	{
 		return $this->message;
 	}
 	

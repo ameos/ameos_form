@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-interface ElementInterface {
+interface ElementInterface 
+{
 	
 	/**
 	 * @constuctor

@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Date extends ElementAbstract {
+class Date extends ElementAbstract 
+{
 
 	/**
 	 * @var string $valueYear current year value
@@ -49,12 +50,13 @@ class Date extends ElementAbstract {
 	 * @param	array	$configuration configuration
 	 * @param	\Ameos\AmeosForm\Form $form form
 	 */
-	public function __construct($absolutename, $name, $configuration = [], $form) {
+	public function __construct($absolutename, $name, $configuration = [], $form) 
+	{
 		parent::__construct($absolutename, $name, $configuration, $form);
-		if(!isset($this->configuration['format-output'])) {
+		if (!isset($this->configuration['format-output'])) {
 			$this->configuration['format-output'] = 'timestamp';
 		}
-		if(!isset($this->configuration['format-display'])) {
+		if (!isset($this->configuration['format-display'])) {
 			$this->configuration['format-display'] = 'dmy';
 		}
 
@@ -72,7 +74,8 @@ class Date extends ElementAbstract {
 	 *
 	 * @return	array rendering information
 	 */
-	public function getRenderingInformation() {
+	public function getRenderingInformation() 
+	{
 		$data = parent::getRenderingInformation();
 		$data['year']  = $this->renderYear();
 		$data['month'] = $this->renderMonth();
@@ -85,21 +88,22 @@ class Date extends ElementAbstract {
 	 *
 	 * @return	string the html
 	 */
-	public function toHtml() {
+	public function toHtml() 
+	{
 		$output = '';
-		switch(substr($this->configuration['format-display'], 0, 1)) {
+		switch (substr($this->configuration['format-display'], 0, 1)) {
 			case 'd': $output.= $this->renderDay();   break;
 			case 'm': $output.= $this->renderMonth(); break;
 			case 'y': $output.= $this->renderYear();  break;
 		}
 
-		switch(substr($this->configuration['format-display'], 1, 1)) {
+		switch (substr($this->configuration['format-display'], 1, 1)) {
 			case 'd': $output.= $this->renderDay();   break;
 			case 'm': $output.= $this->renderMonth(); break;
 			case 'y': $output.= $this->renderYear();  break;
 		}
 
-		switch(substr($this->configuration['format-display'], 2, 1)) {
+		switch (substr($this->configuration['format-display'], 2, 1)) {
 			case 'd': $output.= $this->renderDay();   break;
 			case 'm': $output.= $this->renderMonth(); break;
 			case 'y': $output.= $this->renderYear();  break;
@@ -113,13 +117,14 @@ class Date extends ElementAbstract {
 	 *
 	 * @return	string
 	 */
-	public function renderYear() {
+	public function renderYear() 
+	{
 		$cssclass = isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
 		
 		$availableYears = $this->getYearsItems();
 		
 		$outputYears = '<select id="' . $this->getHtmlId() . '-year" name="' . $this->absolutename . '[year]"' . $cssclass  . '>';
-		foreach($availableYears as $year) {
+		foreach ($availableYears as $year) {
 			$selected = ($this->valueYear == $year) ? ' selected="selected"' : '';
 			$outputYears.= '<option value="' . $year . '"' . $selected . '>' . $year . '</option>';
 		}
@@ -132,13 +137,14 @@ class Date extends ElementAbstract {
 	 *
 	 * @return	string
 	 */
-	public function renderMonth() {
+	public function renderMonth() 
+	{
 		$cssclass = isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
 		
 		$availableMonths = $this->getMonthsItems();
 		
 		$outputMonths = '<select id="' . $this->getHtmlId() . '-month" name="' . $this->absolutename . '[month]"' . $cssclass  . '>';
-		foreach($availableMonths as $month) {
+		foreach ($availableMonths as $month) {
 			$selected = ($this->valueMonth == $month) ? ' selected="selected"' : '';
 			if($month != '') {
 				$outputMonths.= '<option value="' . $month . '"' . $selected . '>' . strftime('%B', mktime(0, 0, 0, (int)$month, 1)) . '</option>';
@@ -155,13 +161,14 @@ class Date extends ElementAbstract {
 	 *
 	 * @return	string
 	 */
-	public function renderDay() {
+	public function renderDay() 
+	{
 		$cssclass = isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
 		
 		$availableDays = $this->getDaysItems();
 
 		$outputDays = '<select id="' . $this->getHtmlId() . '-day" name="' . $this->absolutename . '[day]"' . $cssclass  . '>';
-		foreach($availableDays as $day) {
+		foreach ($availableDays as $day) {
 			$selected = ($this->valueDay == $day) ? ' selected="selected"' : '';
 			$outputDays.= '<option value="' . $day . '"' . $selected . '>' . $day . '</option>';
 		}
@@ -173,7 +180,8 @@ class Date extends ElementAbstract {
 	 * return available years value
 	 * @return array
 	 */ 
-	protected function getYearsItems() {
+	protected function getYearsItems() 
+	{
 		/*
 		when yield will avaiblable on most of server
 		for($year = 1900; $year <= date('Y') + 20; $year++) {
@@ -181,7 +189,7 @@ class Date extends ElementAbstract {
 		}
 		*/
 		$years = [''] ;
-		for($year = $this->yearMaximumLimit; $year >= $this->yearMinimumLimit; $year--) {
+		for ($year = $this->yearMaximumLimit; $year >= $this->yearMinimumLimit; $year--) {
 			$years[] = $year;
 		}
 		return $years;
@@ -191,7 +199,8 @@ class Date extends ElementAbstract {
 	 * return available months value
 	 * @return array
 	 */
-	protected function getMonthsItems() {
+	protected function getMonthsItems() 
+	{
 		/*
 		when yield will avaiblable on most of server
 		for($day = 1; $day <= 31; $day++) {
@@ -199,7 +208,7 @@ class Date extends ElementAbstract {
 		}
 		*/
 		$months = [''] ;
-		for($month = 1; $month <= 12; $month++) {
+		for ($month = 1; $month <= 12; $month++) {
 			$months[] = $month;
 		}
 		return $months;
@@ -209,7 +218,8 @@ class Date extends ElementAbstract {
 	 * return available days value
 	 * @return array
 	 */
-	protected function getDaysItems() {
+	protected function getDaysItems() 
+	{
 		/*
 		when yield will avaiblable on most of server
 		for($day = 1; $day <= 31; $day++) {
@@ -217,7 +227,7 @@ class Date extends ElementAbstract {
 		}
 		*/
 		$days = [''] ;
-		for($day = 1; $day <= 31; $day++) {
+		for ($day = 1; $day <= 31; $day++) {
 			$days[] = $day;
 		}
 		return $days;
@@ -229,13 +239,14 @@ class Date extends ElementAbstract {
 	 * @param	string	$value value
 	 * @return 	\Ameos\AmeosForm\Elements\ElementAbstract this
 	 */
-	public function setValue($value) {
-		if(is_array($value)) {
+	public function setValue($value) 
+	{
+		if (is_array($value)) {
 			$this->valueDay   = $value['day'];
 			$this->valueMonth = $value['month'];
 			$this->valueYear  = $value['year'];
 
-			if($this->valueDay == '' || $this->valueMonth == '' || $this->valueYear == '') {
+			if ($this->valueDay == '' || $this->valueMonth == '' || $this->valueYear == '') {
 				$value = '';
 			} else {
 				if(!checkdate($this->valueMonth, $this->valueDay, $this->valueYear)) {
@@ -246,13 +257,13 @@ class Date extends ElementAbstract {
 				$value = $date->getTimestamp();
 			}
 			
-		} elseif(is_a($value, '\Datetime')) {
+		} elseif (is_a($value, '\Datetime')) {
 			$value = $date->getTimestamp();
 
 			$this->valueDay   = date('j', $value);
 			$this->valueMonth = date('n', $value);
 			$this->valueYear  = date('Y', $value);			
-		} elseif(is_numeric($value)) {
+		} elseif (is_numeric($value)) {
 			$this->valueDay   = date('j', $value);
 			$this->valueMonth = date('n', $value);
 			$this->valueYear  = date('Y', $value);	
@@ -266,13 +277,14 @@ class Date extends ElementAbstract {
 	 *
 	 * @return	string value
 	 */
-	public function getValue() {
+	public function getValue() 
+	{
 		$value = parent::getValue();
-		if($value == '') return '';
+		if ($value == '') return '';
 		
 		$value = date('Y-m-d', $value);
 		$date  = new \Datetime($value);
-		if($this->configuration['format-output'] == 'timestamp') {
+		if ($this->configuration['format-output'] == 'timestamp') {
 			return $date->getTimestamp();
 		}
 

@@ -17,7 +17,8 @@ namespace Ameos\AmeosForm\Form\Search;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\UserUtility;
 
-class ClassicForm extends \Ameos\AmeosForm\Form\Search {
+class ClassicForm extends \Ameos\AmeosForm\Form\Search 
+{
 
 	/**
 	 * @var string $query query
@@ -35,7 +36,8 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Search {
 	 * @param	string $identifier form identifier
 	 * @param	string $query query
 	 */
-	public function __construct($identifier, $query) {
+	public function __construct($identifier, $query) 
+	{
 		parent::__construct($identifier);
 		$this->mode       = 'search/classic';
 		$this->query      = $query;;		
@@ -49,20 +51,21 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Search {
 	 * @param string|bool $direction
 	 * @return resource
 	 */
-	public function getResults($orderby = FALSE, $direction = 'ASC') {
-		foreach($this->elements as $element) {
-			if($element->isSearchable()) {
-				if($element->getValue() == '') {
+	public function getResults($orderby = FALSE, $direction = 'ASC') 
+	{
+		foreach ($this->elements as $element) {
+			if ($element->isSearchable()) {
+				if ($element->getValue() == '') {
 					unset($this->clauses[$element->getName()]);
 				}
-				if(($clause = $element->getClause()) !== FALSE) {
+				if (($clause = $element->getClause()) !== false) {
 					$this->clauses[$clause['elementname']] = $clause;
 				}
 			}
 		}
 
-		if($this->storeSearchInSession === TRUE) {
-			if(UserUtility::isLogged()) {
+		if ($this->storeSearchInSession === true) {
+			if (UserUtility::isLogged()) {
 				$GLOBALS['TSFE']->fe_user->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
 			} else {
 				$GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
@@ -71,11 +74,11 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Search {
 		}
 		
 		$clauses = '';
-		foreach($this->clauses as $clause) {
+		foreach ($this->clauses as $clause) {
 			$clauses.= ' AND ' . $this->makeWhereClause($clause);
 		}
 
-		if($orderby) {
+		if ($orderby) {
 			$order = ' ORDER BY ' . $orderby . ' ' . $direction;
 		} else {
 			$order = '';
@@ -89,7 +92,8 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Search {
 	 * @param array $clause where clause information
 	 * @return string
 	 */
-	protected function makeWhereClause($clause) {
+	protected function makeWhereClause($clause) 
+	{
 		return $clause['field'] . ' ' . $clause['type'] . ' \'' . $clause['value'] . '\'';
 	}
 }

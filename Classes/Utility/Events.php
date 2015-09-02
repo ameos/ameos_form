@@ -16,7 +16,8 @@ namespace Ameos\AmeosForm\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-final class Events {
+final class Events 
+{
 
 	/**
 	 * @var array<Ameos\AmeosForm\Utility\Events>
@@ -32,7 +33,8 @@ final class Events {
 	/**
 	 * @constructor
 	 */
-	private function __construct() {
+	private function __construct() 
+	{
 		
 	}
 
@@ -42,8 +44,9 @@ final class Events {
 	 * @param string $formIdentifier form identifier
 	 * @return Ameos\AmeosForm\Utility\Events
 	 */
-	public static function getInstance($formIdentifier) {
-		if(!array_key_exists($formIdentifier, self::$instances)) {
+	public static function getInstance($formIdentifier) 
+	{
+		if (!array_key_exists($formIdentifier, self::$instances)) {
 			$newInstance = new Events();
 			self::$instances[$formIdentifier] = $newInstance;
 		}
@@ -57,8 +60,9 @@ final class Events {
 	 * @param array $arguments event arguments
 	 * @return Ameos\AmeosForm\Utility\Events
 	 */
-	public function registerEvent($eventIdenfifier, $callback, $arguments) {
-		if(!array_key_exists($eventIdenfifier, $this->registeredEvents)) {
+	public function registerEvent($eventIdenfifier, $callback, $arguments) 
+	{
+		if (!array_key_exists($eventIdenfifier, $this->registeredEvents)) {
 			$this->registeredEvents[$eventIdenfifier] = [];
 		}
 		$this->registeredEvents[$eventIdenfifier][] = [
@@ -72,9 +76,10 @@ final class Events {
 	 * trigger an event
 	 * @param string $eventIdenfifier event idenfifier
 	 */
-	public function trigger($eventIdenfifier) {
-		if(array_key_exists($eventIdenfifier, $this->registeredEvents)) {
-			foreach($this->registeredEvents[$eventIdenfifier] as $event) {
+	public function trigger($eventIdenfifier) 
+	{
+		if (array_key_exists($eventIdenfifier, $this->registeredEvents)) {
+			foreach ($this->registeredEvents[$eventIdenfifier] as $event) {
 				call_user_func_array($event['callback'], $event['arguments']);
 			}
 		}

@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Constraints;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Required extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
+class Required extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
+{
 
 	/**
 	 * return true if the element is valide
@@ -22,10 +23,11 @@ class Required extends \Ameos\AmeosForm\Constraints\ConstraintAbstract {
 	 * @param	string $value value to test
 	 * @return	bool true if the element is valide
 	 */
-	public function isValid($value) {
-		if(is_a($this->element, '\\Ameos\\AmeosForm\\Elements\\Upload')) {
-			if(is_array($value) && array_key_exists('upload', $value) && is_array($value['upload'])) {
-				return TRUE;
+	public function isValid($value) 
+	{
+		if (is_a($this->element, '\\Ameos\\AmeosForm\\Elements\\Upload')) {
+			if (is_array($value) && array_key_exists('upload', $value) && is_array($value['upload'])) {
+				return true;
 			}
 		}
 		return !(trim($value) == '');

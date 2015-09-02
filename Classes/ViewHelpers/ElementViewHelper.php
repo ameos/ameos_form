@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
-class ElementViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class ElementViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
+{
 
     /**
      * Renders form
@@ -27,17 +28,18 @@ class ElementViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
      * @param string $custom custom
      * @return string html
      */
-    public function render($element, $class = '', $errorClass = '', $placeholder = '', $style = '', $custom = '') {
-		if(!is_a($element, '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {
-			return '';
-		}
+    public function render($element, $class = '', $errorClass = '', $placeholder = '', $style = '', $custom = '') 
+    {
+	if (!is_a($element, '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {
+		return '';
+	}
 
-		if($class !== '')       { $element->addConfiguration('class', $class); }
-		if($errorClass !== '')  { $element->addConfiguration('errorClass', $errorClass); }
-		if($placeholder !== '') { $element->addConfiguration('placeholder', $placeholder); }
-		if($style !== '')       { $element->addConfiguration('style', $style); }
-		if($custom !== '')      { $element->addConfiguration('custom', $custom); }
-		
-		return $element->toHtml();
+	if ($class !== '')       { $element->addConfiguration('class', $class); }
+	if ($errorClass !== '')  { $element->addConfiguration('errorClass', $errorClass); }
+	if ($placeholder !== '') { $element->addConfiguration('placeholder', $placeholder); }
+	if ($style !== '')       { $element->addConfiguration('style', $style); }
+	if ($custom !== '')      { $element->addConfiguration('custom', $custom); }
+	
+	return $element->toHtml();
     }
 }

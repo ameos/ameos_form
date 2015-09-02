@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Date {
+class Date 
+{
 
 	/**
 	 * convert date to timestamp
@@ -22,15 +23,16 @@ class Date {
 	 * @param string $format
 	 * @return string
      */
-	public static function dateToTimestamp($value, $format) {
-		if($value == '') {
+	public static function dateToTimestamp($value, $format) 
+	{
+		if ($value == '') {
 			return 0;
 		}
 		
-		if(strpos($format, '%') !== FALSE) {
+		if (strpos($format, '%') !== false) {
 			$date = strptime($value, $format);
 			
-			if(is_array($date)) {
+			if (is_array($date)) {
 				return mktime($date['tm_hour'], $date['tm_min'], $date['tm_sec'], ($date['tm_mon'] + 1), $date['tm_mday'], (1900 + $date['tm_year']));		
 			} else {
 				return 0;
@@ -47,8 +49,9 @@ class Date {
 	 * @param string $format
 	 * @return string
      */
-	public static function timestampToDate($value, $format) {
-		if(strpos($format, '%') !== FALSE) {
+	public static function timestampToDate($value, $format) 
+	{
+		if (strpos($format, '%') !== false) {
 			return strftime($format, $value);
 		}
 		return date($format, $value);
