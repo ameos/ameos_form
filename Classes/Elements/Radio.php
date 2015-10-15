@@ -49,6 +49,7 @@ class Radio extends ElementAbstract
 		$data = parent::getRenderingInformation();
 		$data['items'] = [];
 		foreach ($this->configuration['items'] as $value => $label) {
+			$checked = ($this->getValue() == $value) ? ' checked="checked"' : '';
 			$data['items'][$value] = array(
 				'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '" type="radio" value="' . $value . '"' . $checked . $class . ' />',
 				'label' => '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>',
