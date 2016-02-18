@@ -46,11 +46,11 @@ initDatepicker = function(id, format, translation) {
 
 	if(document.getElementById(id + "-datepicker").addEventListener) {
 		document.getElementById(id + "-datepicker").addEventListener("change", function() {
-			updateDatepicker(id);	
+			updateDatepicker(id, format);	
 		});
 	} else {
 		document.getElementById(id + "-datepicker").attachEvent("onchange", function() {
-			updateDatepicker(id);	
+			updateDatepicker(id, format);	
 		});
 	}
 };
