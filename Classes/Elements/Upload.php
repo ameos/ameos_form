@@ -103,7 +103,7 @@ class Upload extends ElementAbstract
 	public function setValue($value) 
 	{
 		if (is_array($value)) {
-			if (isset($value['upload']) && is_array($value['upload'])) {
+			if (isset($value['upload']) && is_array($value['upload']) && $value['upload'][0]['name'] != '') {
 				$this->value = $value;
 				$this->determineErrors();
 				$currentValue = [];
@@ -169,13 +169,15 @@ class Upload extends ElementAbstract
 		if ($this->elementConstraintsAreChecked === false) {
 			if ($this->form !== FALSE && $this->form->isSubmitted()) {
 				$values = $this->getValue();
-				foreach ($values['upload'] as $value) {
-					foreach ($this->constraints as $constraint) {
-						if (!$constraint->isValid($value)) {
-							$this->form->getErrorManager()->add($constraint->getMessage(), $this);
-						}
-					}
-				}
+                if (isset($value['upload']) && is_array($value['upload'])) {
+                    foreach ($values['upload'] as $value) {
+                        foreach ($this->constraints as $constraint) {
+                            if (!$constraint->isValid($value)) {
+                                $this->form->getErrorManager()->add($constraint->getMessage(), $this);
+                            }
+                        }
+                    }
+                }
 				foreach ($this->systemerror as $error) {				
 					$this->form->getErrorManager()->add($error, $this);
 				}
