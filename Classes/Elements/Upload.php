@@ -169,7 +169,7 @@ class Upload extends ElementAbstract
 		if ($this->elementConstraintsAreChecked === false) {
 			if ($this->form !== FALSE && $this->form->isSubmitted()) {
 				$values = $this->getValue();
-                if (isset($value['upload']) && is_array($value['upload'])) {
+                if (isset($values['upload']) && is_array($values['upload'])) {
                     foreach ($values['upload'] as $value) {
                         foreach ($this->constraints as $constraint) {
                             if (!$constraint->isValid($value)) {
