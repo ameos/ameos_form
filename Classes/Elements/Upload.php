@@ -16,7 +16,7 @@ namespace Ameos\AmeosForm\Elements;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
-use Ameos\AmeosForm\Utility\String as StringUtility;
+use Ameos\AmeosForm\Utility\StringUtility;
 
 class Upload extends ElementAbstract 
 {

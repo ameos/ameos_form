@@ -58,7 +58,7 @@ abstract class AbstractForm
 	protected $enableCsrftoken = true;
 	
 	/**
-	 * @var Ameos\AmeosForm\Utility\String $stringUtility 
+	 * @var Ameos\AmeosForm\Utility\StringUtility $stringUtility 
 	 */
 	public $stringUtility;
 	
@@ -75,7 +75,7 @@ abstract class AbstractForm
 		
 		$this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
 		
-		$this->stringUtility = $this->objectManager->get('Ameos\\AmeosForm\\Utility\\String', $this);
+		$this->stringUtility = $this->objectManager->get('Ameos\\AmeosForm\\Utility\\StringUtility', $this);
 		$this->errorManager  = $this->objectManager->get('Ameos\\AmeosForm\\Utility\\ErrorManager', $this);
 	}
 	

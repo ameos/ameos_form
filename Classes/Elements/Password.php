@@ -75,7 +75,7 @@ class Password extends ElementAbstract
 
 		if ($this->form !== false) {
 			if ($this->form->getMode() == 'crud/extbase' && $value != '') {
-				$method = 'set' . \Ameos\AmeosForm\Utility\String::camelCase($this->name);
+				$method = 'set' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
 				if (method_exists($this->form->getModel(), $method)) {
 					$this->form->getModel()->$method($value);
 				}

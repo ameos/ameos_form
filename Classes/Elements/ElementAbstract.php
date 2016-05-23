@@ -174,7 +174,7 @@ abstract class ElementAbstract implements ElementInterface
 
 		if ($this->form !== false) {
 			if ($this->form->getMode() == 'crud/extbase') {
-				$method = 'set' . \Ameos\AmeosForm\Utility\String::camelCase($this->name);
+				$method = 'set' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
 				if (method_exists($this->form->getModel(), $method)) {
 					$this->form->getModel()->$method($value);
 				}
@@ -195,7 +195,7 @@ abstract class ElementAbstract implements ElementInterface
 	{
 		if ($this->form !== false) {
 			if ($this->form->getMode() == 'crud/extbase') {
-				$method = 'get' . \Ameos\AmeosForm\Utility\String::camelCase($this->name);
+				$method = 'get' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
 				if (method_exists($this->form->getModel(), $method)) {
 					$this->setValue($this->form->getModel()->$method());
 				}
