@@ -23,6 +23,6 @@
         "psr-4": {
             "Ameos\\AmeosForm\\": "Classes"
         }
-    },
+    }
 }
 
