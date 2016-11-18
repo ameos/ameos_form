@@ -169,11 +169,26 @@ class Upload extends ElementAbstract
 		if ($this->elementConstraintsAreChecked === false) {
 			if ($this->form !== FALSE && $this->form->isSubmitted()) {
 				$values = $this->getValue();
+
+                // check required constrainnt
+                if (!$values) {
+                    foreach ($this->constraints as $constraint) {
+                        if (is_a($constraint, 'Ameos\\AmeosForm\\Constraints\\Required')) {
+                            if (!$constraint->isValid($values)) {
+                                $this->form->getErrorManager()->add($constraint->getMessage(), $this);
+                            }
+                        }
+                    }
+                }
+
+                // check other constraints
                 if (isset($values['upload']) && is_array($values['upload'])) {
                     foreach ($values['upload'] as $value) {
                         foreach ($this->constraints as $constraint) {
-                            if (!$constraint->isValid($value)) {
-                                $this->form->getErrorManager()->add($constraint->getMessage(), $this);
+                            if (!is_a($constraint, 'Ameos\\AmeosForm\\Constraints\\Required')) {
+                                if (!$constraint->isValid($value)) {
+                                    $this->form->getErrorManager()->add($constraint->getMessage(), $this);
+                                }
                             }
                         }
                     }
