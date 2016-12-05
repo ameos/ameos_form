@@ -1,4 +1,4 @@
-# ameos_form
+# Ameos Form (ameos_form)
 Form api for extbase and TYPO3
 
 ## Example
