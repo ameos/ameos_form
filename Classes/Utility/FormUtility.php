@@ -55,6 +55,7 @@ class FormUtility
 			case 'email':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Email',       $absolutename, $name, $configuration, $form); break;
 			case 'url':         $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Url',         $absolutename, $name, $configuration, $form); break;
 			case 'tel':         $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Tel',         $absolutename, $name, $configuration, $form); break;
+			case 'rating':      $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Rating',      $absolutename, $name, $configuration, $form); break;
 			
 			default:
 				if ($type != '' && $type != 'text' && class_exists($type)) {
