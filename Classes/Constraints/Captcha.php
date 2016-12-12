@@ -27,7 +27,7 @@ class Captcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 	 */
 	public function isValid($value) 
 	{
-		require_once(ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/SecureImage/securimage.php');
+		require_once ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/SecureImage/securimage.php';
 		$securimage = new \Securimage();
 		return $securimage->check($value);
 	}
