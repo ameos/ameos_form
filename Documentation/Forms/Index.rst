@@ -78,7 +78,7 @@ You can associate a list with a search form.
 	$this->view->assign('list', $list);
 
 
-For templaing list, see :ref:`Templating with fluid <templating>` part.
+For templating list, see :ref:`Templating with fluid <templating>` part.
 
 
 The repository used by the seach form must extends \\Ameos\\AmeosForm\\Domain\\Repository\\SearchableRepository
@@ -158,3 +158,24 @@ After the creation of your form, you add constraint easily.
 For example : $form->addConstraint('my_field', 'required', LocalizationUtility::translate('my_field.required', 'ExtensionKey'));
 
 All constraints are detailled on :ref:`Constraints <constraints>` part.
+
+
+.. _forms-disableformprotection:
+
+Disable form protection
+-----------------------
+
+If you want, you can disable form protection.
+
+Crsf protection :
+
+::
+
+    $form->disableCsrftoken();
+
+Honeypot protection :
+
+::
+
+    $form->disableHoneypot();
+    
