@@ -56,6 +56,11 @@ abstract class AbstractForm
 	 * @var bool $enableCrsftoken enable crsf token
 	 */
 	protected $enableCsrftoken = true;
+
+	/**
+	 * @var bool $enableHoneypot enable honey pot
+	 */
+	protected $enableHoneypot = true;
 	
 	/**
 	 * @var Ameos\AmeosForm\Utility\StringUtility $stringUtility 
@@ -72,7 +77,7 @@ abstract class AbstractForm
 		$this->elements   = [];
 		$this->identifier = $identifier;
 		$this->enableCsrftoken = TYPO3_MODE == 'FE' ? true : false;
-		
+
 		$this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
 		
 		$this->stringUtility = $this->objectManager->get('Ameos\\AmeosForm\\Utility\\StringUtility', $this);
@@ -124,6 +129,35 @@ abstract class AbstractForm
 	public function csrftokenIsEnabled() 
 	{
 		return $this->enableCsrftoken;
+	}
+
+	/**
+	 * enable honeypot
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function enableHoneypot() 
+	{
+		$this->enableHoneypot = true;
+		return $this;
+	}
+
+	/**
+	 * disable honeypot
+	 * @return \Ameos\AmeosForm\Form\AbstractForm
+	 */
+	public function disableHoneypot() 
+	{
+		$this->enableHoneypot = false;
+		return $this;
+	}
+
+	/**
+	 * return TRUE if honeypot is enabled
+	 * @return bool
+	 */
+	public function honeypotIsEnabled() 
+	{        
+		return $this->enableHoneypot;
 	}
 
 	/**
@@ -282,6 +316,9 @@ abstract class AbstractForm
 		if ($this->csrftokenIsEnabled()) {
 			$html.= '<input type="hidden" id="' . $this->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $this->getIdentifier() . '[csrftoken]" />';	
 		}
+        if ($this->honeypotIsEnabled()) {
+			$html.= '<input type="text" id="' . $this->getIdentifier() . '-winnie" value="" name="' . $this->getIdentifier() . '[winnie]" />';	
+		}
 		$html.= '</form>';
 		return $html;
 	}
@@ -302,6 +339,11 @@ abstract class AbstractForm
 		if ($this->csrftokenIsEnabled()) {
 			if ($requestDatas['csrftoken'] == '' || $requestDatas['csrftoken'] != $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken')) {
 				throw new \Exception('Forbidden: invalid csrf token');
+			}
+		}
+        if ($this->honeypotIsEnabled()) {
+			if (isset($requestDatas['winnie']) && $requestDatas['winnie'] != '') {
+				throw new \Exception('Forbidden: you are a bot');
 			}
 		}
 

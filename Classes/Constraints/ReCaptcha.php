@@ -16,7 +16,7 @@ namespace Ameos\AmeosForm\Constraints;
 
 use \TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-class Captcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
+class ReCaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
 {
 	
 	/**
@@ -27,8 +27,14 @@ class Captcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 	 */
 	public function isValid($value) 
 	{
-		require_once ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/SecureImage/securimage.php';
-		$securimage = new \Securimage();
-		return $securimage->check($value);
+        require_once ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/ReCaptcha/autoload.php';
+
+        $recaptcha = new \ReCaptcha\ReCaptcha($this->configuration['privateKey']);
+        $response  = $recaptcha->verify($_POST['g-recaptcha-response']);
+        
+        if ($response->isSuccess()) {
+            return true;
+        }
+        return false;
 	}
 }
