@@ -429,6 +429,37 @@ step          increment step between each number   1                       10
 ============  ===================================  ======================  ===================================================
 
 
+.. _elements-rating:
+
+Radio button
+------------
+
+.. figure:: ../Images/rating.png
+
+You can add a rating element like this
+
+::
+
+	$form->add('my-rating', 'rating', $configuration);
+
+Available configuration
+
+============  ===================================  ======================  ===================================================
+Property      Description                          Default value           Example
+============  ===================================  ======================  ===================================================
+style         css style for the html tag                                   width: 150px;
+disabled      true if the html field is disabled   false                   true or false
+title         html tag title                                               my field title
+custom        custom html attribute                                        customattr="customvalue"
+class         css class for the html tag                                   big
+errorclass    css class when there is an error                             error
+min           score min                            1                       10
+max           score max                            5                       50
+step          step between score                   1                       2
+label         label of item                        ★
+============  ===================================  ======================  ===================================================
+
+
 .. _elements-recaptcha:
 
 ReCaptcha

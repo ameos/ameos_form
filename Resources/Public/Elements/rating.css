@@ -1,0 +1,4 @@
+.rating { font-size: 45px; direction: rtl; display: inline-block; text-align: left; }
+.rating input { opacity: 0; position: absolute; }
+.rating label { color: #aaa; text-decoration: none; -webkit-transition: color .4s; -moz-transition: color .4s; -o-transition: color .4s; transition: color .4s; }
+.rating label:hover ~ label, .rating input:focus ~ label, .rating input:checked ~ label, .rating label:hover { color: orange; cursor: pointer; }
