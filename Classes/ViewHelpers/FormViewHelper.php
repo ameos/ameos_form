@@ -79,6 +79,9 @@ class FormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 		if ($form->csrftokenIsEnabled()) {
 			$output.= '<input type="hidden" id="' . $form->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $form->getIdentifier() . '[csrftoken]" />';
 		}
+        if ($form->honeypotIsEnabled()) {
+			$output.= '<span style="position:absolute;left:-500000px"><input type="text" id="' . $form->getIdentifier() . '-winnie" value="" name="' . $form->getIdentifier() . '[winnie]" /></span>';	
+		}
 		$output.= '</form>';
 		return $output;
 	}
