@@ -12,7 +12,7 @@ Elements
 		:local:
 		:depth: 1
 
-.. _elements-button:
+.. _elements-general:
 
 The configuration of the element can be set with a table when creating the element
 
@@ -27,6 +27,8 @@ Or after instanciation
 	$form->add('my-element', 'text');
 	$form->get('my-element')->with('placeholder', 'My placeholder');
 
+
+.. _elements-button:
 
 Button
 ------
@@ -55,6 +57,8 @@ errorclass    css class when there is an error                             error
 label         label of the button                                          click me!
 ============  ===================================  ======================  ===================================================
 
+
+.. _elements-captcha:
 
 Captcha
 -------
@@ -422,6 +426,30 @@ errorclass    css class when there is an error                             error
 min           minimum number                                               10
 max           maximum number                                               100
 step          increment step between each number   1                       10
+============  ===================================  ======================  ===================================================
+
+
+.. _elements-recaptcha:
+
+ReCaptcha
+---------
+
+.. figure:: ../Images/recaptcha.png
+   
+You can add a recaptcha like this
+
+::
+
+	$form->add('my-recaptcha', 'recaptcha', $configuration);
+
+Available configuration
+
+============  ===================================  ======================  ===================================================
+Property      Description                          Default value           Example
+============  ===================================  ======================  ===================================================
+publicKey     Your api public key (required)
+privateKey    Your api private key (required)
+errormessage  Message if the captcha is not valid  Captcha is not valid    Captcha is not valid
 ============  ===================================  ======================  ===================================================
 
 

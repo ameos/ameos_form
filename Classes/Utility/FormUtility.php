@@ -47,6 +47,7 @@ class FormUtility
 			case 'time':        $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Time',        $absolutename, $name, $configuration, $form); break;
 			case 'timepicker':  $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Timepicker',  $absolutename, $name, $configuration, $form); break;
 			case 'captcha':     $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Captcha',     $absolutename, $name, $configuration, $form); break;
+			case 'recaptcha':   $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\ReCaptcha',   $absolutename, $name, $configuration, $form); break;
 			case 'label':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Label',       $absolutename, $name, $configuration, $form); break;
 			case 'color':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Color',       $absolutename, $name, $configuration, $form); break;
 			case 'range':       $element = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Elements\\Range',       $absolutename, $name, $configuration, $form); break;
