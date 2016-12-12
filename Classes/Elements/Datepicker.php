@@ -19,11 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Datepicker extends ElementAbstract 
 {
-    /**
-     * @var \TYPO3\CMS\Core\Page\PageRenderer
-     */
-    protected $pageRenderer = null;
-
 	/**
 	 * @constuctor
 	 *
@@ -36,16 +31,14 @@ class Datepicker extends ElementAbstract
 	{
 		parent::__construct($absolutename, $name, $configuration, $form);
         
-        $this->pageRenderer = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Page\\PageRenderer');
-        
 		if (!isset($this->configuration['format'])) $this->configuration['format'] = 'D MMM YYYY';
 
-		$this->pageRenderer->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/css/pikaday.css');
-		$this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Momentjs/moment.js');
-		$this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/pikaday.js');
-		$this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Elements/datepicker.js');
+		$GLOBALS['TSFE']->getPageRenderer()->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/css/pikaday.css');
+		$GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Momentjs/moment.js');
+		$GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/pikaday.js');
+		$GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Elements/datepicker.js');
 
-		$this->pageRenderer->addJsFooterInlineCode('init-datepicker-' . $name, '
+		$GLOBALS['TSFE']->getPageRenderer()->addJsFooterInlineCode('init-datepicker-' . $name, '
 			var i18n = {
 				previousMonth: "' . LocalizationUtility::translate('previousMonth', 'AmeosForm') . '",
 				nextMonth: "' . LocalizationUtility::translate('nextMonth', 'AmeosForm') . '",
@@ -110,13 +103,13 @@ class Datepicker extends ElementAbstract
 		}
 		parent::setValue($value);
 		if ($value != '') {
-			$this->pageRenderer->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
+			$GLOBALS['TSFE']->getPageRenderer()->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
 				if(document.getElementById("' . $this->getHtmlId() . '-datepicker")) {
 					document.getElementById("' . $this->getHtmlId() . '-datepicker").value = moment(' . $value . ', "X").format("' . $this->configuration['format'] . '");
 				}
 			');
 		} else {
-			$this->pageRenderer->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
+			$GLOBALS['TSFE']->getPageRenderer()->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
 				if(document.getElementById("' . $this->getHtmlId() . '-datepicker")) {
 					document.getElementById("' . $this->getHtmlId() . '-datepicker").value = "";
 				}
