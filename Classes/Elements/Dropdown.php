@@ -71,10 +71,17 @@ class Dropdown extends ElementAbstract
 			foreach ($currentValue as $key => $value) {
 				if (is_object($value) && is_a($value, '\\TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity')) {
 					$currentValue[$key] = $this->getValue()->$optionValueFieldMethod();
+				} elseif (is_object($value) && is_a($value, '\\TYPO3\\CMS\\Extbase\\Persistence\\ObjectStorage')) {
+					$currentValue = [];
+					foreach ($value as $subkey => $subvalue) {
+						if (is_object($subvalue) && is_a($subvalue, '\\TYPO3\\CMS\\Extbase\\DomainObject\\AbstractEntity')) {
+							$currentValue[] = $subvalue->$optionValueFieldMethod();
+						}
+					}
 				}
 			}
 
-			foreach ($this->configuration['items'] as $model) {				
+			foreach ($this->configuration['items'] as $model) {
 				$selected = in_array($model->$optionValueFieldMethod(), $currentValue) ? ' selected="selected"' : '';
 				$output.= '<option value="' . $model->$optionValueFieldMethod() . '"' . $selected . '>' . $model->$optionLabelFieldMethod() . '</option>';
 			}			
