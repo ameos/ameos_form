@@ -31,7 +31,7 @@ class Button extends ElementAbstract
 	{
 		$label = isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
 		
-		return '<input type="button" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
+                return '<button id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . '>' . $this->getLabel() . '</button>';
 	}
 	
 	/**

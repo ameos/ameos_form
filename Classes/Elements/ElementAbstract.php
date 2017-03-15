@@ -106,6 +106,7 @@ abstract class ElementAbstract implements ElementInterface
 		$output.= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true ? ' disabled="disabled"' : '';
 		$output.= isset($this->configuration['title']) ? ' title="' . $this->configuration['title'] . '"' : '';
 		$output.= isset($this->configuration['datalist']) ? ' list="' . $this->getHtmlId() . '-datalist"' : '';
+                $output.= isset($this->configuration['type']) ? ' type="' . $this->configuration['type'] . '"' : '';
 		$output.= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
 
 		$cssclass = isset($this->configuration['class']) ? $this->configuration['class'] : '';
