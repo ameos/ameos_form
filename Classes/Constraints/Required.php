@@ -30,6 +30,9 @@ class Required extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 				return true;
 			}
 		}
+        if (is_array($value)) {
+            return !empty($value);
+        }
 		return !(trim($value) == '');
 	}
 }
