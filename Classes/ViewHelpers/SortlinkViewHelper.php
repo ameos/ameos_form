@@ -18,7 +18,6 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class SortlinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper 
 {
-
     /**
      * @var string
      */
@@ -31,38 +30,40 @@ class SortlinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBas
      */
     public function initializeArguments() 
     {
-	$this->registerUniversalTagAttributes();
-	$this->registerTagAttribute('target', 'string', 'Target of link', false);
-	$this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document', false);
+        $this->registerUniversalTagAttributes();
+        $this->registerTagAttribute('target', 'string', 'Target of link', false);
+        $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document', false);
+        $this->registerArgument('column', 'string', 'The column', false);
     }
-	
+
     /**
      * Renders sort link
      *
      * @param string $column the column
      * @return string html
      */
-    public function render($column) 
+    public function render() 
     {
-	$uriBuilder = $this->controllerContext->getUriBuilder();
+        $column = $this->arguments['column'];
+        $uriBuilder = $this->controllerContext->getUriBuilder();
 
-	$currentDirection = $this->controllerContext->getRequest()->hasArgument('direction')
-	    ? $this->controllerContext->getRequest()->getArgument('direction')
-	    : 'ASC';
+        $currentDirection = $this->controllerContext->getRequest()->hasArgument('direction')
+            ? $this->controllerContext->getRequest()->getArgument('direction')
+            : 'ASC';
 
-	$currentColumn = $this->controllerContext->getRequest()->hasArgument('sort')
-	    ? $this->controllerContext->getRequest()->getArgument('sort')
-	    : false;
+        $currentColumn = $this->controllerContext->getRequest()->hasArgument('sort')
+            ? $this->controllerContext->getRequest()->getArgument('sort')
+            : false;
 
-	$direction = 'ASC';
-	if ($currentColumn == $column && $currentDirection == 'ASC') {
-	    $direction = 'DESC';
-	}
-	
-	$uri = $uriBuilder->reset()->uriFor(null, ['sort' => $column, 'direction' => $direction]);
-	$this->tag->addAttribute('href', $uri);
-	$this->tag->setContent($this->renderChildren());
-	$this->tag->forceClosingTag(true);
-	return $this->tag->render();
+        $direction = 'ASC';
+        if ($currentColumn == $column && $currentDirection == 'ASC') {
+            $direction = 'DESC';
+        }
+        
+        $uri = $uriBuilder->reset()->uriFor(null, ['sort' => $column, 'direction' => $direction]);
+        $this->tag->addAttribute('href', $uri);
+        $this->tag->setContent($this->renderChildren());
+        $this->tag->forceClosingTag(true);
+        return $this->tag->render();
     }
 }

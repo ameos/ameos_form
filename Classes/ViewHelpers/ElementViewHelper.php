@@ -16,30 +16,49 @@ namespace Ameos\AmeosForm\ViewHelpers;
 
 class ElementViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
 {
+    /**
+     * @var boolean
+     */
+    protected $escapeChildren = false;
+
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Arguments initialization
+     *
+     * @return void
+     */
+    public function initializeArguments() 
+    {
+        parent::initializeArguments();
+        $this->registerArgument('element',     \Ameos\AmeosForm\Elements\ElementInterface::class, 'form element', false);
+        $this->registerArgument('class',       'string', 'class attribute', false);
+        $this->registerArgument('errorClass',  'string', 'class attribute when error', false);
+        $this->registerArgument('placeholder', 'string', 'placeholder attribute', false);
+        $this->registerArgument('style',       'string', 'style attribute', false);
+        $this->registerArgument('custom',      'string', 'custom attribute', false);
+    }
 
     /**
      * Renders form
-     *
-     * @param \Ameos\AmeosForm\Elements\ElementAbstract $form the form
-     * @param string $class css class
-     * @param string $errorClass css error class
-     * @param string $placeholder placeholder
-     * @param string $style style
-     * @param string $custom custom
+     * 
      * @return string html
      */
-    public function render($element, $class = '', $errorClass = '', $placeholder = '', $style = '', $custom = '') 
+    public function render() 
     {
-	if (!is_a($element, '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {
-		return '';
-	}
+        if (!is_a($this->arguments['element'], '\\Ameos\\AmeosForm\\Elements\\ElementInterface')) {
+            return '';
+        }
 
-	if ($class !== '')       { $element->addConfiguration('class', $class); }
-	if ($errorClass !== '')  { $element->addConfiguration('errorClass', $errorClass); }
-	if ($placeholder !== '') { $element->addConfiguration('placeholder', $placeholder); }
-	if ($style !== '')       { $element->addConfiguration('style', $style); }
-	if ($custom !== '')      { $element->addConfiguration('custom', $custom); }
-	
-	return $element->toHtml();
+        if ($this->arguments['class'] !== '')       { $this->arguments['element']->addConfiguration('class', $this->arguments['class']); }
+        if ($this->arguments['errorClass'] !== '')  { $this->arguments['element']->addConfiguration('errorClass', $this->arguments['errorClass']); }
+        if ($this->arguments['placeholder'] !== '') { $this->arguments['element']->addConfiguration('placeholder', $this->arguments['placeholder']); }
+        if ($this->arguments['style'] !== '')       { $this->arguments['element']->addConfiguration('style', $this->arguments['style']); }
+        if ($this->arguments['custom'] !== '')      { $this->arguments['element']->addConfiguration('custom', $this->arguments['custom']); }
+        
+        return $element->toHtml();
     }
 }

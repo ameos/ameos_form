@@ -18,24 +18,45 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
+    /**
+     * @var boolean
+     */
+    protected $escapeChildren = false;
 
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Arguments initialization
+     *
+     * @return void
+     */
+    public function initializeArguments() 
+    {
+        parent::initializeArguments();
+        $this->registerArgument('form',    \Ameos\AmeosForm\Form\AbstractForm::class, 'form instance', false);
+        $this->registerArgument('method',  'string', 'method attribute', false);
+        $this->registerArgument('enctype', 'string', 'method attribute', false);
+        $this->registerArgument('action',  'string', 'action attribute', false);
+        $this->registerArgument('class',   'string', 'class attribute', false);
+        $this->registerArgument('id',      'string', 'id attribute', false);
+    }
+    
     /**
      * Renders form
      *
-     * @param \Ameos\AmeosForm\Form\AbstractForm $form the form
-     * @param string $method method
-     * @param string $enctype enctype
-     * @param string $action action
-     * @param string $class class
-     * @param string $id id
      * @return string html
      */
-    public function render($form, $method = 'post', $enctype = 'multipart/form-data', $action = '', $class = '', $id = '') 
+    public function render() 
     {
-		$enctype = $enctype == '' ? '' : ' enctype="' . $enctype . '"';
-		$action  = $action  == '' ? '' : ' action="' . $action .'"';
-		$class   = $class   == '' ? '' : ' class="' . $class . '"';
-		$id      = $id      == '' ? '' : ' id="' . $id . '"';
+        $form = $this->arguments['form'];
+        $method  = $this->arguments['method']  == '' ? 'POST' : $this->arguments['method'];
+		$enctype = $this->arguments['enctype'] == '' ? '' : ' enctype="' . $this->arguments['enctype'] . '"';
+		$action  = $this->arguments['action']  == '' ? '' : ' action="' . $this->arguments['action'] .'"';
+		$class   = $this->arguments['class']   == '' ? '' : ' class="' . $this->arguments['class'] . '"';
+		$id      = $this->arguments['id']      == '' ? '' : ' id="' . $this->arguments['id'] . '"';
 
 		if (!is_object($form)) {
 			return 'Form is not valid. May be it\'s not assigned to the view.';

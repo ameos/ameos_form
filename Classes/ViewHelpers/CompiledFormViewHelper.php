@@ -16,15 +16,34 @@ namespace Ameos\AmeosForm\ViewHelpers;
 
 class CompiledFormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
 {
+    /**
+     * @var boolean
+     */
+    protected $escapeChildren = false;
+
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Arguments initialization
+     *
+     * @return void
+     */
+    public function initializeArguments() 
+    {
+        parent::initializeArguments();
+        $this->registerArgument('form', \Ameos\AmeosForm\Form\AbstractForm::class, 'form instance', false);
+    }
 
     /**
      * Renders form
      *
-     * @param \Ameos\AmeosForm\Form $form the form
      * @return string html
      */
-    public function render($form) 
+    public function render() 
     {
-		return $form->toHtml();
+		return $this->arguments['form']->toHtml();
     }
 }

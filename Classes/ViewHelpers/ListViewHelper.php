@@ -18,15 +18,34 @@ use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ListViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
 {
+    /**
+     * @var boolean
+     */
+    protected $escapeChildren = false;
+
+    /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Arguments initialization
+     *
+     * @return void
+     */
+    public function initializeArguments() 
+    {
+        parent::initializeArguments();
+        $this->registerArgument('list', \Ameos\AmeosForm\Library\RecordList::class, 'list', false);
+    }
 
     /**
      * Renders lister
      *
-     * @param \Ameos\AmeosForm\Library\RecordList $lister the lister
      * @return string html
      */
-    public function render($list) 
+    public function render() 
     {
-		return $list->render();
+		return $this->arguments['list']->render();
     }
 }
