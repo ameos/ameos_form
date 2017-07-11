@@ -1,8 +1,8 @@
 <?php
 
 $EM_CONF[$_EXTKEY] = [
-    'title'            => 'Form API',
-    'description'      => 'Form API for extbase and fluid',
+    'title'            => 'Test Form API',
+    'description'      => 'Test Form API for extbase and fluid',
     'category'         => 'misc',
     'author'           => 'Ameos team',
     'author_email'     => 'typo3dev@ameos.com',
@@ -13,11 +13,11 @@ $EM_CONF[$_EXTKEY] = [
     'state'            => 'stable',
     'internal'         => '',
     'uploadfolder'     => '0',
-    'createDirs'       => 'typo3temp/ameos_form/tempupload/',
+    'createDirs'       => '',
     'modify_tables'    => '',
     'clearCacheOnLoad' => 0,
     'lockType'         => '',
-    'version'          => '1.3.7',
+    'version'          => '1.3.8',
     'autoload'         => ['psr-4' => ['Ameos\\AmeosForm\\' => 'Classes']],
     'constraints'      => [
         'depends' => [
