@@ -1,8 +1,8 @@
 <?php
 
 $EM_CONF[$_EXTKEY] = [
-    'title'            => 'Test Form API',
-    'description'      => 'Test Form API for extbase and fluid',
+    'title'            => 'Form API',
+    'description'      => 'Form API for extbase and fluid',
     'category'         => 'misc',
     'author'           => 'Ameos team',
     'author_email'     => 'typo3dev@ameos.com',
