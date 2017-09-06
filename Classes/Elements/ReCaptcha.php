@@ -30,7 +30,11 @@ class ReCaptcha extends ElementAbstract
 	{
 		parent::__construct($absolutename, $name, $configuration, $form);
 
-        $GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile('https://www.google.com/recaptcha/api.js');
+        $onload          = isset($configuration['onload']) ? $configuration['onload'] : '';
+        $render          = isset($configuration['render']) ? $configuration['render'] : 'onload';
+        $language        = isset($configuration['language']) ? $configuration['language'] : '';
+
+        $GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile('https://www.google.com/recaptcha/api.js?onload=' . $onload . '&render=' . $render . '&hl=' . $language, 'text/javascript', FALSE, FALSE, '', TRUE);
 
 		$errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'ReCaptcha is not valid';
 		$constraint = GeneralUtility::makeInstance(
@@ -50,6 +54,13 @@ class ReCaptcha extends ElementAbstract
 	 */
 	public function toHtml() 
 	{
-        return '<div class="g-recaptcha" data-sitekey="' . $this->configuration['publicKey'] . '"></div>';
+        $theme           = isset($this->configuration['theme']) ? $this->configuration['theme'] : 'light';
+        $type            = isset($this->configuration['type']) ? $this->configuration['type'] : 'image';
+        $size            = isset($this->configuration['size']) ? $this->configuration['size'] : 'normal';
+        $tabindex        = isset($this->configuration['tabindex']) ? $this->configuration['tabindex'] : '0';
+        $callback        = isset($this->configuration['callback']) ? $this->configuration['callback'] : '';
+        $expiredcallback = isset($this->configuration['expired-callback']) ? $this->configuration['expired-callback'] : '';
+
+        return '<div class="g-recaptcha" data-sitekey="' . $this->configuration['publicKey'] . '" data-theme="' . $theme . '" data-type="' . $type . '" data-size="' . $size . '" data-tabindex="' . $tabindex . '" data-callback="' . $callback . '" data-expired-callback="' . $expiredcallback . '"></div>';
 	}
 }

@@ -480,6 +480,15 @@ Property      Description                          Default value           Examp
 ============  ===================================  ======================  ===================================================
 publicKey     Your api public key (required)
 privateKey    Your api private key (required)
+onload        The name of your callback function to be executed once all the dependencies have loaded. (optional)
+render        Whether to render the widget explicitly. Defaults to onload, which will render the widget in the first g-recaptcha tag it finds. (optional)
+language      Forces the widget to render in a specific language. Auto-detects the user's language if unspecified. (optional) Language codes: https://developers.google.com/recaptcha/docs/language    en-GB
+theme         The color theme of the widget (optional)  light              dark or light
+type          The type of CAPTCHA to serve (optional)  image               audio or image
+size          The size of the widget (optional)  normal                    compact or normal
+tabindex      The tabindex of the widget and challenge (optional)
+callback      The name of your callback function to be executed when the user submits a successful CAPTCHA response. The user's response, g-recaptcha-response, will be the input for your callback function. (optional)
+expired-callback  The name of your callback function to be executed when the recaptcha response expires and the user needs to solve a new CAPTCHA. (optional)
 errormessage  Message if the captcha is not valid  Captcha is not valid    Captcha is not valid
 ============  ===================================  ======================  ===================================================
 
