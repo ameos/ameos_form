@@ -8,7 +8,7 @@ Ameos Form
 		ameos_form
 
 	:Version:
-		1.3.9
+		1.3.10
 
 	:Language:
 		en
