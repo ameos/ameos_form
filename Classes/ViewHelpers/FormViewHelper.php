@@ -53,7 +53,7 @@ class FormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
     {
         $form = $this->arguments['form'];
         $method  = $this->arguments['method']  == '' ? 'POST' : $this->arguments['method'];
-		$enctype = $this->arguments['enctype'] == '' ? '' : ' enctype="' . $this->arguments['enctype'] . '"';
+		$enctype = $this->arguments['enctype'] == '' ? ' enctype="multipart/form-data"' : ' enctype="' . $this->arguments['enctype'] . '"';
 		$action  = $this->arguments['action']  == '' ? '' : ' action="' . $this->arguments['action'] .'"';
 		$class   = $this->arguments['class']   == '' ? '' : ' class="' . $this->arguments['class'] . '"';
 		$id      = $this->arguments['id']      == '' ? '' : ' id="' . $this->arguments['id'] . '"';

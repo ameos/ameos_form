@@ -34,7 +34,7 @@ class Radio extends ElementAbstract
 		foreach ($this->configuration['items'] as $value => $label) {
 			$checked = ($this->getValue() == $value) ? ' checked="checked"' : '';
 			$output.= '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '" type="radio" value="' . $value . '"' . $checked . $attributes . ' />' . 
-				'<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label><br />';
+				'<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>';
 		}
 		return $output;
 	}

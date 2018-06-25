@@ -59,6 +59,6 @@ class ElementViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
         if ($this->arguments['style'] !== '')       { $this->arguments['element']->addConfiguration('style', $this->arguments['style']); }
         if ($this->arguments['custom'] !== '')      { $this->arguments['element']->addConfiguration('custom', $this->arguments['custom']); }
         
-        return $element->toHtml();
+        return $this->arguments['element']->toHtml();
     }
 }
