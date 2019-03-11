@@ -62,7 +62,7 @@ class ErrorManager
 	protected $useLegacyFlashMessageHandling = false;
 	
 	/**
-	 * @constructor
+	 * @param	\Ameos\AmeosForm\Form $form form
 	 */
 	public function __construct($form) 
 	{

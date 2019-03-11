@@ -61,7 +61,6 @@ class RecordList
 	protected $defaultDirection; 
 	
 	/**
-	 * @constructor
 	 * @param \Ameos\AmeosForm\Form\AbstractForm $searchform search form
 	 * @param string $template template path
 	 * @param \TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext $context

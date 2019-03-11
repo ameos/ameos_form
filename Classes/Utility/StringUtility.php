@@ -19,16 +19,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class StringUtility 
-{
-	
+{	
 	/**
 	 * @var \Ameos\AmeosForm\Form $form form
 	 */
 	protected $form;
 
 	/**
-	 * @constuctor
-	 *
 	 * @param	\Ameos\AmeosForm\Form $form form
 	 */
 	public function __construct($form) 

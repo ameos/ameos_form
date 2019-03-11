@@ -31,7 +31,7 @@ final class Events
 	protected $registeredEvents = [];
 
 	/**
-	 * @constructor
+	 * singleton constructor
 	 */
 	private function __construct() 
 	{

@@ -17,12 +17,12 @@ $EM_CONF[$_EXTKEY] = [
     'modify_tables'    => '',
     'clearCacheOnLoad' => 0,
     'lockType'         => '',
-    'version'          => '1.3.11',
+    'version'          => '1.3.12',
     'autoload'         => ['psr-4' => ['Ameos\\AmeosForm\\' => 'Classes']],
     'constraints'      => [
         'depends' => [
-            'typo3' => '6.2.0-8.7.99',
-            'php'   => '5.4.1-7.2.99'
+            'typo3' => '7.6.0-9.5.99',
+            'php'   => '7.0.0-7.2.99'
         ],
         'conflicts' => [],
         'suggests'  => [],
