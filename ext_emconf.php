@@ -17,7 +17,7 @@ $EM_CONF[$_EXTKEY] = [
     'modify_tables'    => '',
     'clearCacheOnLoad' => 0,
     'lockType'         => '',
-    'version'          => '1.3.13',
+    'version'          => '1.4',
     'autoload'         => ['psr-4' => ['Ameos\\AmeosForm\\' => 'Classes']],
     'constraints'      => [
         'depends' => [
