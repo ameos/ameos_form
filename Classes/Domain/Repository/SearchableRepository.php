@@ -56,7 +56,8 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 					break;
 
 				default:
-					return $query->$clause['type']($clause['field'], $clause['value']);
+					$type = (string)$clause['type'];
+					return $query->$type($clause['field'], $clause['value']);
 					break;
 			}
 		}
