@@ -44,6 +44,9 @@ class SortlinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBas
      */
     public function render() 
     {
+        if(empty($this->controllerContext))
+            $this->controllerContext = $this->renderingContext->getControllerContext();
+
         $column = $this->arguments['column'];
         $uriBuilder = $this->controllerContext->getUriBuilder();
 
