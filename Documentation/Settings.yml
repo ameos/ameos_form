@@ -11,7 +11,7 @@ conf.py:
   copyright: 2014-2017
   project: Ameos Form
   version: 1.4
-  release: 1.4.0
+  release: 1.4.5
   html_theme_options:
     github_repository: ameos/ameos_form
     github_branch: master

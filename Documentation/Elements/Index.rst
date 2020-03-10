@@ -212,9 +212,9 @@ You can add a date picker like this.
 
 Available configuration
 
-===================  ============================================================  ======================  ===================================================
+===================  ============================================================  ======================  ======================================================
 Property             Description                                                    Default value           Example
-===================  ============================================================  ======================  ===================================================
+===================  ============================================================  ======================  ======================================================
 format               date format (http://momentjs.com/docs/#/displaying/format/)   D MMM YYYY              MMM D YYYY
 placeholder          place holder for the html tag                                                         my firstname
 style                css style for the html tag                                                            width: 150px;
@@ -223,7 +223,13 @@ title                html tag title                                             
 custom               custom html attribute                                                                 customattr="customvalue"
 class                css class for the html tag                                                            big
 errorclass           css class when there is an error                                                      error
-===================  ============================================================  ======================  ===================================================
+minDate              unix timestamp for minimum date available                                             1583836842
+maxDate              unix timestamp for maximum date available                                             1589107240
+disableDays          array of array of specific days, days of week, months, years                          ['d' => [1, 2]] for mondays and tuesdays (0 = sunday)
+				                                                                                           ['m' => [1, 4]] for february and may (0 = january)
+				 																						   ['y' => [2015]] for year 2015
+				                                                                                           ['ts' => [1582215827]] for specific days (20/02/2020)
+===================  ============================================================  ======================  ======================================================
 
 
 .. _elements-dropdown:
