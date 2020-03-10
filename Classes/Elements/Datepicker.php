@@ -75,7 +75,24 @@ class Datepicker extends ElementAbstract
 					7: "' . LocalizationUtility::translate('weekdaysShort.7', 'AmeosForm') . '"
 				}
 			};
-			initDatepicker("' . $this->getHtmlId() . '", "' . $this->configuration['format'] . '", i18n);
+			var dateRange = {};'
+			.
+				/* *1000 to convert unix timestamp to js timestamp */
+				(isset($configuration['minDate']) ? 'dateRange.minDate = new Date(' . $configuration['minDate'] . '*1000);' : '') .
+				(isset($configuration['maxDate']) ? 'dateRange.maxDate = new Date(' . $configuration['maxDate'] . '*1000);' : '')
+			.
+			'var disableDays = undefined;'
+			.
+				/* Array of days to disable eg. mondays, wednesday + 20/02/2020 [d => [1, 3], ts => [1582215827]] */
+				/* Array of keyValue pair
+				 * ['d' => [1, 3]] for monday, wednesday (0 = sunday, 6 = saturday)
+				 * ['m' => [1, 4]] for february, may (0 = january, 11 = december)
+				 * ['y' => [2015]] for 2015
+				 * ['ts' => [1582215827]] for specific days (20/02/2020)
+				 */
+				(isset($configuration['disableDays']) ? 'var disableDays = ' . \json_encode($configuration['disableDays']) . ';': '')
+			.
+			'initDatepicker("' . $this->getHtmlId() . '", "' . $this->configuration['format'] . '", i18n, dateRange, disableDays);
 		');
 	}
 	
