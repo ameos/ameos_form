@@ -223,6 +223,10 @@ title                html tag title                                             
 custom               custom html attribute                                                                 customattr="customvalue"
 class                css class for the html tag                                                            big
 errorclass           css class when there is an error                                                      error
+firstDay             define which day of the week must be the first                0 (sunday)              1
+landingDate          unix timestamp from which will be extracted year and month    current day             1484152522 (for january 2017)
+                     that will be displayed upon user click
+yearRange            array of start and end year to display in the year dropdown   [Year - 10, Year]       [2015, 2020]
 minDate              unix timestamp for minimum date available                                             1583836842
 maxDate              unix timestamp for maximum date available                                             1589107240
 disableDays          array of array of specific days, days of week, months, years                          ['d' => [1, 2]] for mondays and tuesdays (0 = sunday)

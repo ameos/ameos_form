@@ -1,14 +1,25 @@
-initDatepicker = function(id, format, translation, dateRange, disableDays) {
+initDatepicker = function(id, format, translation, configuration) {
 
-	var minDate = -1, maxDate = -1;
+	var minDate = -1, maxDate = -1, firstDay = 0;
+	var currentYear = new Date().getFullYear();
+	var yearRange = [currentYear - 10, currentYear];
+	var disableDays = undefined, landingDate = undefined;
 
-	if(dateRange !== undefined)
+	if(configuration['minDate'] !== undefined)
+		minDate = configuration['minDate'];
+	if(configuration['maxDate'] !== undefined)
+		maxDate = configuration['maxDate'];
+	if(configuration['disableDays'] !== undefined)
+		disableDays = configuration['disableDays'];
+	if(configuration['landingDate'] !== undefined)
 	{
-		if(dateRange['minDate'] !== undefined)
-			minDate = dateRange['minDate'];
-		if(dateRange['maxDate'] !== undefined)
-			maxDate = dateRange['maxDate'];
+		landingDate = configuration['landingDate'];
+		yearRange = [landingDate.getFullYear() - 10, currentYear];
 	}
+	if(configuration['firstDay'] !== undefined)
+		firstDay = configuration['firstDay'];
+	if(configuration['yearRange'] !== undefined)
+		yearRange = configuration['yearRange'];
 
 	var datepicker = new Pikaday({
 		field: document.getElementById(id + "-datepicker"),
@@ -49,6 +60,8 @@ initDatepicker = function(id, format, translation, dateRange, disableDays) {
 				i18n.weekdaysShort[7]
 			]
 		},
+		firstDay: firstDay,
+		yearRange: yearRange,
 		minDate: minDate,
 		maxDate: maxDate,
 		// Callback on each day created, return true to disable it
@@ -86,7 +99,7 @@ initDatepicker = function(id, format, translation, dateRange, disableDays) {
 				if(disableDays['ts'] !== undefined)
 				{
 					disableDays['ts'].forEach(function(ts){
-						var tsDate = new Date(ts * 1000);
+						var tsDate = new Date(ts);
 						if(date.getFullYear().toString() + date.getMonth().toString() + date.getDate().toString() === tsDate.getFullYear().toString() + tsDate.getMonth().toString() + tsDate.getDate().toString())
 							isDisabled = true;
 					});
@@ -99,6 +112,12 @@ initDatepicker = function(id, format, translation, dateRange, disableDays) {
 			document.getElementById(id).value = moment(value).format("X");
 		}
 	});
+
+	if(landingDate !== undefined)
+	{
+        datepicker.gotoYear(landingDate.getFullYear().toString());
+        datepicker.gotoMonth(landingDate.getMonth().toString());
+	}
 
 	if(document.getElementById(id + "-datepicker").addEventListener) {
 		document.getElementById(id + "-datepicker").addEventListener("change", function() {

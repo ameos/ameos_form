@@ -8,10 +8,10 @@
 
 ---
 conf.py:
-  copyright: 2014-2017
+  copyright: 2014-2020
   project: Ameos Form
   version: 1.4
-  release: 1.4.5
+  release: 1.4.6
   html_theme_options:
     github_repository: ameos/ameos_form
     github_branch: master

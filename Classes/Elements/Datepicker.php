@@ -33,6 +33,22 @@ class Datepicker extends ElementAbstract
         
 		if (!isset($this->configuration['format'])) $this->configuration['format'] = 'D MMM YYYY';
 
+		// Convert UNIX timestamp (sec) to JavaScript timestamp (millisec)
+		if(array_key_exists('minDate', $this->configuration))
+			$this->configuration['minDate'] *= 1000;
+		if(array_key_exists('maxDate', $this->configuration))
+			$this->configuration['maxDate'] *= 1000;
+		if(array_key_exists('disableDays', $this->configuration))
+		{
+			if(array_key_exists('ts', $this->configuration['disableDays']))
+			{
+				foreach($this->configuration['disableDays']['ts'] as $index => $val)
+					$this->configuration['disableDays']['ts'][$index] = $val * 1000;
+			}
+		}
+		if(array_key_exists('landingDate', $this->configuration))
+			$this->configuration['landingDate'] *= 1000;
+
 		$this->pageRenderer->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/css/pikaday.css');
 		$this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Momentjs/moment.js');
 		$this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/pikaday.js');
@@ -75,14 +91,11 @@ class Datepicker extends ElementAbstract
 					7: "' . LocalizationUtility::translate('weekdaysShort.7', 'AmeosForm') . '"
 				}
 			};
-			var dateRange = {};'
+			var configuration = {};'
 			.
 				/* *1000 to convert unix timestamp to js timestamp */
-				(isset($configuration['minDate']) ? 'dateRange.minDate = new Date(' . $configuration['minDate'] . '*1000);' : '') .
-				(isset($configuration['maxDate']) ? 'dateRange.maxDate = new Date(' . $configuration['maxDate'] . '*1000);' : '')
-			.
-			'var disableDays = undefined;'
-			.
+				(isset($this->configuration['minDate']) ? 'configuration.minDate = new Date(' . $this->configuration['minDate'] . ');' : '') .
+				(isset($this->configuration['maxDate']) ? 'configuration.maxDate = new Date(' . $this->configuration['maxDate'] . ');' : '') .
 				/* Array of days to disable eg. mondays, wednesday + 20/02/2020 [d => [1, 3], ts => [1582215827]] */
 				/* Array of keyValue pair
 				 * ['d' => [1, 3]] for monday, wednesday (0 = sunday, 6 = saturday)
@@ -90,9 +103,12 @@ class Datepicker extends ElementAbstract
 				 * ['y' => [2015]] for 2015
 				 * ['ts' => [1582215827]] for specific days (20/02/2020)
 				 */
-				(isset($configuration['disableDays']) ? 'var disableDays = ' . \json_encode($configuration['disableDays']) . ';': '')
+				(isset($this->configuration['disableDays']) ? 'configuration.disableDays = ' . \json_encode($this->configuration['disableDays']) . ';' : '') .
+				(isset($this->configuration['landingDate']) ? 'configuration.landingDate = new Date(' . $this->configuration['landingDate'] . ');' : '') . 
+				(isset($this->configuration['firstDay']) ? 'configuration.firstDay = ' . $this->configuration['firstDay'] . ';' : '') .
+				(isset($this->configuration['yearRange']) ? 'configuration.yearRange = ' . \json_encode($this->configuration['yearRange']) . ';' : '')
 			.
-			'initDatepicker("' . $this->getHtmlId() . '", "' . $this->configuration['format'] . '", i18n, dateRange, disableDays);
+			'initDatepicker("' . $this->getHtmlId() . '", "' . $this->configuration['format'] . '", i18n, configuration);
 		');
 	}
 	
