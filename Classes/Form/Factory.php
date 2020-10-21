@@ -30,22 +30,33 @@ class Factory
      * @return AbstractForm the form
      * @throws \Exception
      */
-    public static function make()
+    public static function make(...$arguments)
     {
-        $arguments = func_get_args();
-        if (is_string($arguments[0]) && is_a($arguments[1], SearchableRepository::class)) {
+        if (
+            is_string($arguments[0])
+            && isset($arguments[1])
+            && is_a($arguments[1], SearchableRepository::class)
+        ) {
             return GeneralUtility::makeInstance(FormSearch\ExtbaseForm::class, $arguments[0], $arguments[1]);
         }
 
-        if (is_string($arguments[0]) && is_a($arguments[1], Repository::class)) {
+        if (
+            is_string($arguments[0])
+            && isset($arguments[1])
+            && is_a($arguments[1], Repository::class)
+        ) {
             throw new \Exception('Your repository must extends ' . SearchableRepository::class);
         }
 
-        if (is_string($arguments[0]) && is_a($arguments[1], AbstractEntity::class)) {
+        if (
+            is_string($arguments[0])
+            && isset($arguments[1])
+            && is_a($arguments[1], AbstractEntity::class)
+        ) {
             return GeneralUtility::makeInstance(FormCrud\ExtbaseForm::class, $arguments[0], $arguments[1]);
         }
 
-        if (is_string($arguments[0]) && is_string($arguments[1])) {
+        if (is_string($arguments[0]) && isset($arguments[1]) && is_string($arguments[1])) {
             if (isset($arguments[2])) {
                 return GeneralUtility::makeInstance(FormCrud\ClassicForm::class, $arguments[0], $arguments[1], (int)$arguments[2]);
             } else {
