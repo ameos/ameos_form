@@ -15,7 +15,7 @@ namespace Ameos\AmeosForm\Tests\Unit\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class DropdownTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
 
     /**

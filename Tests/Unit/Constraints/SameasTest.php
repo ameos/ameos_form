@@ -15,7 +15,7 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class SameasTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
 
     /**

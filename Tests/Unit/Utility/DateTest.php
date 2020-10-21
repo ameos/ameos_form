@@ -15,7 +15,7 @@ namespace Ameos\AmeosForm\Tests\Unit\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
-class DateTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class DateTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
 
     /**

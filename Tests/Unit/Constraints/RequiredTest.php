@@ -15,7 +15,7 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-class RequiredTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class RequiredTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
 
     /**
@@ -23,6 +23,7 @@ class RequiredTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
      */
     public function requiredIsValid()
     {
+        define(TYPO3_MODE, 'FE');
         $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
         $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'required', 'field mandatory');
 
