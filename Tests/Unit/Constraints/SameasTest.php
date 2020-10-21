@@ -14,12 +14,14 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+{
 
 	/**
 	 * @test
 	 */
-	public function sameasIsValid() {
+	public function sameasIsValid()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken();
 		$form->add('input-text-1', 'text');
@@ -37,7 +39,8 @@ class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function sameasIsNotValid() {
+	public function sameasIsNotValid()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken();
 		$form->add('input-text-1', 'text');

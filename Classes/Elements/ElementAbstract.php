@@ -150,7 +150,7 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * add configuration
      *
-     * @alias    addConfiguration
+     * alias    addConfiguration
      * @param    string    $key configuration key
      * @param    string    $value value
      * @return     \Ameos\AmeosForm\Elements\ElementAbstract this

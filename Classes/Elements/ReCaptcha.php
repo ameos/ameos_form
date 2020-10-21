@@ -15,6 +15,7 @@ namespace Ameos\AmeosForm\Elements;
  */
  
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Ameos\AmeosForm\Constraints\ReCaptcha as ReCaptchaConstraint;
 
 class ReCaptcha extends ElementAbstract 
 {
@@ -38,7 +39,7 @@ class ReCaptcha extends ElementAbstract
 
         $errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'ReCaptcha is not valid';
         $constraint = GeneralUtility::makeInstance(
-            'Ameos\\AmeosForm\\Constraints\\ReCaptcha',
+            ReCaptchaConstraint::class,
             $errorMessage,
             ['privateKey' => $configuration['privateKey']],
             $this,

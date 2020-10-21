@@ -16,7 +16,7 @@ namespace Ameos\AmeosForm\Constraints;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-class ReCaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
+class Numericcaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
 {
 	
 	/**
@@ -27,14 +27,12 @@ class ReCaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 	 */
 	public function isValid($value) 
 	{
-        require_once ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/ReCaptcha/autoload.php';
-
-        $recaptcha = new \ReCaptcha\ReCaptcha($this->configuration['privateKey']);
-        $response  = $recaptcha->verify($_POST['g-recaptcha-response']);
-        
-        if ($response->isSuccess()) {
-            return true;
-        }
-        return false;
+		if(!(intval($value) === $this->element->getDigit(1) + $this->element->getDigit(2))){
+			$this->element->reloadDigit(1);
+			$this->element->reloadDigit(2);
+			return false;
+		}else{
+			return true;
+		}
 	}
 }

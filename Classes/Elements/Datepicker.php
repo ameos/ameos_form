@@ -119,7 +119,7 @@ class Datepicker extends ElementAbstract
 	 */
 	public function toHtml() 
 	{
-		return '<input type="text" id="' . $this->getHtmlId() . '-datepicker" name="' . $this->absolutename . '-datepicker" ' . $this->getAttributes() . ' />'
+		return '<input type="text" autocomplete="off" id="' . $this->getHtmlId() . '-datepicker" name="' . $this->absolutename . '-datepicker" ' . $this->getAttributes() . ' />'
 			. '<input type="hidden" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '" />';
 	}
 

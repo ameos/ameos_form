@@ -75,7 +75,7 @@ class ExtbaseForm extends \Ameos\AmeosForm\Form\Search
 			} else {
 				$GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
 			}
-			$GLOBALS['TSFE']->storeSessionData();
+			$GLOBALS['TSFE']->fe_user->storeSessionData();
 		}
 		
 		$clauses = array_merge($this->clauses, $this->defaultClause);		

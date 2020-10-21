@@ -16,6 +16,7 @@ namespace Ameos\AmeosForm\Form;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
+use Ameos\AmeosForm\Constraints;
 
 class Crud extends \Ameos\AmeosForm\Form\AbstractForm 
 {
@@ -50,7 +51,7 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm
 	 * @param	string	$message message
 	 * @param	array	$configuration configuration
 	 * @return	\Ameos\AmeosForm\Form this
-	 * @alias 	addConstraint
+	 * alias 	addConstraint
 	 */
 	public function validator($elementName, $type, $message, $configuration = []) 
 	{
@@ -70,15 +71,15 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm
 	{
 		if ($this->has($elementName)) {
 			switch ($type) {
-				case 'email':         $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Email',         $message, $configuration, $this->getElement($elementName), $this); break;
-				case 'sameas':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Sameas',        $message, $configuration, $this->getElement($elementName), $this); break;
-				case 'unique':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Unique',        $message, $configuration, $this->getElement($elementName), $this); break;
-				case 'fileextension': $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Fileextension', $message, $configuration, $this->getElement($elementName), $this); break;
-				case 'filesize':      $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Filesize',      $message, $configuration, $this->getElement($elementName), $this); break;
-				case 'captcha':       $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Captcha',       $message, $configuration, $this->getElement($elementName), $this); break;
-				case 'custom':        $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Custom',        $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'email':         $constraint = GeneralUtility::makeInstance(Constraints\Email::class,         $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'sameas':        $constraint = GeneralUtility::makeInstance(Constraints\Sameas::class,        $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'unique':        $constraint = GeneralUtility::makeInstance(Constraints\Unique::class,        $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'fileextension': $constraint = GeneralUtility::makeInstance(Constraints\Fileextension::class, $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'filesize':      $constraint = GeneralUtility::makeInstance(Constraints\Filesize::class,      $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'captcha':       $constraint = GeneralUtility::makeInstance(Constraints\Captcha::class,       $message, $configuration, $this->getElement($elementName), $this); break;
+				case 'custom':        $constraint = GeneralUtility::makeInstance(Constraints\Custom::class,        $message, $configuration, $this->getElement($elementName), $this); break;
 				case 'required':      // no-break
-				default:              $constraint = GeneralUtility::makeInstance('Ameos\\AmeosForm\\Constraints\\Required',      $message, $configuration, $this->getElement($elementName), $this); break;
+				default:              $constraint = GeneralUtility::makeInstance(Constraints\Required::class,      $message, $configuration, $this->getElement($elementName), $this); break;
 			}
 			
 			$this->get($elementName)->addConstraint($constraint);

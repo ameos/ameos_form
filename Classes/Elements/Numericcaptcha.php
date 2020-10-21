@@ -15,9 +15,9 @@ namespace Ameos\AmeosForm\Elements;
  */
  
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Ameos\AmeosForm\Constraints\Captcha as CaptchaConstraint;
+use Ameos\AmeosForm\Constraints\Numericcaptcha as NumericcaptchaConstraint;
 
-class Captcha extends ElementAbstract 
+class Numericcaptcha extends ElementAbstract 
 {
 
 	/**
@@ -31,10 +31,27 @@ class Captcha extends ElementAbstract
 	public function __construct($absolutename, $name, $configuration = [], $form) 
 	{
 		parent::__construct($absolutename, $name, $configuration, $form);
-
-		$errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'Captcha is not valid';
-		$constraint = GeneralUtility::makeInstance(CaptchaConstraint::class, $errorMessage, [], $this, $form);
+		if(!$this->form->isSubmitted()){
+			$this->reloadDigit(1);
+			$this->reloadDigit(2);
+		}
+		$errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'Numeric captcha is not valid';
+		$constraint = GeneralUtility::makeInstance(NumericcaptchaConstraint::class, $errorMessage, [], $this, $form);
 		$this->addConstraint($constraint);
+	}
+
+	public function reloadDigit($key){
+		$sessionKey = 'form-'.$this->form->getIdentifier().'-'.$this->getHtmlId().'-digit-'.$key;
+		$GLOBALS['TSFE']->fe_user->setKey("ses",$sessionKey,FALSE);
+		$this->getDigit($key);
+	}
+
+	public function getDigit($key){
+		$sessionKey = 'form-'.$this->form->getIdentifier().'-'.$this->getHtmlId().'-digit-'.$key;
+		if($GLOBALS["TSFE"]->fe_user->getKey("ses",$sessionKey) == FALSE){
+			$GLOBALS['TSFE']->fe_user->setKey("ses",$sessionKey,rand(1,9));
+		}
+		return $GLOBALS["TSFE"]->fe_user->getKey("ses",$sessionKey);
 	}
 	
 	/**
@@ -45,29 +62,10 @@ class Captcha extends ElementAbstract
 	public function toHtml() 
 	{
 		$sid = md5(uniqid());
-		return $this->renderCaptchaPicture() . $this->renderCaptchaRefresh() . $this->renderCaptchaInput();
+		return $this->renderLabel() . $this->renderCaptchaInput();
 	}
 
-	/**
-	 * render captcha picture
-	 * @return string html
-	 */
-	protected function renderCaptchaPicture() 
-	{
-		return '<img id="' . $this->getHtmlId() . '-image" src="/typo3conf/ext/ameos_form/Resources/Public/Captcha/securimage_show.php?sid=' . $sid . '" alt="CAPTCHA Image" />';
-	}
 
-	/**
-	 * render refresh captcha
-	 * @return string html
-	 */
-	protected function renderCaptchaRefresh() 
-	{
-		return '<a href="#" title="Refresh Image" onclick="document.getElementById(\'' . $this->getHtmlId() . '-image\').src = \'/typo3conf/ext/ameos_form/Resources/Public/Captcha/securimage_show.php?sid=\' + Math.random(); this.blur(); return false">
-				<img src="/typo3conf/ext/ameos_form/Resources/Public/Captcha/images/refresh.png" alt="Reload Image" onclick="this.blur()" />
-			</a>';
-	}
-	
 	/**
 	 * render captcha picture
 	 * @return string html
@@ -75,6 +73,14 @@ class Captcha extends ElementAbstract
 	protected function renderCaptchaInput() 
 	{
 		return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
+	}
+
+	protected function renderLabel(){
+		return '<label for="' . $this->getHtmlId() . '">'. $this->renderOperation(). '</label>';
+	}
+
+	protected function renderOperation(){
+		return $this->getDigit(1).' + '.$this->getDigit(2);
 	}
 	
 	/**
@@ -85,9 +91,9 @@ class Captcha extends ElementAbstract
 	public function getRenderingInformation() 
 	{
 		$data = parent::getRenderingInformation();
-		$data['captcha'] = $this->renderCaptchaPicture();
-		$data['refresh'] = $this->renderCaptchaRefresh();
 		$data['input']   = $this->renderCaptchaInput();
+		$data['label']   = $this->renderLabel();
+		$data['operation']   = $this->renderOperation();
 		return $data;
 	}
 }

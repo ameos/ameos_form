@@ -14,12 +14,14 @@ namespace Ameos\AmeosForm\Tests\Unit\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class GeneralTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class GeneralTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+{
 
 	/**
 	 * @test
 	 */
-	public function elementRenderer() {
+	public function elementRenderer()
+	{
 		$expectedResult = '<input type="text" id="tx_ameosform-unittest_input-text" '
 			. 'name="tx_ameosform-unittest[input-text]" '
 			. 'value="my-value" '
@@ -47,7 +49,8 @@ class GeneralTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function elementRendereringInformation() {
+	public function elementRendereringInformation()
+	{
 		$expectedHtmlResult = '<input type="text" id="tx_ameosform-unittest_input-text" '
 			. 'name="tx_ameosform-unittest[input-text]" '
 			. 'value="my-value" '

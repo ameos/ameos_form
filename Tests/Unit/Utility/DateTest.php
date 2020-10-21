@@ -14,7 +14,8 @@ namespace Ameos\AmeosForm\Tests\Unit\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
-class DateTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class DateTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+{
 
 	/**
 	 * @test
@@ -38,7 +39,8 @@ class DateTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function timestampToDate() {
+	public function timestampToDate()
+	{
 		$expectedResult = [
 			'1135582400' => '2005 12 26',
 			'1135882400' => '29/12/2005 - 19:53:20',

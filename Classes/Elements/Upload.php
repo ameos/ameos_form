@@ -15,6 +15,8 @@ namespace Ameos\AmeosForm\Elements;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Resource\StorageRepository;
 use Ameos\AmeosForm\Utility\Events;
 use Ameos\AmeosForm\Utility\StringUtility;
 
@@ -45,8 +47,8 @@ class Upload extends ElementAbstract
         if (isset($this->configuration['directory'])) {
             $this->configuration['directory'] = $this->form->stringUtility->smart($this->configuration['directory']);
         }
-        if (!file_exists(PATH_site . 'typo3temp/ameos_form/tempupload/')) {
-            GeneralUtility::mkdir_deep(PATH_site . 'typo3temp/', 'ameos_form/tempupload/');
+        if (!file_exists(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/')) {
+            GeneralUtility::mkdir_deep(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/');
         }
     }
 
@@ -61,14 +63,14 @@ class Upload extends ElementAbstract
         $output = '';
         if ($this->getValue() && !(isset($this->configuration['show_link']) && (bool)$this->configuration['show_link'] === false)) {
             if ($this->uploadState == 'temporary-upload') {
-                $values = GeneralUtility::trimExplode(',', $this->getValue());                
+                $values = $this->getValue();    
                 foreach ($values as $value) {                
                     $output.= '<a target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '">Voir le fichier ' . $value . '</a> ';
                     $output.= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
                 }
                 
             } else {
-                $values = GeneralUtility::trimExplode(',', $this->getValue());
+                $values = $this->getValue();
                 foreach ($values as $value) {
                     $output.= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '">Voir le fichier ' . $value . '</a> ';
                 }
@@ -77,6 +79,17 @@ class Upload extends ElementAbstract
         }
         $output .= '<input type="file" ' . $multiple . 'id="' . $this->getHtmlId() . '-upload" name="' . $this->absolutename . '[upload][]"' . $this->getAttributes() . ' />';
         return $output;
+    }
+
+    /**
+     * return the value
+     *
+     * @return    string value
+     */
+    public function getValue() 
+    {
+        $value = parent::getValue();
+        return $value;
     }
 
     /**
@@ -142,7 +155,7 @@ class Upload extends ElementAbstract
                     
                     Events::getInstance($this->form->getIdentifier())->registerEvent('form_is_valid', [$this, 'moveTemporaryUploadedFile'], [
                         'destinationFilepath' => $directory . $filename,
-                        'temporaryFilepath'   => PATH_site . 'typo3temp/ameos_form/tempupload/' . $value['temporary'],
+                        'temporaryFilepath'   => Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/' . $value['temporary'],
                     ]);
                         
                     $this->uploadState = 'temporary-upload';
@@ -211,7 +224,7 @@ class Upload extends ElementAbstract
      */
     protected function getUploadDirectory() 
     {
-        return PATH_site . trim($this->configuration['directory'], '/') . '/';
+        return Environment::getPublicPath() . '/' . trim($this->configuration['directory'], '/') . '/';
     }
 
     /**
@@ -256,7 +269,7 @@ class Upload extends ElementAbstract
      */
     protected function getTemporaryUpdateFilepath($clientFilename) 
     {
-        $directory = PATH_site . 'typo3temp/ameos_form/tempupload/';
+        $directory = Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/';
         if (file_exists($directory . $clientFilename)) {
             $fileIndex = 1;
             do {
@@ -295,15 +308,25 @@ class Upload extends ElementAbstract
         $this->uploadState = 'upload';
         if (isset($this->configuration['fal']) && (bool)$this->configuration['fal'] === true) {
             $storageIdentifier = isset($this->configuration['storageIdentifier']) ? (int)$this->configuration['storageIdentifier'] : 1;
-            $storageRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Resource\\StorageRepository'); 
+            $storageRepository = GeneralUtility::makeInstance(StorageRepository::class); 
             $storage = $storageRepository->findByUid($storageIdentifier);
-            $fileObject = $storage->addFile($temporaryFilepath, $storage->getRootLevelFolder(), $destinationFilepath);
-        //debug($destinationFilepath);
-        //debug($fileObject->getUid());
+
+            $folderIdentifier = str_replace(
+                $storage->getConfiguration()['basePath'],
+                '',
+                $this->configuration['directory']
+            );
+
+            $fileObject = $storage->addFile(
+                $temporaryFilepath,
+                $storage->getFolder($folderIdentifier),
+                basename($destinationFilepath)
+            );
+            $this->setValue($fileObject);
 
         } else {
             rename($temporaryFilepath, $destinationFilepath);
-            $this->setValue(basename($destinationFilepath));    
+            $this->setValue(basename($destinationFilepath));
         }
     }
 }

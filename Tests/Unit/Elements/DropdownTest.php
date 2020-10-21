@@ -14,12 +14,14 @@ namespace Ameos\AmeosForm\Tests\Unit\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class DropdownTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class DropdownTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+{
 
 	/**
 	 * @test
 	 */
-	public function elementRenderer() {
+	public function elementRenderer()
+	{
 		$expectedResult = '<select id="tx_ameosform-unittest_my-select" name="tx_ameosform-unittest[my-select]" '
 			. 'placeholder="Here your value" '
 			. 'style="display: block;" '
@@ -51,7 +53,8 @@ class DropdownTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function elementRendereringInformation() {
+	public function elementRendereringInformation()
+	{
 		$expectedHtmlResult = '<select id="tx_ameosform-unittest_my-select" name="tx_ameosform-unittest[my-select]" '
 			. 'placeholder="Here your value" '
 			. 'style="display: block;" '

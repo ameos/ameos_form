@@ -14,7 +14,7 @@ namespace Ameos\AmeosForm\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
-class CompiledFormViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper 
+class CompiledFormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper 
 {
     /**
      * @var boolean

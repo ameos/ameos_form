@@ -16,8 +16,11 @@ namespace Ameos\AmeosForm\Form;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use Ameos\AmeosForm\Utility\FormUtility;
 use Ameos\AmeosForm\Utility\Events;
+use Ameos\AmeosForm\Utility\StringUtility as AmeosStringUtility;
+use Ameos\AmeosForm\Utility\ErrorManager;
 
 abstract class AbstractForm 
 {
@@ -78,10 +81,10 @@ abstract class AbstractForm
 		$this->identifier = $identifier;
 		$this->enableCsrftoken = TYPO3_MODE == 'FE' ? true : false;
 
-		$this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 		
-		$this->stringUtility = $this->objectManager->get('Ameos\\AmeosForm\\Utility\\StringUtility', $this);
-		$this->errorManager  = $this->objectManager->get('Ameos\\AmeosForm\\Utility\\ErrorManager', $this);
+		$this->stringUtility = $this->objectManager->get(AmeosStringUtility::class, $this);
+		$this->errorManager  = $this->objectManager->get(ErrorManager::class, $this);
 	}
 	
 	/**
@@ -240,7 +243,7 @@ abstract class AbstractForm
 
 	/**
 	 * return element
-	 * @alias getElement
+	 * alias getElement
 	 * @param	string $name element name
 	 * @return 	\Ameos\AmeosForm\Elements\ElementInterface
 	 */
@@ -251,7 +254,7 @@ abstract class AbstractForm
 
 	/**
 	 * return TRUE if element exist
-	 * @alias hasElement
+	 * alias hasElement
 	 * @param	string $name element name
 	 * @return 	bool
 	 */
@@ -303,7 +306,7 @@ abstract class AbstractForm
 		if (!$this->isSubmitted()) {
 			$csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
 			$GLOBALS['TSFE']->fe_user->setKey('ses', $this->getIdentifier() . '-csrftoken', $csrftoken);
-			$GLOBALS['TSFE']->storeSessionData();
+			$GLOBALS['TSFE']->fe_user->storeSessionData();
 		} else {
 			$csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken');
 		}

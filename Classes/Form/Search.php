@@ -40,7 +40,7 @@ abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm
             } else {
                 $GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
             }
-            $GLOBALS['TSFE']->storeSessionData();
+            $GLOBALS['TSFE']->fe_user->storeSessionData();
         } elseif (TYPO3_MODE == 'BE') {
             session_start();
             $_SESSION['form-' . $this->getIdentifier() . '-clauses'] = $this->clauses;

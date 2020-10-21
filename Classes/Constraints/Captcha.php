@@ -14,7 +14,7 @@ namespace Ameos\AmeosForm\Constraints;
  * The TYPO3 project - inspiring people to share!
  */
 
-use \TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class Captcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
 {

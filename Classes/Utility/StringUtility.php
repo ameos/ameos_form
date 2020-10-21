@@ -87,7 +87,7 @@ class StringUtility
 		if (substr($string, 0, 8) === 'EXTCONF:') {
 			$path = str_replace('EXTCONF:', '', $string);
 			$parts = GeneralUtility::trimExplode('/', $path);
-			$string = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'];
+			$string = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'];
 			foreach ($parts as $part) {
 				if (!isset($string[$part])) {
 					$string = '';

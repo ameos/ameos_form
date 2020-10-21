@@ -15,6 +15,7 @@ namespace Ameos\AmeosForm\Library;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\View\StandaloneView;
 use Ameos\AmeosForm\Utility\Events;
 
 class RecordList 
@@ -83,7 +84,7 @@ class RecordList
 	 */ 
 	protected function initializeView()
 	{
-		$this->view = GeneralUtility::makeInstance('TYPO3\\CMS\\Fluid\\View\\StandaloneView');	
+		$this->view = GeneralUtility::makeInstance(StandaloneView::class);	
 		$this->view->setControllerContext($this->context);
 		$this->view->setTemplatePathAndFilename($this->template);
 	}

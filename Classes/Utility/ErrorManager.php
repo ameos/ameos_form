@@ -14,15 +14,16 @@ namespace Ameos\AmeosForm\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
-use \TYPO3\CMS\Core\Messaging\AbstractMessage;
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
 
 class ErrorManager 
 {
 
 	/**
 	 * @var \TYPO3\CMS\Core\Messaging\FlashMessageService
-	 * @inject
+	 * @TYPO3\CMS\Extbase\Annotation\Inject
 	 */
 	protected $flashMessageService;
 	
@@ -143,7 +144,7 @@ class ErrorManager
 		
 		if ($this->flashMessageIsEnabled()) {
 			foreach ($errors as $error) {
-				$flashMessage = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $error, '', AbstractMessage::ERROR);
+				$flashMessage = GeneralUtility::makeInstance(FlashMessage::class, $error, '', AbstractMessage::ERROR);
 				$this->getFlashMessageQueue()->enqueue($flashMessage);
 			}
 		}

@@ -15,6 +15,7 @@ namespace Ameos\AmeosForm\Elements;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use Ameos\AmeosForm\Utility\Events;
 
 class Password extends ElementAbstract 
@@ -98,7 +99,7 @@ class Password extends ElementAbstract
     public function encryptPassword($password)
     {
         if (version_compare(TYPO3_version, '9', '>=')) {
-            $hashInstance = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory::class)
+            $hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)
                 ->getDefaultHashInstance('FE');
             $this->setValue($hashInstance->getHashedPassword($password));
         } elseif (\TYPO3\CMS\Saltedpasswords\Utility\SaltedPasswordsUtility::isUsageEnabled() && $password != '') {

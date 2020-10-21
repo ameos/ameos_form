@@ -19,7 +19,8 @@ class EmailTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function emailIsEmptyAndRequired() {
+	public function emailIsEmptyAndRequired()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken()->add('input-text', 'text')
 			->addConstraint('input-text', 'required', 'field mandatory')
@@ -36,7 +37,8 @@ class EmailTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function emailIsEmptyAndNotRequired() {
+	public function emailIsEmptyAndNotRequired()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 
@@ -51,7 +53,8 @@ class EmailTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function emailIsValid() {
+	public function emailIsValid()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 
@@ -66,7 +69,8 @@ class EmailTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function emailIsNotValid() {
+	public function emailIsNotValid()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 

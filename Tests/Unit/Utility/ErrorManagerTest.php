@@ -14,12 +14,14 @@ namespace Ameos\AmeosForm\Tests\Unit\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
-class ErrorManagerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class ErrorManagerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+{
 
 	/**
 	 * @test
 	 */
-	public function addErrors() {
+	public function addErrors()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken()->add('input-text-required', 'text')->addConstraint('input-text-required', 'required', 'field mandatory');
 		$form->disableCsrftoken()->add('input-text-email', 'text')->addConstraint('input-text-email', 'email', 'email not valid');

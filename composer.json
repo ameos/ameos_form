@@ -4,10 +4,10 @@
     "type": "typo3-cms-extension",
     "homepage": "https://github.com/ameos/ameos_form",
     "require": {
-        "typo3/cms-core": "^8.7 | ^9 | dev-master",
-        "typo3/cms-fluid": "^8.7 | ^9 | dev-master",
-        "typo3/cms-extbase": "^8.7 | ^9 | dev-master",
-        "php": ">=7.0.0"
+        "typo3/cms-core": "^10.4 | dev-master",
+        "typo3/cms-fluid": "^10.4 | dev-master",
+        "typo3/cms-extbase": "^10.4 | dev-master",
+        "php": ">=7.2.0"
     },
     "keywords": [
         "TYPO3",

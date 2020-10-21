@@ -14,12 +14,14 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-class CustomTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class CustomTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+{
 
 	/**
 	 * @test
 	 */
-	public function customIsValid() {
+	public function customIsValid()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken()->add('input-text', 'text');
 		$form->addConstraint('input-text', 'custom', 'custom error', ['method' => function($value, $form) {
@@ -37,7 +39,8 @@ class CustomTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function customIsNotValid() {
+	public function customIsNotValid()
+	{
 		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 		$form->disableCsrftoken()->add('input-text', 'text');
 		$form->addConstraint('input-text', 'custom', 'custom error', ['method' => function($value, $form) {

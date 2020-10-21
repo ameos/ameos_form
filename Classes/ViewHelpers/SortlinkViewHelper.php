@@ -14,9 +14,9 @@ namespace Ameos\AmeosForm\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class SortlinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper 
+class SortlinkViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper 
 {
     /**
      * @var string

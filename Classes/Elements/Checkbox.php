@@ -51,6 +51,11 @@ class Checkbox extends ElementAbstract
 		$data = parent::getRenderingInformation();
 		$data['items'] = [];
 		foreach ($this->configuration['items'] as $value => $label) {
+			$currentValue = $this->getValue();
+			if($currentValue === NULL) {
+				$currentValue = $this->configuration['defaultValue'];
+			}
+			$checked = in_array($value, $currentValue) ? ' checked="checked"' : '';
 			$data['items'][$value] = array(
 				'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '[]" type="checkbox" value="' . $value . '"' . $checked . $class . ' />',
 				'label' => '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>',
