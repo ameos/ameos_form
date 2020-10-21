@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Elements;
 
 /*
@@ -14,16 +15,16 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Label extends ElementAbstract 
+class Label extends ElementAbstract
 {
-	
-	/**
-	 * form to html
-	 *
-	 * @return	string the html
-	 */
-	public function toHtml() 
-	{
-		return $this->getValue();
-	}	
+    
+    /**
+     * form to html
+     *
+     * @return  string the html
+     */
+    public function toHtml()
+    {
+        return $this->getValue();
+    }
 }

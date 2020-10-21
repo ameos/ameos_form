@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
 /*
@@ -14,71 +15,72 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
  * The TYPO3 project - inspiring people to share!
  */
 
-class EmailTest extends \TYPO3\CMS\Core\Tests\UnitTestCase {
+class EmailTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+{
 
-	/**
-	 * @test
-	 */
-	public function emailIsEmptyAndRequired()
-	{
-		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->disableCsrftoken()->add('input-text', 'text')
-			->addConstraint('input-text', 'required', 'field mandatory')
-			->addConstraint('input-text', 'email', 'email not valid');
+    /**
+     * @test
+     */
+    public function emailIsEmptyAndRequired()
+    {
+        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+        $form->disableCsrftoken()->add('input-text', 'text')
+            ->addConstraint('input-text', 'required', 'field mandatory')
+            ->addConstraint('input-text', 'email', 'email not valid');
 
-		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-		
-		$form->bindRequest(array('input-text' => ''));
-		$result = $form->get('input-text')->isValid();
+        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        
+        $form->bindRequest(array('input-text' => ''));
+        $result = $form->get('input-text')->isValid();
 
-		$this->assertFalse($result);
-	}
-	
-	/**
-	 * @test
-	 */
-	public function emailIsEmptyAndNotRequired()
-	{
-		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
+        $this->assertFalse($result);
+    }
+    
+    /**
+     * @test
+     */
+    public function emailIsEmptyAndNotRequired()
+    {
+        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+        $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 
-		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-		
-		$form->bindRequest(array('input-text' => ''));
-		$result = $form->get('input-text')->isValid();
+        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        
+        $form->bindRequest(array('input-text' => ''));
+        $result = $form->get('input-text')->isValid();
 
-		$this->assertTrue($result);
-	}
-	
-	/**
-	 * @test
-	 */
-	public function emailIsValid()
-	{
-		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
+        $this->assertTrue($result);
+    }
+    
+    /**
+     * @test
+     */
+    public function emailIsValid()
+    {
+        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+        $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 
-		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-		
-		$form->bindRequest(array('input-text' => 'test@example.com'));
-		$result = $form->get('input-text')->isValid();
+        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        
+        $form->bindRequest(array('input-text' => 'test@example.com'));
+        $result = $form->get('input-text')->isValid();
 
-		$this->assertTrue($result);
-	}
+        $this->assertTrue($result);
+    }
 
-	/**
-	 * @test
-	 */
-	public function emailIsNotValid()
-	{
-		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
+    /**
+     * @test
+     */
+    public function emailIsNotValid()
+    {
+        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+        $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 
-		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-		
-		$form->bindRequest(array('input-text' => 'notmail'));
-		$result = $form->get('input-text')->isValid();
+        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        
+        $form->bindRequest(array('input-text' => 'notmail'));
+        $result = $form->get('input-text')->isValid();
 
-		$this->assertFalse($result);
-	}
+        $this->assertFalse($result);
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Constraints;
 
 /*
@@ -14,21 +15,21 @@ namespace Ameos\AmeosForm\Constraints;
  * The TYPO3 project - inspiring people to share!
  */
 
-interface ConstraintInterface 
+interface ConstraintInterface
 {
 
-	/**
-	 * return true if the element is valide
-	 *
-	 * @param	string $value value to test
-	 * @return	bool true if the element is valide
-	 */
-	public function isValid($value);
+    /**
+     * return true if the element is valide
+     *
+     * @param   string $value value to test
+     * @return  bool true if the element is valide
+     */
+    public function isValid($value);
 
-	/**
-	 * return the message
-	 * 
-	 * @return	string the message
-	 */
-	public function getMessage();
+    /**
+     * return the message
+     *
+     * @return  string the message
+     */
+    public function getMessage();
 }

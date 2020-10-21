@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Elements;
 
 /*
@@ -14,20 +15,20 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Rating extends Radio 
+class Rating extends Radio
 {
 
-	/**
-	 * @constuctor
-	 *
-	 * @param	string	$absolutename absolutename
-	 * @param	string	$name name
-	 * @param	array	$configuration configuration
-	 * @param	\Ameos\AmeosForm\Form $form form
-	 */
-	public function __construct($absolutename, $name, $configuration = [], $form) 
-	{
-		parent::__construct($absolutename, $name, $configuration, $form);
+    /**
+     * @constuctor
+     *
+     * @param   string  $absolutename absolutename
+     * @param   string  $name name
+     * @param   array   $configuration configuration
+     * @param   \Ameos\AmeosForm\Form $form form
+     */
+    public function __construct($absolutename, $name, $configuration, $form)
+    {
+        parent::__construct($absolutename, $name, $configuration, $form);
 
         $GLOBALS['TSFE']->getPageRenderer()->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Elements/rating.css');
 
@@ -42,16 +43,16 @@ class Rating extends Radio
                 $this->configuration['items'][$i] = $label;
             }
         }
-	}
-	
-	/**
-	 * form to html
-	 *
-	 * @return	string the html
-	 */
-	public function toHtml() 
-	{
+    }
+    
+    /**
+     * form to html
+     *
+     * @return  string the html
+     */
+    public function toHtml()
+    {
         $output = parent::toHtml();
         return '<span class="rating">' . str_replace('<br />', '', $output) . '<span class="clear"></span></span>';
-	}
+    }
 }

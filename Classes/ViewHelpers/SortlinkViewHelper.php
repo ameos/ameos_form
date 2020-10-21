@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\ViewHelpers;
 
 /*
@@ -16,7 +17,7 @@ namespace Ameos\AmeosForm\ViewHelpers;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class SortlinkViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper 
+class SortlinkViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper
 {
     /**
      * @var string
@@ -28,7 +29,7 @@ class SortlinkViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBa
      *
      * @return void
      */
-    public function initializeArguments() 
+    public function initializeArguments()
     {
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('target', 'string', 'Target of link', false);
@@ -42,10 +43,11 @@ class SortlinkViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBa
      * @param string $column the column
      * @return string html
      */
-    public function render() 
+    public function render()
     {
-        if(empty($this->controllerContext))
+        if (empty($this->controllerContext)) {
             $this->controllerContext = $this->renderingContext->getControllerContext();
+        }
 
         $column = $this->arguments['column'];
         $uriBuilder = $this->controllerContext->getUriBuilder();

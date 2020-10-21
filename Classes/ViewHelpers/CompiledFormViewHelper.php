@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\ViewHelpers;
 
 /*
@@ -14,7 +15,7 @@ namespace Ameos\AmeosForm\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
-class CompiledFormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper 
+class CompiledFormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
 {
     /**
      * @var boolean
@@ -31,7 +32,7 @@ class CompiledFormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractV
      *
      * @return void
      */
-    public function initializeArguments() 
+    public function initializeArguments()
     {
         parent::initializeArguments();
         $this->registerArgument('form', \Ameos\AmeosForm\Form\AbstractForm::class, 'form instance', false);
@@ -42,8 +43,8 @@ class CompiledFormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractV
      *
      * @return string html
      */
-    public function render() 
+    public function render()
     {
-		return $this->arguments['form']->toHtml();
+        return $this->arguments['form']->toHtml();
     }
 }

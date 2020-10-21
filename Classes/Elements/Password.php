@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Elements;
 
 /*
@@ -18,7 +19,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use Ameos\AmeosForm\Utility\Events;
 
-class Password extends ElementAbstract 
+class Password extends ElementAbstract
 {
     
     /**
@@ -34,7 +35,7 @@ class Password extends ElementAbstract
      * @param    array    $configuration configuration
      * @param    \Ameos\AmeosForm\Form $form form
      */
-    public function __construct($absolutename, $name, $configuration = [], $form) 
+    public function __construct($absolutename, $name, $configuration, $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
         $this->configuration['encrypt'] = isset($configuration['encrypt']) ? (bool)$configuration['encrypt'] : true;
@@ -50,21 +51,23 @@ class Password extends ElementAbstract
     public function toHtml()
     {
         $attributes = $this->getAttributes();
-        if ($this->configuration['fill_value']
-          || ($this->form->isSubmitted() && !$this->form->isValid() && $this->configuration['fill_value_iferror'])) {
-            $attributes.= ' value="' . $this->getValue() . '"';
+        if (
+            $this->configuration['fill_value']
+            || ($this->form->isSubmitted() && !$this->form->isValid() && $this->configuration['fill_value_iferror'])
+        ) {
+            $attributes .= ' value="' . $this->getValue() . '"';
         }
         return '<input type="password" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '"' . $attributes . ' />';
     }
 
     /**
      * set the value
-     * 
+     *
      * @param    string    $value value
      * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
      */
-    public function setValue($value) 
-    {        
+    public function setValue($value)
+    {
         if ($this->configuration['encrypt']) {
             Events::getInstance($this->form->getIdentifier())->registerEvent('form_is_valid', [$this, 'encryptPassword'], [
                 'password' => $value,

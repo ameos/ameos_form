@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Elements;
 
 /*
@@ -14,18 +15,18 @@ namespace Ameos\AmeosForm\Elements;
  * The TYPO3 project - inspiring people to share!
  */
 
-class Tel extends ElementAbstract 
+class Tel extends ElementAbstract
 {
-	
-	/**
-	 * form to html
-	 *
-	 * @return	string the html
-	 */
-	public function toHtml() 
-	{
-		$pattern = isset($this->configuration['pattern']) ? ' pattern="' . $this->configuration['pattern'] . '"' : '';
-		
-		return '<input type="tel" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . $pattern . ' />' . $this->getDatalist();
-	}
+    
+    /**
+     * form to html
+     *
+     * @return  string the html
+     */
+    public function toHtml()
+    {
+        $pattern = isset($this->configuration['pattern']) ? ' pattern="' . $this->configuration['pattern'] . '"' : '';
+        
+        return '<input type="tel" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . $pattern . ' />' . $this->getDatalist();
+    }
 }

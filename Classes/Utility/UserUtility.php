@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Utility;
 
 /*
@@ -14,15 +15,15 @@ namespace Ameos\AmeosForm\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
-class UserUtility 
+class UserUtility
 {
 
     /**
      * return true if the user is logged
      *
-     * @return	bool true if the user is logged
+     * @return  bool true if the user is logged
      */
-    public static function isLogged() 
+    public static function isLogged()
     {
         return isset($GLOBALS['TSFE']->fe_user->user['uid']) && $GLOBALS['TSFE']->fe_user->user['uid'] > 0;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Elements;
 
 /*
@@ -20,7 +21,7 @@ use TYPO3\CMS\Core\Resource\StorageRepository;
 use Ameos\AmeosForm\Utility\Events;
 use Ameos\AmeosForm\Utility\StringUtility;
 
-class Upload extends ElementAbstract 
+class Upload extends ElementAbstract
 {
     
     /**
@@ -41,7 +42,7 @@ class Upload extends ElementAbstract
      * @param    array    $configuration configuration
      * @param    \Ameos\AmeosForm\Form $form form
      */
-    public function __construct($absolutename, $name, $configuration = [], $form) 
+    public function __construct($absolutename, $name, $configuration, $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
         if (isset($this->configuration['directory'])) {
@@ -57,25 +58,24 @@ class Upload extends ElementAbstract
      *
      * @return    string the html
      */
-    public function toHtml() {
+    public function toHtml()
+    {
         $multiple = (isset($this->configuration['multiple']) && (bool)$this->configuration['multiple'] === true) ? ' multiple="multiple"' : '';
         
         $output = '';
         if ($this->getValue() && !(isset($this->configuration['show_link']) && (bool)$this->configuration['show_link'] === false)) {
             if ($this->uploadState == 'temporary-upload') {
-                $values = $this->getValue();    
-                foreach ($values as $value) {                
-                    $output.= '<a target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '">Voir le fichier ' . $value . '</a> ';
-                    $output.= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
+                $values = $this->getValue();
+                foreach ($values as $value) {
+                    $output .= '<a target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '">Voir le fichier ' . $value . '</a> ';
+                    $output .= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
                 }
-                
             } else {
                 $values = $this->getValue();
                 foreach ($values as $value) {
-                    $output.= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '">Voir le fichier ' . $value . '</a> ';
+                    $output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '">Voir le fichier ' . $value . '</a> ';
                 }
-                
-            }    
+            }
         }
         $output .= '<input type="file" ' . $multiple . 'id="' . $this->getHtmlId() . '-upload" name="' . $this->absolutename . '[upload][]"' . $this->getAttributes() . ' />';
         return $output;
@@ -86,7 +86,7 @@ class Upload extends ElementAbstract
      *
      * @return    string value
      */
-    public function getValue() 
+    public function getValue()
     {
         $value = parent::getValue();
         return $value;
@@ -97,7 +97,7 @@ class Upload extends ElementAbstract
      *
      * @return    array rendering information
      */
-    public function getRenderingInformation() 
+    public function getRenderingInformation()
     {
         $data = parent::getRenderingInformation();
         if ($this->uploadState == 'temporary-upload') {
@@ -116,7 +116,7 @@ class Upload extends ElementAbstract
      * @param    string    $value value
      * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
      */
-    public function setValue($value) 
+    public function setValue($value)
     {
         if (is_array($value)) {
             if (isset($value['upload']) && is_array($value['upload']) && $value['upload'][0]['name'] != '') {
@@ -139,14 +139,12 @@ class Upload extends ElementAbstract
                         $this->uploadState = 'temporary-upload';
                         
                         $currentValue[] = basename($temporaryFilepath);
-                        
                     }
                     
                     parent::setValue($currentValue);
                 } else {
                     $this->value = null;
                 }
-                
             } elseif (isset($value['temporary'])) {
                 $currentValue = [];
                 foreach ($value['temporary'] as $uploadFile) {
@@ -164,7 +162,6 @@ class Upload extends ElementAbstract
                 }
                 parent::setValue($currentValue);
             }
-            
         } else {
             if (is_string($this->value) && $this->value != '') {
                 $value = $this->value . ',' . $value;
@@ -172,18 +169,18 @@ class Upload extends ElementAbstract
             parent::setValue($value);
         }
         
-        return $this;        
+        return $this;
     }
 
     /**
      * determine errors
-     * 
+     *
      * @return    \Ameos\AmeosForm\Form this
      */
-    public function determineErrors() 
+    public function determineErrors()
     {
         if ($this->elementConstraintsAreChecked === false) {
-            if ($this->form !== FALSE && $this->form->isSubmitted()) {
+            if ($this->form !== false && $this->form->isSubmitted()) {
                 $values = $this->getValue();
 
                 // check required constrainnt
@@ -209,10 +206,10 @@ class Upload extends ElementAbstract
                         }
                     }
                 }
-                foreach ($this->systemerror as $error) {                
+                foreach ($this->systemerror as $error) {
                     $this->form->getErrorManager()->add($error, $this);
                 }
-                $this->elementConstraintsAreChecked = TRUE;
+                $this->elementConstraintsAreChecked = true;
             }
         }
         return $this;
@@ -222,7 +219,7 @@ class Upload extends ElementAbstract
      * Return directory
      * @return string
      */
-    protected function getUploadDirectory() 
+    protected function getUploadDirectory()
     {
         return Environment::getPublicPath() . '/' . trim($this->configuration['directory'], '/') . '/';
     }
@@ -231,7 +228,7 @@ class Upload extends ElementAbstract
      * Return uri
      * @return string
      */
-    protected function getUploadDirectoryUri() 
+    protected function getUploadDirectoryUri()
     {
         return '/' . trim($this->configuration['directory'], '/') . '/';
     }
@@ -241,7 +238,7 @@ class Upload extends ElementAbstract
      * @param string $clientFilename filename on the client system file
      * @return string
      */
-    protected function getUploadFilename($clientFilename) 
+    protected function getUploadFilename($clientFilename)
     {
         if (isset($this->configuration['filename']) && trim((string)$this->configuration['filename']) !== '') {
             return trim((string)$this->configuration['filename']);
@@ -254,7 +251,7 @@ class Upload extends ElementAbstract
                 $fileExtension = substr($clientFilename, strrpos($clientFilename, '.') + 1);
                 $filename = basename($clientFilename, '.' . $fileExtension) . '_' . $fileIndex . '.' . $fileExtension;
                 $fileIndex++;
-            } while(file_exists($directory . $filename));
+            } while (file_exists($directory . $filename));
         } else {
             $filename = $clientFilename;
         }
@@ -267,7 +264,7 @@ class Upload extends ElementAbstract
      * @param string $clientFilename filename on the client system file
      * @return string
      */
-    protected function getTemporaryUpdateFilepath($clientFilename) 
+    protected function getTemporaryUpdateFilepath($clientFilename)
     {
         $directory = Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/';
         if (file_exists($directory . $clientFilename)) {
@@ -276,7 +273,7 @@ class Upload extends ElementAbstract
                 $fileExtension = substr($clientFilename, strrpos($clientFilename, '.') + 1);
                 $filename = basename($clientFilename, '.' . $fileExtension) . '_' . $fileIndex . '.' . $fileExtension;
                 $fileIndex++;
-            } while(file_exists($directory . $filename));
+            } while (file_exists($directory . $filename));
         } else {
             $filename = $clientFilename;
         }
@@ -287,7 +284,7 @@ class Upload extends ElementAbstract
      * return true if upload can overwrite existing file
      * @return bool
      */
-    protected function canOverwrite() 
+    protected function canOverwrite()
     {
         return isset($this->configuration['canoverwrite']) && (bool)$this->configuration['canoverwrite'] === true;
     }
@@ -297,7 +294,7 @@ class Upload extends ElementAbstract
      * @param string $destinationFilepath destination file path
      * @param string $destinationFilepath temporary file path
      */
-    public function moveTemporaryUploadedFile($destinationFilepath, $temporaryFilepath) 
+    public function moveTemporaryUploadedFile($destinationFilepath, $temporaryFilepath)
     {
         $directory = dirname($destinationFilepath);
         if (!file_exists($directory)) {
@@ -308,7 +305,7 @@ class Upload extends ElementAbstract
         $this->uploadState = 'upload';
         if (isset($this->configuration['fal']) && (bool)$this->configuration['fal'] === true) {
             $storageIdentifier = isset($this->configuration['storageIdentifier']) ? (int)$this->configuration['storageIdentifier'] : 1;
-            $storageRepository = GeneralUtility::makeInstance(StorageRepository::class); 
+            $storageRepository = GeneralUtility::makeInstance(StorageRepository::class);
             $storage = $storageRepository->findByUid($storageIdentifier);
 
             $folderIdentifier = str_replace(
@@ -323,7 +320,6 @@ class Upload extends ElementAbstract
                 basename($destinationFilepath)
             );
             $this->setValue($fileObject);
-
         } else {
             rename($temporaryFilepath, $destinationFilepath);
             $this->setValue(basename($destinationFilepath));

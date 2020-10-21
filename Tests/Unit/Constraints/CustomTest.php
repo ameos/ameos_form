@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
 /*
@@ -17,41 +18,41 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
 class CustomTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 {
 
-	/**
-	 * @test
-	 */
-	public function customIsValid()
-	{
-		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->disableCsrftoken()->add('input-text', 'text');
-		$form->addConstraint('input-text', 'custom', 'custom error', ['method' => function($value, $form) {
-			return $value == 'test';
-		}]);
+    /**
+     * @test
+     */
+    public function customIsValid()
+    {
+        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+        $form->disableCsrftoken()->add('input-text', 'text');
+        $form->addConstraint('input-text', 'custom', 'custom error', ['method' => function ($value, $form) {
+            return $value == 'test';
+        }]);
 
-		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-		
-		$form->bindRequest(array('input-text' => 'test'));
-		$result = $form->get('input-text')->isValid();
+        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        
+        $form->bindRequest(array('input-text' => 'test'));
+        $result = $form->get('input-text')->isValid();
 
-		$this->assertTrue($result);
-	}
+        $this->assertTrue($result);
+    }
 
-	/**
-	 * @test
-	 */
-	public function customIsNotValid()
-	{
-		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->disableCsrftoken()->add('input-text', 'text');
-		$form->addConstraint('input-text', 'custom', 'custom error', ['method' => function($value, $form) {
-			return $value == 'test';
-		}]);
+    /**
+     * @test
+     */
+    public function customIsNotValid()
+    {
+        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+        $form->disableCsrftoken()->add('input-text', 'text');
+        $form->addConstraint('input-text', 'custom', 'custom error', ['method' => function ($value, $form) {
+            return $value == 'test';
+        }]);
 
-		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-		
-		$form->bindRequest(array('input-text' => 'othervalue'));
-		$result = $form->get('input-text')->isValid();
+        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        
+        $form->bindRequest(array('input-text' => 'othervalue'));
+        $result = $form->get('input-text')->isValid();
 
-		$this->assertFalse($result);
-	}
+        $this->assertFalse($result);
+    }
 }

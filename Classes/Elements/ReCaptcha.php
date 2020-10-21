@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Elements;
 
 /*
@@ -17,7 +18,7 @@ namespace Ameos\AmeosForm\Elements;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Constraints\ReCaptcha as ReCaptchaConstraint;
 
-class ReCaptcha extends ElementAbstract 
+class ReCaptcha extends ElementAbstract
 {
     /**
      * @constuctor
@@ -27,7 +28,7 @@ class ReCaptcha extends ElementAbstract
      * @param    array    $configuration configuration
      * @param    \Ameos\AmeosForm\Form $form form
      */
-    public function __construct($absolutename, $name, $configuration = [], $form) 
+    public function __construct($absolutename, $name, $configuration, $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
@@ -35,7 +36,7 @@ class ReCaptcha extends ElementAbstract
         $render          = isset($configuration['render']) ? $configuration['render'] : 'onload';
         $language        = isset($configuration['language']) ? $configuration['language'] : '';
 
-        $this->pageRenderer->addJsFooterFile('https://www.google.com/recaptcha/api.js?onload=' . $onload . '&render=' . $render . '&hl=' . $language, 'text/javascript', FALSE, FALSE, '', TRUE);
+        $this->pageRenderer->addJsFooterFile('https://www.google.com/recaptcha/api.js?onload=' . $onload . '&render=' . $render . '&hl=' . $language, 'text/javascript', false, false, '', true);
 
         $errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'ReCaptcha is not valid';
         $constraint = GeneralUtility::makeInstance(
@@ -53,7 +54,7 @@ class ReCaptcha extends ElementAbstract
      *
      * @return    string the html
      */
-    public function toHtml() 
+    public function toHtml()
     {
         $theme           = isset($this->configuration['theme']) ? $this->configuration['theme'] : 'light';
         $type            = isset($this->configuration['type']) ? $this->configuration['type'] : 'image';

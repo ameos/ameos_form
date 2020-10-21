@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Tests\Unit\Utility;
 
 /*
@@ -17,23 +18,23 @@ namespace Ameos\AmeosForm\Tests\Unit\Utility;
 class StringTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 {
 
-	/**
-	 * @test
-	 */
-	public function camelCase()
-	{
-		$expectedResult = [
-			'foo_bar'     => 'FooBar',
-			'foobar'      => 'Foobar',
-			'foo_barTest' => 'FooBarTest',
-		];
+    /**
+     * @test
+     */
+    public function camelCase()
+    {
+        $expectedResult = [
+            'foo_bar'     => 'FooBar',
+            'foobar'      => 'Foobar',
+            'foo_barTest' => 'FooBarTest',
+        ];
 
-		$result = [
-			'foo_bar'     => \Ameos\AmeosForm\Utility\String::camelCase('foo_bar'),
-			'foobar'      => \Ameos\AmeosForm\Utility\String::camelCase('foobar'),
-			'foo_barTest' => \Ameos\AmeosForm\Utility\String::camelCase('foo_barTest'),
-		];
-		
-		$this->assertEquals($result, $expectedResult);
-	}
+        $result = [
+            'foo_bar'     => \Ameos\AmeosForm\Utility\String::camelCase('foo_bar'),
+            'foobar'      => \Ameos\AmeosForm\Utility\String::camelCase('foobar'),
+            'foo_barTest' => \Ameos\AmeosForm\Utility\String::camelCase('foo_barTest'),
+        ];
+        
+        $this->assertEquals($result, $expectedResult);
+    }
 }

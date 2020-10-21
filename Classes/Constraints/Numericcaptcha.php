@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Constraints;
 
 /*
@@ -16,23 +17,23 @@ namespace Ameos\AmeosForm\Constraints;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-class Numericcaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract 
+class Numericcaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 {
-	
-	/**
-	 * return true if the element is valide
-	 *
-	 * @param	string $value value to test
-	 * @return	bool true if the element is valide
-	 */
-	public function isValid($value) 
-	{
-		if(!(intval($value) === $this->element->getDigit(1) + $this->element->getDigit(2))){
-			$this->element->reloadDigit(1);
-			$this->element->reloadDigit(2);
-			return false;
-		}else{
-			return true;
-		}
-	}
+    
+    /**
+     * return true if the element is valide
+     *
+     * @param   string $value value to test
+     * @return  bool true if the element is valide
+     */
+    public function isValid($value)
+    {
+        if (!(intval($value) === $this->element->getDigit(1) + $this->element->getDigit(2))) {
+            $this->element->reloadDigit(1);
+            $this->element->reloadDigit(2);
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

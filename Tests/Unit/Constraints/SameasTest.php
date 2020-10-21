@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
 /*
@@ -17,41 +18,41 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
 class SameasTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
 {
 
-	/**
-	 * @test
-	 */
-	public function sameasIsValid()
-	{
-		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->disableCsrftoken();
-		$form->add('input-text-1', 'text');
-		$form->add('input-text-2', 'text');
-		$form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
+    /**
+     * @test
+     */
+    public function sameasIsValid()
+    {
+        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+        $form->disableCsrftoken();
+        $form->add('input-text-1', 'text');
+        $form->add('input-text-2', 'text');
+        $form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
 
-		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-		
-		$form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'test'));
-		$result = $form->get('input-text-2')->isValid();
+        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        
+        $form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'test'));
+        $result = $form->get('input-text-2')->isValid();
 
-		$this->assertTrue($result);
-	}
+        $this->assertTrue($result);
+    }
 
-	/**
-	 * @test
-	 */
-	public function sameasIsNotValid()
-	{
-		$form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-		$form->disableCsrftoken();
-		$form->add('input-text-1', 'text');
-		$form->add('input-text-2', 'text');
-		$form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
+    /**
+     * @test
+     */
+    public function sameasIsNotValid()
+    {
+        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
+        $form->disableCsrftoken();
+        $form->add('input-text-1', 'text');
+        $form->add('input-text-2', 'text');
+        $form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
 
-		$_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-		
-		$form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'othervalue'));
-		$result = $form->get('input-text-2')->isValid();
+        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        
+        $form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'othervalue'));
+        $result = $form->get('input-text-2')->isValid();
 
-		$this->assertFalse($result);
-	}
+        $this->assertFalse($result);
+    }
 }

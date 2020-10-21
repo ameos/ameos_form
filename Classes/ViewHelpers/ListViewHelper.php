@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\ViewHelpers;
 
 /*
@@ -16,7 +17,7 @@ namespace Ameos\AmeosForm\ViewHelpers;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ListViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper 
+class ListViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
 {
     /**
      * @var boolean
@@ -33,7 +34,7 @@ class ListViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
      *
      * @return void
      */
-    public function initializeArguments() 
+    public function initializeArguments()
     {
         parent::initializeArguments();
         $this->registerArgument('list', \Ameos\AmeosForm\Library\RecordList::class, 'list', false);
@@ -44,8 +45,8 @@ class ListViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
      *
      * @return string html
      */
-    public function render() 
+    public function render()
     {
-		return $this->arguments['list']->render();
+        return $this->arguments['list']->render();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Ameos\AmeosForm\Elements;
 
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -18,7 +19,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
  * The TYPO3 project - inspiring people to share!
  */
 
-abstract class ElementAbstract implements ElementInterface 
+abstract class ElementAbstract implements ElementInterface
 {
     /**
      * @var \TYPO3\CMS\Core\Page\PageRenderer
@@ -93,7 +94,7 @@ abstract class ElementAbstract implements ElementInterface
      * @param    array    $configuration configuration
      * @param    \Ameos\AmeosForm\Form $form form
      */
-    public function __construct($absolutename, $name, $configuration = [], $form) 
+    public function __construct($absolutename, $name, $configuration, $form)
     {
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $this->pageRenderer = $objectManager->get(PageRenderer::class);
@@ -109,23 +110,23 @@ abstract class ElementAbstract implements ElementInterface
      * return html attribute
      * @return string html attribute
      */
-    public function getAttributes() 
+    public function getAttributes()
     {
         $output = '';
-        $output.= isset($this->configuration['placeholder']) ? ' placeholder="' . $this->configuration['placeholder'] . '"' : '';
-        $output.= isset($this->configuration['style']) ? ' style="' . $this->configuration['style'] . '"' : '';
-        $output.= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true ? ' disabled="disabled"' : '';
-        $output.= isset($this->configuration['title']) ? ' title="' . $this->configuration['title'] . '"' : '';
-        $output.= isset($this->configuration['datalist']) ? ' list="' . $this->getHtmlId() . '-datalist"' : '';
-                $output.= isset($this->configuration['type']) ? ' type="' . $this->configuration['type'] . '"' : '';
-        $output.= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
+        $output .= isset($this->configuration['placeholder']) ? ' placeholder="' . $this->configuration['placeholder'] . '"' : '';
+        $output .= isset($this->configuration['style']) ? ' style="' . $this->configuration['style'] . '"' : '';
+        $output .= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true ? ' disabled="disabled"' : '';
+        $output .= isset($this->configuration['title']) ? ' title="' . $this->configuration['title'] . '"' : '';
+        $output .= isset($this->configuration['datalist']) ? ' list="' . $this->getHtmlId() . '-datalist"' : '';
+                $output .= isset($this->configuration['type']) ? ' type="' . $this->configuration['type'] . '"' : '';
+        $output .= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
 
         $cssclass = isset($this->configuration['class']) ? $this->configuration['class'] : '';
         if (!$this->isValid()) {
-            $cssclass.= isset($this->configuration['errorclass']) ? ' ' . $this->configuration['errorclass'] : '';
+            $cssclass .= isset($this->configuration['errorclass']) ? ' ' . $this->configuration['errorclass'] : '';
         }
         if ($cssclass != '') {
-            $output.= ' class="' . $cssclass . '"';
+            $output .= ' class="' . $cssclass . '"';
         }
         return $output;
     }
@@ -134,14 +135,14 @@ abstract class ElementAbstract implements ElementInterface
      * return html datalist
      * @return string html datalist
      */
-    public function getDatalist() 
+    public function getDatalist()
     {
         if (isset($this->configuration['datalist']) && is_array($this->configuration['datalist'])) {
             $output = '<datalist id="' . $this->getHtmlId() . '-datalist">';
             foreach ($this->configuration['datalist'] as $value => $label) {
-                $output.= '<option value="' . $value . '" label="' . $label . '">' . $label . '</option>';
+                $output .= '<option value="' . $value . '" label="' . $label . '">' . $label . '</option>';
             }
-            $output.= '</datalist>';
+            $output .= '</datalist>';
             return $output;
         }
         return '';
@@ -155,7 +156,7 @@ abstract class ElementAbstract implements ElementInterface
      * @param    string    $value value
      * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
      */
-    public function with($key, $value) 
+    public function with($key, $value)
     {
         return $this->addConfiguration($key, $value);
     }
@@ -167,7 +168,7 @@ abstract class ElementAbstract implements ElementInterface
      * @param    string    $value value
      * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
      */
-    public function addConfiguration($key, $value) 
+    public function addConfiguration($key, $value)
     {
         $this->configuration[$key] = $value;
         return $this;
@@ -175,11 +176,11 @@ abstract class ElementAbstract implements ElementInterface
 
     /**
      * set the value
-     * 
+     *
      * @param    string    $value value
      * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
      */
-    public function setValue($value) 
+    public function setValue($value)
     {
         $this->valueSetted = true;
         $this->value = $value;
@@ -203,7 +204,7 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * init value from the context
      */
-    protected function initValue() 
+    protected function initValue()
     {
         if ($this->form !== false) {
             if ($this->form->getMode() == 'crud/extbase') {
@@ -229,9 +230,9 @@ abstract class ElementAbstract implements ElementInterface
      *
      * @return    string value
      */
-    public function getValue() 
+    public function getValue()
     {
-        if ($this->valueSetted === TRUE) {
+        if ($this->valueSetted === true) {
             return $this->value;
         }
         $this->initValue();
@@ -243,7 +244,7 @@ abstract class ElementAbstract implements ElementInterface
      *
      * @return    string name
      */
-    public function getName() 
+    public function getName()
     {
         return $this->name;
     }
@@ -253,7 +254,7 @@ abstract class ElementAbstract implements ElementInterface
      *
      * @return    string search field
      */
-    public function getSearchField() 
+    public function getSearchField()
     {
         if (isset($this->configuration['searchfield'])) {
             return $this->configuration['searchfield'];
@@ -266,7 +267,7 @@ abstract class ElementAbstract implements ElementInterface
      *
      * @return    string name
      */
-    public function getHtmlId() 
+    public function getHtmlId()
     {
         return str_replace(['.', '[', ']'], ['_', '_', ''], $this->absolutename);
     }
@@ -276,12 +277,10 @@ abstract class ElementAbstract implements ElementInterface
      *
      * @return    bool|array FALSE if no search. Else array with search type and value
      */
-    public function getClause() 
+    public function getClause()
     {
-        if($this->getValue() != '') 
-        {
-            if($this->overrideClause !== false) 
-            {
+        if ($this->getValue() != '') {
+            if ($this->overrideClause !== false) {
                 $function = $this->overrideClause;
                 $searchInformation = $function($this->getValue(), $this, $this->form);
                 $searchInformation['elementname']  = $this->getName();
@@ -305,7 +304,7 @@ abstract class ElementAbstract implements ElementInterface
      * @param    function $overrideClause function
      * @return    \Ameos\AmeosForm\Form this
      */
-    public function setOverrideClause($overrideClause) 
+    public function setOverrideClause($overrideClause)
     {
         $this->overrideClause = $overrideClause;
         return $overrideClause;
@@ -313,23 +312,23 @@ abstract class ElementAbstract implements ElementInterface
 
     /**
      * add validator
-     * 
+     *
      * @param    \Ameos\AmeosForm\Validators\ValidatorInterface $constraint
      * @return    \Ameos\AmeosForm\Form this
      * @alias    addConstraint
      */
-    public function validator($constraint) 
+    public function validator($constraint)
     {
         return $this->addConstraint($constraint);
     }
     
     /**
      * add constraint
-     * 
+     *
      * @param    \Ameos\AmeosForm\Validators\ValidatorInterface $constraint
      * @return    \Ameos\AmeosForm\Form this
      */
-    public function addConstraint($constraint) 
+    public function addConstraint($constraint)
     {
         $this->constraints[] = $constraint;
         return $this;
@@ -337,10 +336,10 @@ abstract class ElementAbstract implements ElementInterface
 
     /**
      * determine errors
-     * 
+     *
      * @return    \Ameos\AmeosForm\Form this
      */
-    public function determineErrors() 
+    public function determineErrors()
     {
         if ($this->elementConstraintsAreChecked === false) {
             if ($this->form !== false && $this->form->isSubmitted()) {
@@ -350,10 +349,10 @@ abstract class ElementAbstract implements ElementInterface
                         $this->form->getErrorManager()->add($constraint->getMessage(), $this);
                     }
                 }
-                foreach ($this->systemerror as $error) {                
+                foreach ($this->systemerror as $error) {
                     $this->form->getErrorManager()->add($error, $this);
                 }
-                $this->elementConstraintsAreChecked = TRUE;
+                $this->elementConstraintsAreChecked = true;
             }
         }
         return $this;
@@ -364,7 +363,7 @@ abstract class ElementAbstract implements ElementInterface
      *
      * @return    bool true if the element is valide
      */
-    public function isValid() 
+    public function isValid()
     {
         return $this->form->getErrorManager()->elementIsValid($this);
     }
@@ -374,7 +373,7 @@ abstract class ElementAbstract implements ElementInterface
      *
      * @return    array errors
      */
-    public function  getErrors() 
+    public function getErrors()
     {
         return $this->form->getErrorManager()->getErrors($this);
     }
@@ -384,7 +383,7 @@ abstract class ElementAbstract implements ElementInterface
      *
      * @return    array rendering information
      */
-    public function getRenderingInformation() 
+    public function getRenderingInformation()
     {
         $data = $this->configuration;
         $data['__compiled']   = $this->toHtml();
@@ -403,10 +402,10 @@ abstract class ElementAbstract implements ElementInterface
 
     /**
      * return true if element is searchable
-     * 
+     *
      * @return     bool
      */
-    public function isSearchable() 
+    public function isSearchable()
     {
         return $this->searchable;
     }
@@ -421,8 +420,8 @@ abstract class ElementAbstract implements ElementInterface
     
     /**
      * to string
-     */ 
-    public function __toString() 
+     */
+    public function __toString()
     {
         return (string)$this->toHtml();
     }
