@@ -119,7 +119,11 @@ class Upload extends ElementAbstract
     public function setValue($value)
     {
         if (is_array($value)) {
-            if (isset($value['upload']) && is_array($value['upload']) && $value['upload'][0]['name'] != '') {
+            if (isset($value['upload'])
+                && is_array($value['upload'])
+                && isset($value['upload'][0]['name'])
+                && $value['upload'][0]['name'] != ''
+            ) {
                 $this->value = $value;
                 $this->determineErrors();
                 $currentValue = [];
