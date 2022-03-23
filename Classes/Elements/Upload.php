@@ -153,11 +153,12 @@ class Upload extends ElementAbstract
                 $currentValue = [];
                 foreach ($value['temporary'] as $uploadFile) {
                     $directory = $this->getUploadDirectory();
-                    $filename = $this->getUploadFilename($value['temporary']);
-                    
+                    $filename = $this->getUploadFilename($uploadFile);
+                    $temporaryFilepath = $directory . $uploadFile;
+
                     Events::getInstance($this->form->getIdentifier())->registerEvent('form_is_valid', [$this, 'moveTemporaryUploadedFile'], [
                         'destinationFilepath' => $directory . $filename,
-                        'temporaryFilepath'   => Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/' . $value['temporary'],
+                        'temporaryFilepath'   => Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/' . $uploadFile,
                     ]);
                         
                     $this->uploadState = 'temporary-upload';
