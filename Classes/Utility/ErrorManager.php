@@ -18,21 +18,21 @@ namespace Ameos\AmeosForm\Utility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageService;
 
 class ErrorManager
 {
-
     /**
      * @var \TYPO3\CMS\Core\Messaging\FlashMessageService
      * @TYPO3\CMS\Extbase\Annotation\Inject
      */
     protected $flashMessageService;
-    
+
     /**
      * @var \TYPO3\CMS\Core\Messaging\FlashMessageQueue
      */
     protected $flashMessageQueue;
- 
+
     /**
      * @var array $errors
      */
@@ -41,27 +41,27 @@ class ErrorManager
      * @var \Ameos\AmeosForm\Form $form form
      */
     protected $form;
-   
+
     /**
      * @var array $elementsConstraintsChecked true if elements constraints checked
      */
     protected $elementsConstraintsAreChecked;
-  
+
     /**
      * @var bool $mustCheckConstraints
      */
     protected $checkConstraints;
-   
+
     /**
      * @var bool $enableFlashMessage enable flash message
      */
     protected $enableFlashMessage = true;
-   
+
     /**
      * @var bool $useLegacyFlashMessageHandling for TYPO3 6.0 (@deprecated since 6.1, will be removed 2 versions later)
      */
     protected $useLegacyFlashMessageHandling = false;
- 
+
     /**
      * @param   \Ameos\AmeosForm\Form $form form
      */
@@ -102,7 +102,7 @@ class ErrorManager
     {
         return $this->enableFlashMessage;
     }
-  
+
     /**
      * use Legacy Flash Message Handling
      * @return \Ameos\AmeosForm\Form\AbstractForm
@@ -112,7 +112,7 @@ class ErrorManager
         $this->useLegacyFlashMessageHandling = true;
         return $this;
     }
-    
+
     /**
      * don't use Legacy Flash Message Handling
      * @return \Ameos\AmeosForm\Form\AbstractForm
@@ -131,17 +131,17 @@ class ErrorManager
     public function add($errors, $element = null)
     {
         $elementName = $element === null ? 'system' : $element->getName();
-     
+
         if (is_string($errors)) {
             $errors = [$errors];
         }
-      
+
         if (!array_key_exists($elementName, $this->errors)) {
             $this->errors[$elementName] = [];
         }
 
         $this->errors[$elementName] = array_merge($this->errors[$elementName], $errors);
-       
+
         if ($this->flashMessageIsEnabled()) {
             foreach ($errors as $error) {
                 $flashMessage = GeneralUtility::makeInstance(FlashMessage::class, $error, '', AbstractMessage::ERROR);
@@ -149,7 +149,7 @@ class ErrorManager
             }
         }
     }
-   
+
     /**
      * @return \TYPO3\CMS\Core\Messaging\FlashMessageQueue
      */
@@ -159,6 +159,9 @@ class ErrorManager
             if ($this->useLegacyFlashMessageHandling) {
                 $this->flashMessageQueue = $this->flashMessageService->getMessageQueueByIdentifier();
             } else {
+                if (!$this->flashMessageService) {
+                    $this->flashMessageService = GeneralUtility::makeInstance(FlashMessageService::class);
+                }
                 $this->flashMessageQueue = $this->flashMessageService->getMessageQueueByIdentifier('extbase.flashmessages.' . $this->form->getIdentifier());
             }
         }
@@ -176,19 +179,19 @@ class ErrorManager
         if (!$this->checkConstraints()) {
             return array();
         }
-      
+
         if ($element === null) {
             return $this->getAllErrors();
         }
-      
+
         $this->determineErrorsForElement($element);
-       
+
         $elementName = is_string($element) ? $element : $element->getName();
-       
+
         if (array_key_exists($elementName, $this->errors)) {
             return $this->errors[$elementName];
         }
-        
+
         return array();
     }
 
@@ -201,12 +204,12 @@ class ErrorManager
         if (!$this->checkConstraints()) {
             return array();
         }
-        
+
         $this->determineErrors();
-     
+
         return $this->errors;
     }
-   
+
     /**
      * return all errors merged
      * @return array
@@ -216,16 +219,16 @@ class ErrorManager
         if (!$this->checkConstraints()) {
             return array();
         }
-      
+
         $this->determineErrors();
-     
+
         $errors = [];
         foreach ($this->errors as $key => $elementErrors) {
             $errors = array_merge($errors, $elementErrors);
         }
         return $errors;
     }
- 
+
     /**
      * return true if no error
      * @return bool
@@ -235,12 +238,12 @@ class ErrorManager
         if (!$this->checkConstraints()) {
             return true;
         }
-     
+
         $this->determineErrors();
-     
+
         return empty($this->errors);
     }
-    
+
     /**
      * return true if element if valid
      * @param Ameos\AmeosForm\Elements\ElementAbstract|string $element element
@@ -251,22 +254,22 @@ class ErrorManager
         if (!$this->checkConstraints()) {
             return true;
         }
-        
+
         $this->determineErrorsForElement($element);
-       
+
         $elementName = is_string($element) ? $element : $element->getName();
-       
+
         if (!array_key_exists($elementName, $this->errors)) {
             return true;
         }
-      
+
         if (empty($this->errors[$elementName])) {
             return true;
         }
-      
+
         return false;
     }
-   
+
     /**
      * determine errors
      */
@@ -276,7 +279,7 @@ class ErrorManager
             $this->determineErrorsForElement($element);
         }
     }
-    
+
     /**
      * determine errors for an element
      * @param Ameos\AmeosForm\Elements\ElementAbstract|string $element element
@@ -284,13 +287,13 @@ class ErrorManager
     protected function determineErrorsForElement($element)
     {
         $elementName = is_string($element) ? $element : $element->getName();
-       
+
         if (!in_array($elementName, $this->elementsConstraintsAreChecked)) {
             $this->form->get($elementName)->determineErrors();
             $this->elementsConstraintsAreChecked[] = $elementName;
         }
     }
-    
+
     /**
      * return true if must check constraints
      * @return bool

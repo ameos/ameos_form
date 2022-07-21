@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Sameas extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 {
-
     /**
      * return true if the element is sameas an another value
      *

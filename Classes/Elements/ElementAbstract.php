@@ -35,7 +35,7 @@ abstract class ElementAbstract implements ElementInterface
      * @var string $absolutename absolutename
      */
     protected $absolutename;
-    
+
     /**
      * @var string $value value
      */
@@ -45,7 +45,7 @@ abstract class ElementAbstract implements ElementInterface
      * @var bool $valueSetted valueSetted
      */
     protected $valueSetted = false;
-    
+
     /**
      * @var array $configuration configuration
      */
@@ -60,7 +60,7 @@ abstract class ElementAbstract implements ElementInterface
      * @var array $systemerror systemerror
      */
     protected $systemerror = [];
-    
+
     /**
      * @var array $constraints constraints
      */
@@ -80,12 +80,12 @@ abstract class ElementAbstract implements ElementInterface
      * @var    bool|callable $overrideClause override clause function
      */
     protected $overrideClause = false;
-    
+
     /**
      * @var bool $elementConstraintsAreChecked true if element constraints are checked
      */
     protected $elementConstraintsAreChecked = false;
-    
+
     /**
      * @constuctor
      *
@@ -98,7 +98,7 @@ abstract class ElementAbstract implements ElementInterface
     {
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $this->pageRenderer = $objectManager->get(PageRenderer::class);
-        
+
         $this->name = $name;
         $this->form = $form;
         $this->configuration = $configuration;
@@ -321,7 +321,7 @@ abstract class ElementAbstract implements ElementInterface
     {
         return $this->addConstraint($constraint);
     }
-    
+
     /**
      * add constraint
      *
@@ -357,7 +357,7 @@ abstract class ElementAbstract implements ElementInterface
         }
         return $this;
     }
-    
+
     /**
      * return true if the element is valide
      *
@@ -409,15 +409,15 @@ abstract class ElementAbstract implements ElementInterface
     {
         return $this->searchable;
     }
-    
-    
+
+
     /**
      * form to html
      *
      * @return    string the html
      */
     abstract public function toHtml();
-    
+
     /**
      * to string
      */

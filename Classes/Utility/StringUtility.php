@@ -21,7 +21,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class StringUtility
 {
-   
     /**
      * @var \Ameos\AmeosForm\Form $form form
      */
@@ -61,7 +60,7 @@ class StringUtility
         if (is_callable($string)) {
             $string = call_user_func($string);
         }
-        
+
         // return locallang value
         if (substr($string, 0, 4) === 'LLL:') {
             $string = str_replace('LLL:', '', $string);

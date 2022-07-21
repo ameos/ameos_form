@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Filesize extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 {
-
     /**
      * return true if the element is valide
      *
@@ -31,7 +30,7 @@ class Filesize extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
         if (!is_array($value) && empty($value)) {
             return true;
         }
-    
+
         if (is_array($value)) {
             $maxsize = (int)$this->configuration['maxsize'];
             if (

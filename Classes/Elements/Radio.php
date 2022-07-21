@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Radio extends ElementAbstract
 {
-    
     /**
      * form to html
      *
@@ -30,7 +29,7 @@ class Radio extends ElementAbstract
         $attributes .= isset($this->configuration['style']) ? ' style="' . $this->configuration['style'] . '"' : '';
         $attributes .= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true ? ' disabled="disabled"' : '';
         $attributes .= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
-        
+
         $output = '';
         foreach ($this->configuration['items'] as $value => $label) {
             $checked = ($this->getValue() == $value) ? ' checked="checked"' : '';
@@ -58,7 +57,7 @@ class Radio extends ElementAbstract
         }
         return $data;
     }
-    
+
     /**
      * return where clause
      *

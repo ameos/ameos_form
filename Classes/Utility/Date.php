@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Utility;
 
 class Date
 {
-
     /**
      * convert date to timestamp
      * @param string $value
@@ -29,10 +28,10 @@ class Date
         if ($value == '') {
             return 0;
         }
-        
+
         if (strpos($format, '%') !== false) {
             $date = strptime($value, $format);
-            
+
             if (is_array($date)) {
                 return mktime($date['tm_hour'], $date['tm_min'], $date['tm_sec'], ($date['tm_mon'] + 1), $date['tm_mday'], (1900 + $date['tm_year']));
             } else {

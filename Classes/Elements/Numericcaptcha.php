@@ -14,13 +14,12 @@ namespace Ameos\AmeosForm\Elements;
  *
  * The TYPO3 project - inspiring people to share!
  */
- 
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Constraints\Numericcaptcha as NumericcaptchaConstraint;
 
 class Numericcaptcha extends ElementAbstract
 {
-
     /**
      * @constuctor
      *
@@ -56,7 +55,7 @@ class Numericcaptcha extends ElementAbstract
         }
         return $GLOBALS["TSFE"]->fe_user->getKey("ses", $sessionKey);
     }
-    
+
     /**
      * form to html
      *
@@ -87,7 +86,7 @@ class Numericcaptcha extends ElementAbstract
     {
         return $this->getDigit(1) . ' + ' . $this->getDigit(2);
     }
-    
+
     /**
      * return rendering information
      *

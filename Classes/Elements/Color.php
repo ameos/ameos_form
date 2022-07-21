@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Color extends ElementAbstract
 {
-    
     /**
      * form to html
      *

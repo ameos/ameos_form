@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Timepicker extends ElementAbstract
 {
-    
     /**
      * form to html
      *

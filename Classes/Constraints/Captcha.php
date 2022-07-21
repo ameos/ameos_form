@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class Captcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 {
-    
     /**
      * return true if the element is valide
      *

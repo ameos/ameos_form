@@ -69,7 +69,7 @@ class ElementViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHe
         if ($this->arguments['custom'] !== '') {
             $this->arguments['element']->addConfiguration('custom', $this->arguments['custom']);
         }
-        
+
         return $this->arguments['element']->toHtml();
     }
 }

@@ -64,7 +64,7 @@ class SortlinkViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBa
         if ($currentColumn == $column && $currentDirection == 'ASC') {
             $direction = 'DESC';
         }
-        
+
         $uri = $uriBuilder->reset()->uriFor(null, ['sort' => $column, 'direction' => $direction]);
         $this->tag->addAttribute('href', $uri);
         $this->tag->setContent($this->renderChildren());

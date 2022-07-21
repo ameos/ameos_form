@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Number extends ElementAbstract
 {
-    
     /**
      * form to html
      *
@@ -35,10 +34,10 @@ class Number extends ElementAbstract
         if (isset($this->configuration['step'])) {
             $additionnalAttributes .= ' step="' . $this->configuration['step'] . '"';
         }
-        
+
         return '<input type="number" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . $additionnalAttributes . ' />';
     }
-    
+
     /**
      * return rendering information
      *
@@ -57,7 +56,7 @@ class Number extends ElementAbstract
         if (isset($this->configuration['step'])) {
             $data['step'] = $this->configuration['step'];
         }
-        
+
         return $data;
     }
 }

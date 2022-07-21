@@ -21,7 +21,6 @@ use Ameos\AmeosForm\Utility\Events;
 
 class RecordList
 {
-
     /**
      * @var \Ameos\AmeosForm\Form\Search searchform
      */
@@ -61,7 +60,7 @@ class RecordList
      * @var string default direction for sorting
      */
     protected $defaultDirection;
-    
+
     /**
      * @param \Ameos\AmeosForm\Form\AbstractForm $searchform search form
      * @param string $template template path
@@ -101,7 +100,7 @@ class RecordList
         } else {
             $defaultOrderby = $defaultDirection = null;
         }
-        
+
 
         if ($defaultOrderby == null) {
             $defaultOrderby     = $this->defaultOrderby;
@@ -109,11 +108,11 @@ class RecordList
         if ($defaultDirection == null) {
             $defaultDirection = $this->defaultDirection;
         }
-        
+
         $this->orderby = $this->context->getRequest()->hasArgument('sort')
             ? $this->context->getRequest()->getArgument('sort')
             : $defaultOrderby;
-        
+
         $this->direction = $this->context->getRequest()->hasArgument('direction')
             ? $this->context->getRequest()->getArgument('direction')
             : $defaultDirection;

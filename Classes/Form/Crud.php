@@ -21,17 +21,16 @@ use Ameos\AmeosForm\Constraints;
 
 class Crud extends \Ameos\AmeosForm\Form\AbstractForm
 {
-    
     /**
      * @var bool $elementsConstraintsAreChecked true if elements constraints are checked
      */
     protected $elementsConstraintsAreChecked = false;
-    
+
     /**
      * @var array $errorsByElement errorsByElement
      */
     protected $errorsByElement = [];
-    
+
     /**
      * @constuctor
      *
@@ -43,7 +42,7 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm
         parent::__construct($identifier);
         $this->mode = 'crud/manual';
     }
-    
+
     /**
      * add validator
      *
@@ -58,7 +57,7 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm
     {
         return $this->addConstraint($elementName, $type, $message, $configuration);
     }
-    
+
     /**
      * add element constraint
      *
@@ -98,10 +97,10 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm
                     $constraint = GeneralUtility::makeInstance(Constraints\Required::class, $message, $configuration, $this->getElement($elementName), $this);
                     break;
             }
-            
+
             $this->get($elementName)->addConstraint($constraint);
         }
-        
+
         return $this;
     }
 

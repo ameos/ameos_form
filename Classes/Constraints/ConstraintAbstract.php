@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Constraints;
 
 abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\ConstraintInterface
 {
-
     /**
      * @var string $message message
      */
@@ -32,12 +31,12 @@ abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\Constr
      * @var \Ameos\AmeosForm\Form $form form
      */
     protected $form;
-    
+
     /**
      * @var \Ameos\AmeosForm\Elements\ElementAbstract $element element
      */
     protected $element;
-    
+
     /**
      * @constuctor
      *
@@ -51,7 +50,7 @@ abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\Constr
         $this->element       = $element;
         $this->form          = $form;
     }
-    
+
     /**
      * return the message
      *
@@ -61,7 +60,7 @@ abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\Constr
     {
         return $this->message;
     }
-    
+
     /**
      * return true if the element is valide
      *

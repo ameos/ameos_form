@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 final class Events
 {
-
     /**
      * @var array<Ameos\AmeosForm\Utility\Events>
      */

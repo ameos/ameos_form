@@ -21,12 +21,11 @@ use Ameos\AmeosForm\Utility\UserUtility;
 
 class ExtbaseForm extends \Ameos\AmeosForm\Form\Search
 {
-
     /**
      * @var default clause
      */
     protected $defaultClause;
-    
+
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Repository $repository repository
      */
@@ -78,7 +77,7 @@ class ExtbaseForm extends \Ameos\AmeosForm\Form\Search
             }
             $GLOBALS['TSFE']->fe_user->storeSessionData();
         }
-        
+
         $clauses = array_merge($this->clauses, $this->defaultClause);
         return $this->repository->findByClausesArray($clauses, $orderby, $direction);
     }

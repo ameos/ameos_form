@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Dropdown extends ElementAbstract
 {
-
     /**
      * @constuctor
      *
@@ -33,7 +32,7 @@ class Dropdown extends ElementAbstract
             $this->configuration['optionValueField'] = 'uid';
         }
     }
-    
+
     /**
      * form to html
      *
@@ -112,7 +111,7 @@ class Dropdown extends ElementAbstract
     {
         return  isset($this->configuration['multiple']) && $this->configuration['multiple'] == true;
     }
-    
+
     /**
      * return where clause
      *

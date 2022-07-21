@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Domain\Repository;
 
 class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
-
     /**
      * return query clause
      * @param array $clause clause
@@ -86,7 +85,7 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         if ($orderby !== false) {
             $query->setOrderings(array($orderby => $direction));
         }
-        
+
         return $query->execute();
     }
 }
