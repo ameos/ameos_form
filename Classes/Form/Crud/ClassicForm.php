@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ClassicForm extends \Ameos\AmeosForm\Form\Crud
 {
-    
     /**
      * @var int $recordIdentifier
      */
@@ -64,7 +63,7 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Crud
     {
         return $this->data;
     }
-    
+
     /**
      * return data
      *
@@ -125,7 +124,7 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Crud
                     $dataToPersist[$field] = $this->getData($field);
                 }
             }
-            
+
             if ($this->recordIdentifier && $this->recordIdentifier > 0) {
                 $GLOBALS['TYPO3_DB']->exec_UPDATEquery($this->tablename, 'uid = ' . $this->recordIdentifier, $dataToPersist);
             } else {

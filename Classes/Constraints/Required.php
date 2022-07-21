@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Constraints;
 
 class Required extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 {
-
     /**
      * return true if the element is valide
      *

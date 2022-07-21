@@ -20,7 +20,6 @@ use Ameos\AmeosForm\Utility\UserUtility;
 
 class ClassicForm extends \Ameos\AmeosForm\Form\Search
 {
-
     /**
      * @var string $query query
      */
@@ -74,7 +73,7 @@ class ClassicForm extends \Ameos\AmeosForm\Form\Search
             }
             $GLOBALS['TSFE']->fe_user->storeSessionData();
         }
-        
+
         $clauses = '';
         foreach ($this->clauses as $clause) {
             $clauses .= ' AND ' . $this->makeWhereClause($clause);

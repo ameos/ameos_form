@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Text extends ElementAbstract
 {
-    
     /**
      * @constuctor
      *

@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Date extends ElementAbstract
 {
-
     /**
      * @var string $valueYear current year value
      */
@@ -32,12 +31,12 @@ class Date extends ElementAbstract
      * @var string $valueDay current day value
      */
     protected $valueDay = '';
-    
+
     /**
      * @var int $yearMinimumLimit
      */
     protected $yearMinimumLimit;
-    
+
     /**
      * @var int $yearMaximumLimit
      */
@@ -83,7 +82,7 @@ class Date extends ElementAbstract
         $data['day']   = $this->renderDay();
         return $data;
     }
-    
+
     /**
      * form to html
      *
@@ -127,7 +126,7 @@ class Date extends ElementAbstract
                 $output .= $this->renderYear();
                 break;
         }
-        
+
         return $output;
     }
 
@@ -139,9 +138,9 @@ class Date extends ElementAbstract
     public function renderYear()
     {
         $cssclass = isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
-        
+
         $availableYears = $this->getYearsItems();
-        
+
         $outputYears = '<select id="' . $this->getHtmlId() . '-year" name="' . $this->absolutename . '[year]"' . $cssclass  . '>';
         foreach ($availableYears as $year) {
             $selected = ($this->valueYear == $year) ? ' selected="selected"' : '';
@@ -159,9 +158,9 @@ class Date extends ElementAbstract
     public function renderMonth()
     {
         $cssclass = isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
-        
+
         $availableMonths = $this->getMonthsItems();
-        
+
         $outputMonths =
             '<select'
             . ' id="' . $this->getHtmlId() . '-month"'
@@ -187,7 +186,7 @@ class Date extends ElementAbstract
     public function renderDay()
     {
         $cssclass = isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
-        
+
         $availableDays = $this->getDaysItems();
 
         $outputDays = '<select id="' . $this->getHtmlId() . '-day" name="' . $this->absolutename . '[day]"' . $cssclass  . '>';
@@ -305,7 +304,7 @@ class Date extends ElementAbstract
         if ($value == '') {
             return '';
         }
-        
+
         $value = date('Y-m-d', $value);
         $date  = new \Datetime($value);
         if ($this->configuration['format-output'] == 'timestamp') {

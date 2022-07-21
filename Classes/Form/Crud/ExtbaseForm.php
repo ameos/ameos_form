@@ -20,7 +20,6 @@ use Ameos\AmeosForm\Utility\Events;
 
 class ExtbaseForm extends \Ameos\AmeosForm\Form\Crud
 {
-    
     /**
      * @var \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $model model
      */

@@ -17,12 +17,11 @@ namespace Ameos\AmeosForm\Elements;
 
 class Button extends ElementAbstract
 {
-    
     /**
      * @var bool $searchable searchable
      */
     protected $searchable = false;
-    
+
     /**
      * form to html
      *
@@ -36,7 +35,7 @@ class Button extends ElementAbstract
             . $this->getAttributes()
             . '>' . $this->getLabel() . '</button>';
     }
-    
+
     /**
      * return label
      * @return string the label
@@ -45,7 +44,7 @@ class Button extends ElementAbstract
     {
         return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
     }
-    
+
     /**
      * return true if the button is clicked
      * @return bool

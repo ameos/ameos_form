@@ -25,17 +25,16 @@ use Ameos\AmeosForm\Utility\ErrorManager;
 
 abstract class AbstractForm
 {
-    
     /**
      * @var TYPO3\CMS\Extbase\Object\ObjectManager $objectManager
      */
     protected $objectManager;
-    
+
     /**
      * @var Ameos\AmeosForm\Utility\ErrorManager $errorManager error manager
      */
     protected $errorManager;
-    
+
     /**
      * @var string $identifer identifier
      */
@@ -65,12 +64,12 @@ abstract class AbstractForm
      * @var bool $enableHoneypot enable honey pot
      */
     protected $enableHoneypot = true;
-    
+
     /**
      * @var Ameos\AmeosForm\Utility\StringUtility $stringUtility
      */
     public $stringUtility;
-    
+
     /**
      * @constuctor
      *
@@ -83,11 +82,11 @@ abstract class AbstractForm
         $this->enableCsrftoken = TYPO3_MODE == 'FE' ? true : false;
 
         $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        
+
         $this->stringUtility = $this->objectManager->get(AmeosStringUtility::class, $this);
         $this->errorManager  = $this->objectManager->get(ErrorManager::class, $this);
     }
-    
+
     /**
      * return error manager instance
      * @return Ameos\AmeosForm\Utility\ErrorManager
@@ -96,7 +95,7 @@ abstract class AbstractForm
     {
         return $this->errorManager;
     }
-    
+
     /**
      * return identifier
      * @return string identifier
@@ -203,7 +202,7 @@ abstract class AbstractForm
         $this->extensionName = $extensionName;
         return $this;
     }
-    
+
     /**
      * return extension name
      * @return string extension name
@@ -212,7 +211,7 @@ abstract class AbstractForm
     {
         return $this->extensionName;
     }
-    
+
     /**
      * return elements
      * @return array elements
@@ -286,7 +285,7 @@ abstract class AbstractForm
         $this->elements[$name] = $element;
         return $this;
     }
-    
+
     /**
      * Return mode
      *
@@ -311,7 +310,7 @@ abstract class AbstractForm
         } else {
             $csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken');
         }
-        
+
         $html = '<form method="post">';
         foreach ($this->elements as $element) {
             $html .= $element->toHtml();
@@ -339,7 +338,7 @@ abstract class AbstractForm
         }
 
         $requestDatas = is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request') ? $request->getArguments() : $request;
-        
+
         if ($this->csrftokenIsEnabled()) {
             if ($requestDatas['csrftoken'] == '' || $requestDatas['csrftoken'] != $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken')) {
                 throw new \Exception('Forbidden: invalid csrf token');
@@ -358,7 +357,7 @@ abstract class AbstractForm
                 $element->setValue('');
             }
         }
-        
+
         return $this;
     }
 
@@ -371,7 +370,7 @@ abstract class AbstractForm
         $post = GeneralUtility::_POST($this->identifier);
         return isset($post['issubmitted']) && $post['issubmitted'] == 1;
     }
-    
+
     /**
      * return submitter
      * @return Ameos\AmeosForm\Elements\Submit|FALSE
@@ -385,10 +384,10 @@ abstract class AbstractForm
                 }
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * call magic method
      * return element if exist
@@ -403,45 +402,45 @@ abstract class AbstractForm
             if ($this->has($elementName)) {
                 return $this->get($elementName);
             }
-            
+
             $elementName = lcfirst($elementName);
             if ($this->has($elementName)) {
                 return $this->get($elementName);
             }
-            
+
             $elementName = GeneralUtility::camelCaseToLowerCaseUnderscored($elementName);
             if ($this->has($elementName)) {
                 return $this->get($elementName);
             }
-            
+
             $elementName = str_replace('_', '-', $elementName);
             if ($this->has($elementName)) {
                 return $this->get($elementName);
             }
         }
-        
+
         if (StringUtility::beginsWith($method, 'with')) {
             $elementName = substr($method, 4);
             if ($this->has($elementName)) {
                 return $this->get($elementName)->with($parameters[0], $parameters[1]);
             }
-            
+
             $elementName = lcfirst($elementName);
             if ($this->has($elementName)) {
                 return $this->get($elementName)->with($parameters[0], $parameters[1]);
             }
-            
+
             $elementName = GeneralUtility::camelCaseToLowerCaseUnderscored($elementName);
             if ($this->has($elementName)) {
                 return $this->get($elementName)->with($parameters[0], $parameters[1]);
             }
-            
+
             $elementName = str_replace('_', '-', $elementName);
             if ($this->has($elementName)) {
                 return $this->get($elementName)->with($parameters[0], $parameters[1]);
             }
         }
-        
+
         return false;
     }
 }

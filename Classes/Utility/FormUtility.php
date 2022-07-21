@@ -20,7 +20,6 @@ use Ameos\AmeosForm\Elements;
 
 class FormUtility
 {
-
     /**
      * add element fo the form
      *
@@ -260,7 +259,7 @@ class FormUtility
                     $form
                 );
                 break;
-            
+
             default:
                 if ($type != '' && $type != 'text' && class_exists($type)) {
                     $element = GeneralUtility::makeInstance($type, $absolutename, $name, $configuration, $form);

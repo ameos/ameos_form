@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Checkbox extends ElementAbstract
 {
-    
     /**
      * form to html
      *
@@ -98,7 +97,7 @@ class Checkbox extends ElementAbstract
         if (!is_array($value)) {
             $value = GeneralUtility::trimExplode(',', $value);
         }
-        
+
         return $value;
     }
 

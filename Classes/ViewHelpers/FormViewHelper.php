@@ -44,7 +44,7 @@ class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
         $this->registerArgument('class', 'string', 'class attribute', false);
         $this->registerArgument('id', 'string', 'id attribute', false);
     }
-    
+
     /**
      * Renders form
      *
@@ -62,7 +62,7 @@ class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
         if (!is_object($form)) {
             return 'Form is not valid. May be it\'s not assigned to the view.';
         }
-        
+
         foreach ($form->getElements() as $elementName => $element) {
             $this->templateVariableContainer->add($elementName, $element);
         }
@@ -72,17 +72,17 @@ class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
                 $this->templateVariableContainer->add('errors', $errors);
             }
         }
-        
+
         $output = $this->renderChildren();
-        
+
         foreach ($form->getElements() as $elementName => $element) {
             $this->templateVariableContainer->remove($elementName);
         }
-        
+
         if (strpos($form->getMode(), 'crud') !== false && !empty($errors)) {
             $this->templateVariableContainer->remove('errors');
         }
-        
+
         if (TYPO3_MODE == 'FE') {
             if (!$form->isSubmitted()) {
                 $csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
@@ -94,10 +94,10 @@ class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
         } else {
             $csrftoken = 'notoken';
         }
-        
+
         $output = '<form method="' . $method . '" ' . $id . $enctype . $class . $action . '>' . $output . '
 			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" value="1" name="' . $form->getIdentifier() . '[issubmitted]" />';
-        
+
         if ($form->csrftokenIsEnabled()) {
             $output .= '<input type="hidden" id="' . $form->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $form->getIdentifier() . '[csrftoken]" />';
         }

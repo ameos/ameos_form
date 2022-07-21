@@ -21,12 +21,11 @@ use Ameos\AmeosForm\Utility\Events;
 
 class Password extends ElementAbstract
 {
-    
     /**
      * @var bool $searchable searchable
      */
     protected $searchable = false;
-    
+
     /**
      * @constuctor
      *
@@ -42,7 +41,7 @@ class Password extends ElementAbstract
         $this->configuration['fill_value'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value'] : false;
         $this->configuration['fill_value_iferror'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value_iferror'] : true;
     }
-    
+
     /**
      * form to html
      *
@@ -73,7 +72,7 @@ class Password extends ElementAbstract
                 'password' => $value,
             ]);
         }
-        
+
         $this->valueSetted = true;
         $this->value = $value;
 

@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Time extends ElementAbstract
 {
-
     /**
      * @var string $valueHour current hour value
      */
@@ -39,7 +38,7 @@ class Time extends ElementAbstract
     public function __construct($absolutename, $name, $configuration, $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
-        
+
         $this->configuration['minutestep'] = isset($this->configuration['minutestep']) ? $this->configuration['minutestep'] : 1;
     }
 
@@ -55,7 +54,7 @@ class Time extends ElementAbstract
         $data['minute'] = $this->renderMinute();
         return $data;
     }
-    
+
     /**
      * form to html
      *
@@ -97,7 +96,7 @@ class Time extends ElementAbstract
         $output .= '</datalist>';
         return $output;
     }
-    
+
     /**
      * set the value
      *

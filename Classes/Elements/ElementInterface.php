@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 interface ElementInterface
 {
-    
     /**
      * @constuctor
      *

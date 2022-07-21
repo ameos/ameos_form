@@ -31,7 +31,7 @@ class Datepicker extends ElementAbstract
     public function __construct($absolutename, $name, $configuration, $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
-        
+
         if (!isset($this->configuration['format'])) {
             $this->configuration['format'] = 'D MMM YYYY';
         }
@@ -116,7 +116,7 @@ class Datepicker extends ElementAbstract
             'initDatepicker("' . $this->getHtmlId() . '", "' . $this->configuration['format'] . '", i18n, configuration);
 		');
     }
-    
+
     /**
      * form to html
      *

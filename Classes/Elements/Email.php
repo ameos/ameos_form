@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Email extends ElementAbstract
 {
-    
     /**
      * form to html
      *

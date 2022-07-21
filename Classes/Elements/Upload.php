@@ -23,17 +23,16 @@ use Ameos\AmeosForm\Utility\StringUtility;
 
 class Upload extends ElementAbstract
 {
-    
     /**
      * @var bool $searchable searchable
      */
     protected $searchable = false;
-    
+
     /**
      * @var string $uploadState etat de l'upload ( no-upload, temporary-upload, upload )
      */
     protected $uploadState = 'no-upload';
-    
+
     /**
      * @constuctor
      *
@@ -61,7 +60,7 @@ class Upload extends ElementAbstract
     public function toHtml()
     {
         $multiple = (isset($this->configuration['multiple']) && (bool)$this->configuration['multiple'] === true) ? ' multiple="multiple"' : '';
-        
+
         $output = '';
         if ($this->getValue() && !(isset($this->configuration['show_link']) && (bool)$this->configuration['show_link'] === false)) {
             if ($this->uploadState == 'temporary-upload') {
@@ -119,7 +118,8 @@ class Upload extends ElementAbstract
     public function setValue($value)
     {
         if (is_array($value)) {
-            if (isset($value['upload'])
+            if (
+                isset($value['upload'])
                 && is_array($value['upload'])
                 && isset($value['upload'][0]['name'])
                 && $value['upload'][0]['name'] != ''
@@ -132,19 +132,19 @@ class Upload extends ElementAbstract
                         $directory = $this->getUploadDirectory();
                         $filename = $this->getUploadFilename($uploadFile['name']);
                         $temporaryFilepath = $this->getTemporaryUpdateFilepath($uploadFile['name']);
-                    
+
                         GeneralUtility::upload_copy_move($uploadFile['tmp_name'], $temporaryFilepath);
-                    
+
                         Events::getInstance($this->form->getIdentifier())->registerEvent('form_is_valid', [$this, 'moveTemporaryUploadedFile'], [
                                 'destinationFilepath' => $directory . $filename,
                                 'temporaryFilepath'   => $temporaryFilepath,
                         ]);
-                    
+
                         $this->uploadState = 'temporary-upload';
-                        
+
                         $currentValue[] = basename($temporaryFilepath);
                     }
-                    
+
                     parent::setValue($currentValue);
                 } else {
                     $this->value = null;
@@ -160,9 +160,9 @@ class Upload extends ElementAbstract
                         'destinationFilepath' => $directory . $filename,
                         'temporaryFilepath'   => Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/' . $uploadFile,
                     ]);
-                        
+
                     $this->uploadState = 'temporary-upload';
-                    
+
                     $currentValue[] = basename($temporaryFilepath);
                 }
                 parent::setValue($currentValue);
@@ -173,7 +173,7 @@ class Upload extends ElementAbstract
             }
             parent::setValue($value);
         }
-        
+
         return $this;
     }
 
@@ -248,7 +248,7 @@ class Upload extends ElementAbstract
         if (isset($this->configuration['filename']) && trim((string)$this->configuration['filename']) !== '') {
             return trim((string)$this->configuration['filename']);
         }
-        
+
         $directory = $this->getUploadDirectory();
         if (file_exists($directory . $clientFilename) && !$this->canOverwrite()) {
             $fileIndex = 1;
@@ -260,7 +260,7 @@ class Upload extends ElementAbstract
         } else {
             $filename = $clientFilename;
         }
-        
+
         return $filename;
     }
 
@@ -306,7 +306,7 @@ class Upload extends ElementAbstract
             mkdir($directory, 0770, true);
         }
 
-        
+
         $this->uploadState = 'upload';
         if (isset($this->configuration['fal']) && (bool)$this->configuration['fal'] === true) {
             $storageIdentifier = isset($this->configuration['storageIdentifier']) ? (int)$this->configuration['storageIdentifier'] : 1;

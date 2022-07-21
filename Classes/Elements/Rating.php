@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Rating extends Radio
 {
-
     /**
      * @constuctor
      *
@@ -44,7 +43,7 @@ class Rating extends Radio
             }
         }
     }
-    
+
     /**
      * form to html
      *

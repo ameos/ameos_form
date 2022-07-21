@@ -24,7 +24,6 @@ use Ameos\AmeosForm\Form\Crud as FormCrud;
 
 class Factory
 {
-
     /**
      * create and return FORM
      * @return AbstractForm the form

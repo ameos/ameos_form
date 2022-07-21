@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class ReCaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 {
-    
     /**
      * return true if the element is valide
      *
@@ -32,7 +31,7 @@ class ReCaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 
         $recaptcha = new \ReCaptcha\ReCaptcha($this->configuration['privateKey']);
         $response  = $recaptcha->verify($_POST['g-recaptcha-response']);
-        
+
         if ($response->isSuccess()) {
             return true;
         }

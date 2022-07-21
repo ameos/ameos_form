@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Url extends ElementAbstract
 {
-    
     /**
      * form to html
      *

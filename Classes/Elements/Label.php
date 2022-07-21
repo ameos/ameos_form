@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Label extends ElementAbstract
 {
-    
     /**
      * form to html
      *

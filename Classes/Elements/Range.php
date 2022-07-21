@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Elements;
 
 class Range extends ElementAbstract
 {
-    
     /**
      * form to html
      *
@@ -35,7 +34,7 @@ class Range extends ElementAbstract
         if (isset($this->configuration['step'])) {
             $additionnalAttributes .= ' step="' . $this->configuration['step'] . '"';
         }
-        
+
         return '<input type="range" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . $additionnalAttributes . ' />' . $this->getDatalist();
     }
 
@@ -57,10 +56,10 @@ class Range extends ElementAbstract
         if (isset($this->configuration['step'])) {
             $data['step'] = $this->configuration['step'];
         }
-        
+
         return $data;
     }
-    
+
     /**
      * return where clause
      *

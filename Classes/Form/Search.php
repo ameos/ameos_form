@@ -21,12 +21,11 @@ use Ameos\AmeosForm\Utility\UserUtility;
 
 abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm
 {
-
     /**
      * @var bool $storeSearchInSession
      */
     protected $storeSearchInSession = true;
-    
+
     /**
      * @constuctor
      *
@@ -62,7 +61,7 @@ abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm
         $this->storeSearchInSession = $storeSearchInSession;
         return $this;
     }
-    
+
     /**
      * add element fo the form
      *

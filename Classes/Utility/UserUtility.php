@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Utility;
 
 class UserUtility
 {
-
     /**
      * return true if the user is logged
      *

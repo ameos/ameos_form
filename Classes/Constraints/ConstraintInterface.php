@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Constraints;
 
 interface ConstraintInterface
 {
-
     /**
      * return true if the element is valide
      *

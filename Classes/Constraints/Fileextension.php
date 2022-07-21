@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Fileextension extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
 {
-
     /**
      * return true if the element is valide
      *
@@ -31,7 +30,7 @@ class Fileextension extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
         if (!is_array($value) && empty($value)) {
             return true;
         }
-        
+
         if (is_array($value)) {
             $pathfinfo = pathinfo($value['name']);
             return GeneralUtility::inList($this->configuration['allowed'], strtolower($pathfinfo['extension']));

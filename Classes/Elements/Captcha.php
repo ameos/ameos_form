@@ -14,13 +14,12 @@ namespace Ameos\AmeosForm\Elements;
  *
  * The TYPO3 project - inspiring people to share!
  */
- 
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Constraints\Captcha as CaptchaConstraint;
 
 class Captcha extends ElementAbstract
 {
-
     /**
      * @constuctor
      *
@@ -37,7 +36,7 @@ class Captcha extends ElementAbstract
         $constraint = GeneralUtility::makeInstance(CaptchaConstraint::class, $errorMessage, [], $this, $form);
         $this->addConstraint($constraint);
     }
-    
+
     /**
      * form to html
      *
@@ -68,7 +67,7 @@ class Captcha extends ElementAbstract
 				<img src="/typo3conf/ext/ameos_form/Resources/Public/Captcha/images/refresh.png" alt="Reload Image" onclick="this.blur()" />
 			</a>';
     }
-    
+
     /**
      * render captcha picture
      * @return string html
@@ -77,7 +76,7 @@ class Captcha extends ElementAbstract
     {
         return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
     }
-    
+
     /**
      * return rendering information
      *
