@@ -86,6 +86,9 @@ class Crud extends \Ameos\AmeosForm\Form\AbstractForm
                 case 'filesize':
                     $constraint = GeneralUtility::makeInstance(Constraints\Filesize::class, $message, $configuration, $this->getElement($elementName), $this);
                     break;
+                case 'filemime':
+                    $constraint = GeneralUtility::makeInstance(Constraints\Filemime::class, $message, $configuration, $this->getElement($elementName), $this);
+                    break;
                 case 'captcha':
                     $constraint = GeneralUtility::makeInstance(Constraints\Captcha::class, $message, $configuration, $this->getElement($elementName), $this);
                     break;

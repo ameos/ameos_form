@@ -205,7 +205,10 @@ class Upload extends ElementAbstract
                         foreach ($values['upload'] as $value) {
                             if (!is_a($constraint, 'Ameos\\AmeosForm\\Constraints\\Required')) {
                                 if (!$constraint->isValid($value)) {
-                                    $this->form->getErrorManager()->add($constraint->getMessage(), $this);
+                                    $message = $constraint->getMessage();
+                                    $fileData = pathinfo($value['name']);
+                                    $message = str_replace(['%file_name%', '%file_extension%'], [$fileData['filename'], $fileData['extension']], $message);
+                                    $this->form->getErrorManager()->add($message, $this);
                                 }
                             }
                         }
