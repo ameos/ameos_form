@@ -4,10 +4,10 @@
     "type": "typo3-cms-extension",
     "homepage": "https://github.com/ameos/ameos_form",
     "require": {
-        "typo3/cms-core": "^10.4 | ^11.5 | dev-master",
-        "typo3/cms-fluid": "^10.4 | ^11.5 | dev-master",
-        "typo3/cms-extbase": "^10.4 | ^11.5 | dev-master",
-        "php": ">=7.2.0"
+        "typo3/cms-core": "^12",
+        "typo3/cms-fluid": "^12",
+        "typo3/cms-extbase": "^12",
+        "php": ">=8.0.0"
     },
     "keywords": [
         "TYPO3",
@@ -25,6 +25,11 @@
     "autoload": {
         "psr-4": {
             "Ameos\\AmeosForm\\": "Classes"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "ameos_form"
         }
     }
 }
