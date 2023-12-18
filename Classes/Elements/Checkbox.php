@@ -93,7 +93,7 @@ class Checkbox extends ElementAbstract
      */
     public function getValue()
     {
-        $value = parent::getValue($value);
+        $value = parent::getValue();
         if (!is_array($value)) {
             $value = GeneralUtility::trimExplode(',', $value);
         }

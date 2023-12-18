@@ -54,10 +54,10 @@ class Datepicker extends ElementAbstract
             $this->configuration['landingDate'] *= 1000;
         }
 
-        $this->pageRenderer->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/css/pikaday.css');
-        $this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Momentjs/moment.js');
-        $this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/pikaday.js');
-        $this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Elements/datepicker.js');
+        $this->pageRenderer->addCssFile('EXT:ameos_form/Resources/Public/Pikaday/css/pikaday.css');
+        $this->pageRenderer->addJsFooterFile('EXT:ameos_form/Resources/Public/Momentjs/moment.js');
+        $this->pageRenderer->addJsFooterFile('EXT:ameos_form/Resources/Public/Pikaday/pikaday.js');
+        $this->pageRenderer->addJsFooterFile('EXT:ameos_form/Resources/Public/Elements/datepicker.js');
 
         $this->pageRenderer->addJsFooterInlineCode('init-datepicker-' . $name, '
 			var i18n = {
@@ -124,14 +124,19 @@ class Datepicker extends ElementAbstract
      */
     public function toHtml()
     {
+        $value = $this->getValue();
+        if (is_a($value, \DateTimeInterface::class)) {
+            $value = $value->getTimestamp();
+        }
+
         return '<input type="text" autocomplete="off" id="' . $this->getHtmlId() . '-datepicker" name="' . $this->absolutename . '-datepicker" ' . $this->getAttributes() . ' />'
-            . '<input type="hidden" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '" />';
+            . '<input type="hidden" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $value . '" />';
     }
 
     /**
      * set the value
      *
-     * @param   string  $value value
+     * @param   mixed  $value value
      * @return  \Ameos\AmeosForm\Elements\ElementAbstract this
      */
     public function setValue($value)
@@ -140,7 +145,10 @@ class Datepicker extends ElementAbstract
             $value = '';
         }
         parent::setValue($value);
-        if ($value != '') {
+        if (!empty($value)) {
+            if (is_a($value, \DateTimeInterface::class)) {
+                $value = $value->getTimestamp();
+            }
             $this->pageRenderer->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
 				if(document.getElementById("' . $this->getHtmlId() . '-datepicker")) {
 					document.getElementById("' . $this->getHtmlId() . '-datepicker").value = moment(' . $value . ', "X").format("' . $this->configuration['format'] . '");

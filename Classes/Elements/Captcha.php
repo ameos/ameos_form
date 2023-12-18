@@ -21,6 +21,11 @@ use Ameos\AmeosForm\Constraints\Captcha as CaptchaConstraint;
 class Captcha extends ElementAbstract
 {
     /**
+     * @var string
+     */
+    protected $sid;
+
+    /**
      * @constuctor
      *
      * @param   string  $absolutename absolutename
@@ -44,7 +49,7 @@ class Captcha extends ElementAbstract
      */
     public function toHtml()
     {
-        $sid = md5(uniqid());
+        $this->sid = md5(uniqid());
         return $this->renderCaptchaPicture() . $this->renderCaptchaRefresh() . $this->renderCaptchaInput();
     }
 
@@ -54,7 +59,7 @@ class Captcha extends ElementAbstract
      */
     protected function renderCaptchaPicture()
     {
-        return '<img id="' . $this->getHtmlId() . '-image" src="/typo3conf/ext/ameos_form/Resources/Public/Captcha/securimage_show.php?sid=' . $sid . '" alt="CAPTCHA Image" />';
+        return '<img id="' . $this->getHtmlId() . '-image" src="/_assets/e212ff8d07c38282aa6ba26319f23721/Captcha/securimage_show.php?sid=' . $this->sid . '" alt="CAPTCHA Image" />';
     }
 
     /**
@@ -63,8 +68,8 @@ class Captcha extends ElementAbstract
      */
     protected function renderCaptchaRefresh()
     {
-        return '<a href="#" title="Refresh Image" onclick="document.getElementById(\'' . $this->getHtmlId() . '-image\').src = \'/typo3conf/ext/ameos_form/Resources/Public/Captcha/securimage_show.php?sid=\' + Math.random(); this.blur(); return false">
-				<img src="/typo3conf/ext/ameos_form/Resources/Public/Captcha/images/refresh.png" alt="Reload Image" onclick="this.blur()" />
+        return '<a href="#" title="Refresh Image" onclick="document.getElementById(\'' . $this->getHtmlId() . '-image\').src = \'/_assets/e212ff8d07c38282aa6ba26319f23721/Captcha/securimage_show.php?sid=\' + Math.random(); this.blur(); return false">
+				<img src="/_assets/e212ff8d07c38282aa6ba26319f23721/Captcha/images/refresh.png" alt="Reload Image" onclick="this.blur()" />
 			</a>';
     }
 

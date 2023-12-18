@@ -16,7 +16,6 @@ namespace Ameos\AmeosForm\Constraints;
  */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
 
 class Unique extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
@@ -32,8 +31,8 @@ class Unique extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
         if ($value == '') {
             return true;
         }
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $defaultQuerySettings = $objectManager->get(Typo3QuerySettings::class);
+
+        $defaultQuerySettings = GeneralUtility::makeInstance(Typo3QuerySettings::class);
         $defaultQuerySettings->setRespectStoragePage(false);
         $this->configuration['repository']->setDefaultQuerySettings($defaultQuerySettings);
 

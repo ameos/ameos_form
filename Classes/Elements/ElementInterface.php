@@ -75,7 +75,7 @@ interface ElementInterface
     /**
      * return the value
      *
-     * @return  string value
+     * @return  mixed value
      */
     public function getValue();
 

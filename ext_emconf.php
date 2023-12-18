@@ -1,6 +1,6 @@
 <?php
 
-$EM_CONF[$_EXTKEY] = [
+$EM_CONF['ameos_form'] = [
     'title'            => 'Form API',
     'description'      => 'Form API for extbase and fluid',
     'category'         => 'misc',

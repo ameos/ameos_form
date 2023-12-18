@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This is a PHP library that handles calling reCAPTCHA.
  *
@@ -31,7 +32,6 @@ namespace ReCaptcha;
  */
 interface RequestMethod
 {
-
     /**
      * Submit the request with the specified parameters.
      *

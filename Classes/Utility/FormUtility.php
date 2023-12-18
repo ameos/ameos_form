@@ -133,6 +133,15 @@ class FormUtility
                     $form
                 );
                 break;
+            case 'textdate':
+                $element = GeneralUtility::makeInstance(
+                    Elements\Textdate::class,
+                    $absolutename,
+                    $name,
+                    $configuration,
+                    $form
+                );
+                break;
             case 'datepicker':
                 $element = GeneralUtility::makeInstance(
                     Elements\Datepicker::class,

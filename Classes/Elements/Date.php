@@ -279,7 +279,7 @@ class Date extends ElementAbstract
                 $value = $date->getTimestamp();
             }
         } elseif (is_a($value, '\Datetime')) {
-            $value = $date->getTimestamp();
+            $value = $value->getTimestamp();
 
             $this->valueDay   = date('j', $value);
             $this->valueMonth = date('n', $value);

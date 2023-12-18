@@ -153,12 +153,11 @@ class Upload extends ElementAbstract
                 $currentValue = [];
                 foreach ($value['temporary'] as $uploadFile) {
                     $directory = $this->getUploadDirectory();
-                    $filename = $this->getUploadFilename($uploadFile);
-                    $temporaryFilepath = $directory . $uploadFile;
+                    $filename = $this->getUploadFilename($value['temporary']);
 
                     Events::getInstance($this->form->getIdentifier())->registerEvent('form_is_valid', [$this, 'moveTemporaryUploadedFile'], [
                         'destinationFilepath' => $directory . $filename,
-                        'temporaryFilepath'   => Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/' . $uploadFile,
+                        'temporaryFilepath'   => Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/' . $value['temporary'],
                     ]);
 
                     $this->uploadState = 'temporary-upload';
@@ -200,22 +199,13 @@ class Upload extends ElementAbstract
                 }
 
                 // check other constraints
-                foreach ($this->constraints as $constraint) {
-                    if (isset($values['upload']) && is_array($values['upload'])) {
-                        foreach ($values['upload'] as $value) {
+                if (isset($values['upload']) && is_array($values['upload'])) {
+                    foreach ($values['upload'] as $value) {
+                        foreach ($this->constraints as $constraint) {
                             if (!is_a($constraint, 'Ameos\\AmeosForm\\Constraints\\Required')) {
                                 if (!$constraint->isValid($value)) {
-                                    $message = $constraint->getMessage();
-                                    $fileData = pathinfo($value['name']);
-                                    $message = str_replace(['%file_name%', '%file_extension%'], [$fileData['filename'], $fileData['extension']], $message);
-                                    $this->form->getErrorManager()->add($message, $this);
+                                    $this->form->getErrorManager()->add($constraint->getMessage(), $this);
                                 }
-                            }
-                        }
-                    } else {
-                        if (is_a($constraint, 'Ameos\\AmeosForm\\Constraints\\Custom')) {
-                            if (!$constraint->isValid($values)) {
-                                $this->form->getErrorManager()->add($constraint->getMessage(), $this);
                             }
                         }
                     }

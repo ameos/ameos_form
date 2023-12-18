@@ -37,7 +37,7 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
                         foreach ($clause['clauses'] as $subclause) {
                             $subclauses[] = $this->getQueryClause($subclause, $query);
                         }
-                        return $query->logicalOr($subclauses);
+                        return $query->logicalOr(...$subclauses);
                     }
                     break;
 
@@ -47,7 +47,7 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
                         foreach ($clause['clauses'] as $subclause) {
                             $subclauses[] = $this->getQueryClause($subclause, $query);
                         }
-                        return $query->logicalAnd($subclauses);
+                        return $query->logicalAnd(...$subclauses);
                     }
                     break;
 
@@ -79,7 +79,7 @@ class SearchableRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
             $objectsClauses[] = $this->getQueryClause($clause, $query);
         }
         if (!empty($objectsClauses)) {
-            $query->matching($query->logicalAnd($objectsClauses));
+            $query->matching($query->logicalAnd(...$objectsClauses));
         }
 
         if ($orderby !== false) {

@@ -18,6 +18,8 @@ namespace Ameos\AmeosForm\Form;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Utility\Events;
 use Ameos\AmeosForm\Utility\UserUtility;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Http\ApplicationType;
 
 abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm
 {
@@ -34,14 +36,14 @@ abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm
     public function __construct($identifier)
     {
         parent::__construct($identifier);
-        if (TYPO3_MODE == 'FE') {
+        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             if (UserUtility::isLogged()) {
                 $GLOBALS['TSFE']->fe_user->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
             } else {
                 $GLOBALS['TSFE']->fe_user->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $this->clauses);
             }
             $GLOBALS['TSFE']->fe_user->storeSessionData();
-        } elseif (TYPO3_MODE == 'BE') {
+        } elseif (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend()) {
             session_start();
             $_SESSION['form-' . $this->getIdentifier() . '-clauses'] = $this->clauses;
         }

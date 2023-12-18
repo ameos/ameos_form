@@ -29,6 +29,10 @@ class ReCaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
     {
         require_once ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/ReCaptcha/autoload.php';
 
+        if (!isset($_POST['g-recaptcha-response'])) {
+            return false;
+        }
+
         $recaptcha = new \ReCaptcha\ReCaptcha($this->configuration['privateKey']);
         $response  = $recaptcha->verify($_POST['g-recaptcha-response']);
 

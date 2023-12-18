@@ -30,6 +30,9 @@ class Required extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
                 return true;
             }
         }
+        if (is_a($this->element, '\\Ameos\\AmeosForm\\Elements\\Textdate')) {
+            return is_a($value,\DateTime::class);
+        }
         if (is_array($value)) {
             return !empty($value);
         }

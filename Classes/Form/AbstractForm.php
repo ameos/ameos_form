@@ -17,19 +17,13 @@ namespace Ameos\AmeosForm\Form;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use Ameos\AmeosForm\Utility\FormUtility;
-use Ameos\AmeosForm\Utility\Events;
 use Ameos\AmeosForm\Utility\StringUtility as AmeosStringUtility;
 use Ameos\AmeosForm\Utility\ErrorManager;
+use TYPO3\CMS\Core\Http\ApplicationType;
 
 abstract class AbstractForm
 {
-    /**
-     * @var TYPO3\CMS\Extbase\Object\ObjectManager $objectManager
-     */
-    protected $objectManager;
-
     /**
      * @var Ameos\AmeosForm\Utility\ErrorManager $errorManager error manager
      */
@@ -79,12 +73,10 @@ abstract class AbstractForm
     {
         $this->elements   = [];
         $this->identifier = $identifier;
-        $this->enableCsrftoken = TYPO3_MODE == 'FE' ? true : false;
+        $this->enableCsrftoken = ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend();
 
-        $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
-        $this->stringUtility = $this->objectManager->get(AmeosStringUtility::class, $this);
-        $this->errorManager  = $this->objectManager->get(ErrorManager::class, $this);
+        $this->stringUtility = GeneralUtility::makeInstance(AmeosStringUtility::class, $this);
+        $this->errorManager  = GeneralUtility::makeInstance(ErrorManager::class, $this);
     }
 
     /**
@@ -304,7 +296,7 @@ abstract class AbstractForm
     public function toHtml()
     {
         if (!$this->isSubmitted()) {
-            $csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+            $csrftoken = sha1(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
             $GLOBALS['TSFE']->fe_user->setKey('ses', $this->getIdentifier() . '-csrftoken', $csrftoken);
             $GLOBALS['TSFE']->fe_user->storeSessionData();
         } else {
@@ -333,12 +325,20 @@ abstract class AbstractForm
      */
     public function bindRequest($request)
     {
-        if (!is_array($request) && !is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request')) {
-            throw new \Exception('request must be an array or an extbase request (TYPO3\\CMS\\Extbase\\Mvc\\Request)');
+        if (!is_array($request)
+            && !is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request')
+            && !is_a($request, 'TYPO3\\CMS\\Core\\Http\\ServerRequest')
+        ) {
+            throw new \Exception('request must be an array, an extbase request (TYPO3\\CMS\\Extbase\\Mvc\\Request) or a serverRequest (TYPO3\\CMS\\Core\\Http\\ServerRequest)');
         }
 
-        $requestDatas = is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request') ? $request->getArguments() : $request;
-
+        if (is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request')) {
+            $requestDatas = $request->getArguments();
+        } elseif (is_a($request, 'TYPO3\\CMS\\Core\\Http\\ServerRequest')) {
+            $requestDatas = $request->getParsedBody()[$this->getIdentifier()] ?? null;
+        } else {
+            $requestDatas = $request;
+        }
         if ($this->csrftokenIsEnabled()) {
             if ($requestDatas['csrftoken'] == '' || $requestDatas['csrftoken'] != $GLOBALS['TSFE']->fe_user->getKey('ses', $this->getIdentifier() . '-csrftoken')) {
                 throw new \Exception('Forbidden: invalid csrf token');
@@ -382,6 +382,12 @@ abstract class AbstractForm
                 if (is_a($element, 'Ameos\\AmeosForm\\Elements\\Submit') && $element->isClicked()) {
                     return $element;
                 }
+                if (is_a($element, 'Ameos\\AmeosForm\\Elements\\Button')
+                    && $element->getType() === 'submit'
+                    && $element->isClicked()
+                ) {
+                    return $element;
+                }
             }
         }
 
@@ -397,7 +403,7 @@ abstract class AbstractForm
      */
     public function __call($method, $parameters)
     {
-        if (StringUtility::beginsWith($method, 'get')) {
+        if (str_starts_with($method, 'get')) {
             $elementName = substr($method, 3);
             if ($this->has($elementName)) {
                 return $this->get($elementName);
@@ -419,7 +425,7 @@ abstract class AbstractForm
             }
         }
 
-        if (StringUtility::beginsWith($method, 'with')) {
+        if (str_starts_with($method, 'with')) {
             $elementName = substr($method, 4);
             if ($this->has($elementName)) {
                 return $this->get($elementName)->with($parameters[0], $parameters[1]);

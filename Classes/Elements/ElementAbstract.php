@@ -4,7 +4,6 @@ namespace Ameos\AmeosForm\Elements;
 
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -96,8 +95,7 @@ abstract class ElementAbstract implements ElementInterface
      */
     public function __construct($absolutename, $name, $configuration, $form)
     {
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->pageRenderer = $objectManager->get(PageRenderer::class);
+        $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
 
         $this->name = $name;
         $this->form = $form;
@@ -184,11 +182,32 @@ abstract class ElementAbstract implements ElementInterface
     {
         $this->valueSetted = true;
         $this->value = $value;
-
         if ($this->form !== false) {
             if ($this->form->getMode() == 'crud/extbase') {
                 $method = 'set' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
                 if (method_exists($this->form->getModel(), $method)) {
+                    $reflection = new \ReflectionMethod(get_class($this->form->getModel()), $method);
+                    $parameters = $reflection->getParameters();
+                    $dependenceClass = (string) $parameters[0]->getType();
+                
+                    if ($dependenceClass === 'int' || $dependenceClass === '?int') {
+                        if ($value === '') {
+                            $value = $dependenceClass === 'int' ? 0 : null;
+                        } else {
+                            $value = (int)$value;
+                        }
+                    }
+
+                    if ($dependenceClass === 'DateTime' || $dependenceClass === '?DateTime') {
+                        if ($value === '') {
+                            $value = $dependenceClass === 'DateTime' ? new \DateTime() : null;
+                        } elseif ($value !== null) {
+                            $datetime = new \DateTime();
+                            $datetime->setTimestamp($value);
+                            $value = $datetime;
+                        }
+                    }
+
                     $this->form->getModel()->$method($value);
                 }
             }
@@ -197,7 +216,6 @@ abstract class ElementAbstract implements ElementInterface
                 $this->form->setData($this->name, $value);
             }
         }
-
         return $this;
     }
 
@@ -228,7 +246,7 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * return the value
      *
-     * @return    string value
+     * @return    mixed value
      */
     public function getValue()
     {
@@ -247,6 +265,16 @@ abstract class ElementAbstract implements ElementInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * return the configuration
+     *
+     * @return    array configuration
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
     }
 
     /**
@@ -379,6 +407,31 @@ abstract class ElementAbstract implements ElementInterface
     }
 
     /**
+     * return true if the element is valide
+     *
+     * @return    bool true if the element is required
+     */
+    public function getIsRequired()
+    {
+        foreach ($this->constraints as $constraint) {
+            if(is_a($constraint,'\\Ameos\\AmeosForm\\Constraints\\Required')){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * return true if the element is valide
+     *
+     * @return    bool true if the element is required
+     */
+    public function isRequired()
+    {
+        return $this->getIsRequired();
+    }
+
+    /**
      * return rendering information
      *
      * @return    array rendering information
@@ -393,6 +446,7 @@ abstract class ElementAbstract implements ElementInterface
         $data['htmlid']       = $this->getHtmlId();
         $data['errors']       = $this->getErrors();
         $data['isvalid']      = $this->isValid();
+        $data['required']     = $this->isRequired();
         $data['hasError']     = !$this->isValid();
         if (isset($this->configuration['datalist'])) {
             $data['datalist'] = 'datalist';

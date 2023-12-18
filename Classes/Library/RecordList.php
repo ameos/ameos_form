@@ -18,6 +18,7 @@ namespace Ameos\AmeosForm\Library;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use Ameos\AmeosForm\Utility\Events;
+use TYPO3\CMS\Core\Http\ApplicationType;
 
 class RecordList
 {
@@ -94,7 +95,7 @@ class RecordList
      */
     protected function initializeSorting()
     {
-        if (TYPO3_MODE == 'FE') {
+        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             $defaultOrderby   = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->searchform->getIdentifier() . '-orderby');
             $defaultDirection = $GLOBALS['TSFE']->fe_user->getKey('ses', 'form-' . $this->searchform->getIdentifier() . '-direction');
         } else {

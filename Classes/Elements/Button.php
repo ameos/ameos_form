@@ -2,6 +2,8 @@
 
 namespace Ameos\AmeosForm\Elements;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -46,6 +48,20 @@ class Button extends ElementAbstract
     }
 
     /**
+     * return type
+     * @return string the type
+     */
+    public function getType()
+    {
+        $configuration = $this->getConfiguration();
+        if(is_array($configuration) && array_key_exists('type',$configuration)){
+            return $configuration['type'];
+        }else{
+            return 'button';
+        }
+    }
+
+    /**
      * return true if the button is clicked
      * @return bool
      */
@@ -53,8 +69,17 @@ class Button extends ElementAbstract
     {
         if ($this->form->isSubmitted()) {
             $post = GeneralUtility::_POST($this->form->getIdentifier());
-            return isset($post[$this->getName()]) && $post[$this->getName()] == $this->getLabel();
+            return isset($post[$this->getName()]);
         }
         return false;
+    }
+
+    /**
+     * return true if must check constraints
+     * @return bool
+     */
+    public function checkConstraints()
+    {
+        return isset($this->configuration['check_constraints']) ? $this->configuration['check_constraints'] : true;
     }
 }

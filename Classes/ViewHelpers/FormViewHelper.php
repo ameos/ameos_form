@@ -15,6 +15,7 @@ namespace Ameos\AmeosForm\ViewHelpers;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
@@ -83,9 +84,9 @@ class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
             $this->templateVariableContainer->remove('errors');
         }
 
-        if (TYPO3_MODE == 'FE') {
+        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             if (!$form->isSubmitted()) {
-                $csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+                $csrftoken = sha1(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
                 $GLOBALS['TSFE']->fe_user->setKey('ses', $form->getIdentifier() . '-csrftoken', $csrftoken);
                 $GLOBALS['TSFE']->fe_user->storeSessionData();
             } else {
