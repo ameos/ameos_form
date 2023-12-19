@@ -1,22 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Form;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
+use Ameos\AmeosForm\Elements\ElementInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\StringUtility;
 use Ameos\AmeosForm\Utility\FormUtility;
 use Ameos\AmeosForm\Utility\StringUtility as AmeosStringUtility;
 use Ameos\AmeosForm\Utility\ErrorManager;
@@ -25,7 +14,7 @@ use TYPO3\CMS\Core\Http\ApplicationType;
 abstract class AbstractForm
 {
     /**
-     * @var Ameos\AmeosForm\Utility\ErrorManager $errorManager error manager
+     * @var ErrorManager $errorManager error manager
      */
     protected $errorManager;
 
@@ -237,7 +226,7 @@ abstract class AbstractForm
      * return element
      * alias getElement
      * @param   string $name element name
-     * @return  \Ameos\AmeosForm\Elements\ElementInterface
+     * @return  ElementInterface
      */
     public function get($name)
     {
@@ -325,7 +314,8 @@ abstract class AbstractForm
      */
     public function bindRequest($request)
     {
-        if (!is_array($request)
+        if (
+            !is_array($request)
             && !is_a($request, 'TYPO3\\CMS\\Extbase\\Mvc\\Request')
             && !is_a($request, 'TYPO3\\CMS\\Core\\Http\\ServerRequest')
         ) {
@@ -382,7 +372,8 @@ abstract class AbstractForm
                 if (is_a($element, 'Ameos\\AmeosForm\\Elements\\Submit') && $element->isClicked()) {
                     return $element;
                 }
-                if (is_a($element, 'Ameos\\AmeosForm\\Elements\\Button')
+                if (
+                    is_a($element, 'Ameos\\AmeosForm\\Elements\\Button')
                     && $element->getType() === 'submit'
                     && $element->isClicked()
                 ) {

@@ -1,27 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Form;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Ameos\AmeosForm\Utility\Events;
 use Ameos\AmeosForm\Utility\UserUtility;
-use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\ApplicationType;
 
-abstract class Search extends \Ameos\AmeosForm\Form\AbstractForm
+abstract class Search extends AbstractForm
 {
     /**
      * @var bool $storeSearchInSession

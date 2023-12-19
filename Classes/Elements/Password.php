@@ -1,24 +1,12 @@
 <?php
 
-namespace Ameos\AmeosForm\Elements;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Elements;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use Ameos\AmeosForm\Utility\Events;
-use TYPO3\CMS\Core\Information\Typo3Version;
 
 class Password extends ElementAbstract
 {
@@ -64,7 +52,7 @@ class Password extends ElementAbstract
      * set the value
      *
      * @param    string    $value value
-     * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @return     ElementAbstract this
      */
     public function setValue($value)
     {
@@ -101,15 +89,8 @@ class Password extends ElementAbstract
      */
     public function encryptPassword($password)
     {
-        $typo3version = GeneralUtility::makeInstance(Typo3Version::class);
-        if (version_compare($typo3version->getVersion(), '12', '>=') || version_compare(TYPO3_version, '9', '>=')) {
-            $hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)
-                ->getDefaultHashInstance('FE');
-            $this->setValue($hashInstance->getHashedPassword($password));
-        } elseif (\TYPO3\CMS\Saltedpasswords\Utility\SaltedPasswordsUtility::isUsageEnabled() && $password != '') {
-            $password = \TYPO3\CMS\Saltedpasswords\Salt\SaltFactory::getSaltingInstance(null)
-                ->getHashedPassword($password);
-            $this->setValue($password);
-        }
+        $hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)
+            ->getDefaultHashInstance('FE');
+        $this->setValue($hashInstance->getHashedPassword($password));
     }
 }

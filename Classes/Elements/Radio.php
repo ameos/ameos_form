@@ -1,19 +1,8 @@
 <?php
 
-namespace Ameos\AmeosForm\Elements;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Elements;
 
 class Radio extends ElementAbstract
 {
@@ -51,7 +40,7 @@ class Radio extends ElementAbstract
         foreach ($this->configuration['items'] as $value => $label) {
             $checked = ($this->getValue() == $value) ? ' checked="checked"' : '';
             $data['items'][$value] = array(
-                'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '" type="radio" value="' . $value . '"' . $checked . $class . ' />',
+                'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '" type="radio" value="' . $value . '"' . $checked . ' />',
                 'label' => '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>',
             );
         }

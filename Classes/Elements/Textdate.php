@@ -1,19 +1,8 @@
 <?php
 
-namespace Ameos\AmeosForm\Elements;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Elements;
 
 class Textdate extends ElementAbstract
 {
@@ -49,22 +38,22 @@ class Textdate extends ElementAbstract
      *
      * @return \Ameos\AmeosForm\Elements\Textdate this
      */
-    public function setValue($value):Textdate
+    public function setValue($value): Textdate
     {
         $this->valueSetted = true;
-        if(!is_a($value,\DateTime::class)){
-            if($value != ''){
+        if (!is_a($value, \DateTime::class)) {
+            if ($value != '') {
                 $this->value = new \DateTime($value);
-            }else{
+            } else {
                 $this->value = '';
             }
-        }else{
+        } else {
             $this->value = $value;
         }
         if ($this->form !== false) {
             if ($this->form->getMode() == 'crud/extbase') {
                 $method = 'set' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
-                if (method_exists($this->form->getModel(), $method) && is_a($this->value,\DateTime::class)) {
+                if (method_exists($this->form->getModel(), $method) && is_a($this->value, \DateTime::class)) {
                     $this->form->getModel()->$method($this->value);
                 }
             }
@@ -74,7 +63,6 @@ class Textdate extends ElementAbstract
             }
         }
         return $this;
-        
     }
 
     /**
@@ -82,8 +70,9 @@ class Textdate extends ElementAbstract
      *
      * @return  string the html
      */
-    protected function getValueFormatted(){
-        if($this->value){
+    protected function getValueFormatted()
+    {
+        if ($this->value) {
             return $this->value->format('Y-m-d');
         }
     }

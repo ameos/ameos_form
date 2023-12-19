@@ -1,22 +1,12 @@
 <?php
 
-namespace Ameos\AmeosForm\Utility;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Elements;
+use Ameos\AmeosForm\Enum\Element;
 
 class FormUtility
 {
@@ -33,7 +23,7 @@ class FormUtility
     public static function makeElementInstance($absolutename, $name, $type = '', $configuration, $form = false)
     {
         switch ($type) {
-            case 'textarea':
+            case Element::TEXTAREA:
                 $element = GeneralUtility::makeInstance(
                     Elements\Textarea::class,
                     $absolutename,
@@ -42,7 +32,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'password':
+            case Element::PASSWORD:
                 $element = GeneralUtility::makeInstance(
                     Elements\Password::class,
                     $absolutename,
@@ -52,7 +42,7 @@ class FormUtility
                 )
                     ;
                 break;
-            case 'dropdown':
+            case Element::DROPDOWN:
                 $element = GeneralUtility::makeInstance(
                     Elements\Dropdown::class,
                     $absolutename,
@@ -61,7 +51,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'checkbox':
+            case Element::CHECKBOX:
                 $element = GeneralUtility::makeInstance(
                     Elements\Checkbox::class,
                     $absolutename,
@@ -70,7 +60,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'checksingle':
+            case Element::CHECKSINGLE:
                 $element = GeneralUtility::makeInstance(
                     Elements\Checksingle::class,
                     $absolutename,
@@ -79,7 +69,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'submit':
+            case Element::SUBMIT:
                 $element = GeneralUtility::makeInstance(
                     Elements\Submit::class,
                     $absolutename,
@@ -88,7 +78,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'hidden':
+            case Element::HIDDEN:
                 $element = GeneralUtility::makeInstance(
                     Elements\Hidden::class,
                     $absolutename,
@@ -97,7 +87,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'button':
+            case Element::BUTTON:
                 $element = GeneralUtility::makeInstance(
                     Elements\Button::class,
                     $absolutename,
@@ -106,7 +96,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'upload':
+            case Element::UPLOAD:
                 $element = GeneralUtility::makeInstance(
                     Elements\Upload::class,
                     $absolutename,
@@ -115,7 +105,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'radio':
+            case Element::RADIO:
                 $element = GeneralUtility::makeInstance(
                     Elements\Radio::class,
                     $absolutename,
@@ -124,7 +114,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'date':
+            case Element::DATE:
                 $element = GeneralUtility::makeInstance(
                     Elements\Date::class,
                     $absolutename,
@@ -133,7 +123,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'textdate':
+            case Element::TEXTDATE:
                 $element = GeneralUtility::makeInstance(
                     Elements\Textdate::class,
                     $absolutename,
@@ -142,7 +132,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'datepicker':
+            case Element::DATEPICKER:
                 $element = GeneralUtility::makeInstance(
                     Elements\Datepicker::class,
                     $absolutename,
@@ -151,7 +141,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'time':
+            case Element::TIME:
                 $element = GeneralUtility::makeInstance(
                     Elements\Time::class,
                     $absolutename,
@@ -160,7 +150,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'timepicker':
+            case Element::TIMEPICKER:
                 $element = GeneralUtility::makeInstance(
                     Elements\Timepicker::class,
                     $absolutename,
@@ -169,7 +159,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'captcha':
+            case Element::CAPTCHA:
                 $element = GeneralUtility::makeInstance(
                     Elements\Captcha::class,
                     $absolutename,
@@ -178,7 +168,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'numericcaptcha':
+            case Element::NUMERICCAPTCHA:
                 $element = GeneralUtility::makeInstance(
                     Elements\Numericcaptcha::class,
                     $absolutename,
@@ -187,7 +177,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'recaptcha':
+            case Element::RECAPTCHA:
                 $element = GeneralUtility::makeInstance(
                     Elements\ReCaptcha::class,
                     $absolutename,
@@ -196,7 +186,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'label':
+            case Element::LABEL:
                 $element = GeneralUtility::makeInstance(
                     Elements\Label::class,
                     $absolutename,
@@ -205,7 +195,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'color':
+            case Element::COLOR:
                 $element = GeneralUtility::makeInstance(
                     Elements\Color::class,
                     $absolutename,
@@ -214,7 +204,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'range':
+            case Element::RANGE:
                 $element = GeneralUtility::makeInstance(
                     Elements\Range::class,
                     $absolutename,
@@ -223,7 +213,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'number':
+            case Element::NUMBER:
                 $element = GeneralUtility::makeInstance(
                     Elements\Number::class,
                     $absolutename,
@@ -232,7 +222,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'email':
+            case Element::EMAIL:
                 $element = GeneralUtility::makeInstance(
                     Elements\Email::class,
                     $absolutename,
@@ -241,7 +231,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'url':
+            case Element::URL:
                 $element = GeneralUtility::makeInstance(
                     Elements\Url::class,
                     $absolutename,
@@ -250,7 +240,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'tel':
+            case Element::TEL:
                 $element = GeneralUtility::makeInstance(
                     Elements\Tel::class,
                     $absolutename,
@@ -259,7 +249,7 @@ class FormUtility
                     $form
                 );
                 break;
-            case 'rating':
+            case Element::RATING:
                 $element = GeneralUtility::makeInstance(
                     Elements\Rating::class,
                     $absolutename,

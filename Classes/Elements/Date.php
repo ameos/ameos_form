@@ -1,36 +1,25 @@
 <?php
 
-namespace Ameos\AmeosForm\Elements;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Elements;
 
 class Date extends ElementAbstract
 {
     /**
-     * @var string $valueYear current year value
+     * @var int $valueYear current year value
      */
-    protected $valueYear = '';
+    protected $valueYear = 0;
 
     /**
-     * @var string $valueMonth current month value
+     * @var int $valueMonth current month value
      */
-    protected $valueMonth = '';
+    protected $valueMonth = 0;
 
     /**
-     * @var string $valueDay current day value
+     * @var int $valueDay current day value
      */
-    protected $valueDay = '';
+    protected $valueDay = 0;
 
     /**
      * @var int $yearMinimumLimit
@@ -259,14 +248,14 @@ class Date extends ElementAbstract
      * set the value
      *
      * @param   string  $value value
-     * @return  \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @return  ElementAbstract this
      */
     public function setValue($value)
     {
         if (is_array($value)) {
-            $this->valueDay   = $value['day'];
-            $this->valueMonth = $value['month'];
-            $this->valueYear  = $value['year'];
+            $this->valueDay   = (int)$value['day'];
+            $this->valueMonth = (int)$value['month'];
+            $this->valueYear  = (int)$value['year'];
 
             if ($this->valueDay == '' || $this->valueMonth == '' || $this->valueYear == '') {
                 $value = '';
@@ -275,19 +264,20 @@ class Date extends ElementAbstract
                     $this->systemerror[] = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('error.date.valid', 'AmeosForm');
                     return $this;
                 }
-                $date  = new \Datetime($value['year'] . '-' . $value['month'] . '-' . $value['day']);
+                $date  = new \DateTime($value['year'] . '-' . $value['month'] . '-' . $value['day']);
                 $value = $date->getTimestamp();
             }
-        } elseif (is_a($value, '\Datetime')) {
+        } elseif (is_a($value, \DateTime::class)) {
+            /** @var \DateTime $value */
             $value = $value->getTimestamp();
 
-            $this->valueDay   = date('j', $value);
-            $this->valueMonth = date('n', $value);
-            $this->valueYear  = date('Y', $value);
+            $this->valueDay   = (int)date('j', (int)$value);
+            $this->valueMonth = (int)date('n', (int)$value);
+            $this->valueYear  = (int)date('Y', (int)$value);
         } elseif (is_numeric($value)) {
-            $this->valueDay   = date('j', $value);
-            $this->valueMonth = date('n', $value);
-            $this->valueYear  = date('Y', $value);
+            $this->valueDay   = (int)date('j', (int)$value);
+            $this->valueMonth = (int)date('n', (int)$value);
+            $this->valueYear  = (int)date('Y', (int)$value);
         }
         parent::setValue($value);
         return $this;

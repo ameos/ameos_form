@@ -51,10 +51,10 @@ Template html
 
 
 
-.. _templating-list:
+.. _templating-searchform:
 
-Templating a list
------------------
+Templating a searchform
+-----------------------
 
 Example : 
 
@@ -86,33 +86,6 @@ Template html Search.html
 		</div>
 	</form:form>
 	<form:list list="{my-list}" />
-
-Template html List.html
-
-::
-
-	{namespace form=Ameos\AmeosForm\ViewHelpers}
-	<f:widget.paginate objects="{records}" as="paginatedRecords" configuration="{itemsPerPage:20}">
-	<table>
-		<thead>
-			<tr>
-				<th><form:sortlink column="name"><f:translate key="name" /></form:sortlink></th>
-				<th><form:sortlink column="email"><f:translate key="email" /></form:sortlink></th>
-			</tr>
-		</thead>
-		<tbody>
-			<f:for each="{paginatedRecords}" as="record" iteration="itemIteration">
-				<f:if condition="{itemIteration.isEven}">
-					<f:then><tr class="even"></f:then>
-					<f:else><tr class="odd"></f:else>
-				</f:if>
-					<td>{record.name}</td>
-					<td>{record.email}</td>
-				</tr>
-			</f:for>
-		</tbody>
-	</table>
-	</f:widget.paginate>
 
 
 

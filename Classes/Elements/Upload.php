@@ -1,25 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Elements;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
+use Ameos\AmeosForm\Constraints\Required;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Resource\StorageRepository;
 use Ameos\AmeosForm\Utility\Events;
-use Ameos\AmeosForm\Utility\StringUtility;
 
 class Upload extends ElementAbstract
 {
@@ -113,7 +102,7 @@ class Upload extends ElementAbstract
      *
      * @todo : fal mode
      * @param    string    $value value
-     * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @return     ElementAbstract this
      */
     public function setValue($value)
     {
@@ -190,7 +179,7 @@ class Upload extends ElementAbstract
                 // check required constrainnt
                 if (!$values) {
                     foreach ($this->constraints as $constraint) {
-                        if (is_a($constraint, 'Ameos\\AmeosForm\\Constraints\\Required')) {
+                        if (is_a($constraint, Required::class)) {
                             if (!$constraint->isValid($values)) {
                                 $this->form->getErrorManager()->add($constraint->getMessage(), $this);
                             }
@@ -202,7 +191,7 @@ class Upload extends ElementAbstract
                 if (isset($values['upload']) && is_array($values['upload'])) {
                     foreach ($values['upload'] as $value) {
                         foreach ($this->constraints as $constraint) {
-                            if (!is_a($constraint, 'Ameos\\AmeosForm\\Constraints\\Required')) {
+                            if (!is_a($constraint, Required::class)) {
                                 if (!$constraint->isValid($value)) {
                                     $this->form->getErrorManager()->add($constraint->getMessage(), $this);
                                 }

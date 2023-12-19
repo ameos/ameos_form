@@ -1,19 +1,8 @@
 <?php
 
-namespace Ameos\AmeosForm\Elements;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Elements;
 
 interface ElementInterface
 {
@@ -46,7 +35,7 @@ interface ElementInterface
      *
      * @param   string  $key configuration key
      * @param   string  $value value
-     * @return  \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @return  ElementAbstract this
      */
     public function addConfiguration($key, $value);
 
@@ -68,7 +57,7 @@ interface ElementInterface
      * set the value
      *
      * @param   string  $value value
-     * @return  \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @return  ElementAbstract this
      */
     public function setValue($value);
 
@@ -106,4 +95,22 @@ interface ElementInterface
      * @return  array rendering information
      */
     public function getRenderingInformation();
+
+    /**
+     * add configuration
+     *
+     * alias    addConfiguration
+     * @param    string    $key configuration key
+     * @param    string    $value value
+     * @return     ElementAbstract this
+     */
+    public function with($key, $value);
+
+    /**
+     * add constraint
+     *
+     * @param    \Ameos\AmeosForm\Validators\ValidatorInterface $constraint
+     * @return    \Ameos\AmeosForm\Form this
+     */
+    public function addConstraint($constraint);
 }
