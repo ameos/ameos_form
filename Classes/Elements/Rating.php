@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use TYPO3\CMS\Core\Page\AssetCollector;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 class Rating extends Radio
 {
     /**
@@ -18,7 +21,7 @@ class Rating extends Radio
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
-        $GLOBALS['TSFE']->getPageRenderer()->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Elements/rating.css');
+        $this->assetCollector->addStyleSheet('ameos-form-rating', 'EXT:ameos_form/Resources/Public/Elements/rating.css');
 
         $min   = isset($this->configuration['min'])   ? (int)$this->configuration['min']  : 1;
         $max   = isset($this->configuration['max'])   ? (int)$this->configuration['max']  : 5;

@@ -80,7 +80,7 @@ class Time extends ElementAbstract
         $output = '<input type="text" id="' . $this->getHtmlId() . '-minute" list="' . $this->getHtmlId() . '-minute-datalist" size="2" name="' . $this->absolutename . '[minute]" value="' . $this->valueMinute . '"' . $this->getAttributes() . ' placeholder="mm" />';
         $output .= '<datalist id="' . $this->getHtmlId() . '-minute-datalist">';
         for ($minute = 0; $minute < 60; $minute += $this->configuration['minutestep']) {
-            $output .= '<option value="' . str_pad($minute, 2, '0', STR_PAD_LEFT) . '">' . str_pad($minute, 2, '0', STR_PAD_LEFT) . '</option>';
+            $output .= '<option value="' . str_pad((string)$minute, 2, '0', STR_PAD_LEFT) . '">' . str_pad((string)$minute, 2, '0', STR_PAD_LEFT) . '</option>';
         }
         $output .= '</datalist>';
         return $output;

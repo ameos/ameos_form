@@ -42,12 +42,12 @@ class Datepicker extends ElementAbstract
             $this->configuration['landingDate'] *= 1000;
         }
 
-        $this->pageRenderer->addCssFile('EXT:ameos_form/Resources/Public/Pikaday/css/pikaday.css');
-        $this->pageRenderer->addJsFooterFile('EXT:ameos_form/Resources/Public/Momentjs/moment.js');
-        $this->pageRenderer->addJsFooterFile('EXT:ameos_form/Resources/Public/Pikaday/pikaday.js');
-        $this->pageRenderer->addJsFooterFile('EXT:ameos_form/Resources/Public/Elements/datepicker.js');
+        $this->assetCollector->addStyleSheet('ameos-form-pikaday', 'EXT:ameos_form/Resources/Public/Pikaday/css/pikaday.css');
+        $this->assetCollector->addJavaScript('ameos-form-moment', 'EXT:ameos_form/Resources/Public/Momentjs/moment.js');
+        $this->assetCollector->addJavaScript('ameos-form-pikaday', 'EXT:ameos_form/Resources/Public/Pikaday/pikaday.js');
+        $this->assetCollector->addJavaScript('ameos-form-datepicker', 'EXT:ameos_form/Resources/Public/Elements/datepicker.js');
 
-        $this->pageRenderer->addJsFooterInlineCode('init-datepicker-' . $name, '
+        $this->assetCollector->addInlineJavaScript('init-datepicker-' . $name, '
 			var i18n = {
 				previousMonth: "' . LocalizationUtility::translate('previousMonth', 'AmeosForm') . '",
 				nextMonth: "' . LocalizationUtility::translate('nextMonth', 'AmeosForm') . '",
@@ -137,13 +137,13 @@ class Datepicker extends ElementAbstract
             if (is_a($value, \DateTimeInterface::class)) {
                 $value = $value->getTimestamp();
             }
-            $this->pageRenderer->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
+            $this->assetCollector->addInlineJavaScript('setvalue-datepicker-' . $this->getName() . '-' . $value, '
 				if(document.getElementById("' . $this->getHtmlId() . '-datepicker")) {
 					document.getElementById("' . $this->getHtmlId() . '-datepicker").value = moment(' . $value . ', "X").format("' . $this->configuration['format'] . '");
 				}
 			');
         } else {
-            $this->pageRenderer->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
+            $this->assetCollector->addInlineJavaScript('setvalue-datepicker-' . $this->getName() . '-' . $value, '
 				if(document.getElementById("' . $this->getHtmlId() . '-datepicker")) {
 					document.getElementById("' . $this->getHtmlId() . '-datepicker").value = "";
 				}

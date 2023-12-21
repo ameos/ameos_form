@@ -25,10 +25,11 @@ class Password extends ElementAbstract
      */
     public function __construct($absolutename, $name, $configuration, $form)
     {
+        $configuration['encrypt'] = isset($configuration['encrypt']) ? (bool)$configuration['encrypt'] : true;
+        $configuration['fill_value'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value'] : false;
+        $configuration['fill_value_iferror'] = isset($configuration['fill_value_iferror']) ? (bool)$configuration['fill_value_iferror'] : true;
+
         parent::__construct($absolutename, $name, $configuration, $form);
-        $this->configuration['encrypt'] = isset($configuration['encrypt']) ? (bool)$configuration['encrypt'] : true;
-        $this->configuration['fill_value'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value'] : false;
-        $this->configuration['fill_value_iferror'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value_iferror'] : true;
     }
 
     /**

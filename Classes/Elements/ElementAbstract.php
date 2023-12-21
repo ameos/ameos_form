@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
-use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class ElementAbstract implements ElementInterface
 {
     /**
-     * @var \TYPO3\CMS\Core\Page\PageRenderer
+     * @var AssetCollector
      */
-    protected $pageRenderer;
+    protected $assetCollector;
 
     /**
      * @var string $name name
@@ -84,7 +84,7 @@ abstract class ElementAbstract implements ElementInterface
      */
     public function __construct($absolutename, $name, $configuration, $form)
     {
-        $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $this->assetCollector = GeneralUtility::makeInstance(AssetCollector::class);
 
         $this->name = $name;
         $this->form = $form;

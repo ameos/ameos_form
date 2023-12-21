@@ -25,7 +25,7 @@ class ReCaptcha extends ElementAbstract
         $render          = isset($configuration['render']) ? $configuration['render'] : 'onload';
         $language        = isset($configuration['language']) ? $configuration['language'] : '';
 
-        $this->pageRenderer->addJsFooterFile('https://www.google.com/recaptcha/api.js?onload=' . $onload . '&render=' . $render . '&hl=' . $language, 'text/javascript', false, false, '', true);
+        $this->assetCollector->addJavaScript('recaptcha', 'https://www.google.com/recaptcha/api.js?onload=' . $onload . '&render=' . $render . '&hl=' . $language, 'text/javascript', false, false, '', true);
 
         $errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'ReCaptcha is not valid';
         $constraint = GeneralUtility::makeInstance(
