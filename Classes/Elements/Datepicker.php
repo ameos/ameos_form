@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class Datepicker extends ElementAbstract
@@ -14,9 +15,9 @@ class Datepicker extends ElementAbstract
      * @param   string  $absolutename absolutename
      * @param   string  $name name
      * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param   Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
@@ -110,7 +111,7 @@ class Datepicker extends ElementAbstract
      *
      * @return  string the html
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $value = $this->getValue();
         if (is_a($value, \DateTimeInterface::class)) {
@@ -125,9 +126,9 @@ class Datepicker extends ElementAbstract
      * set the value
      *
      * @param   mixed  $value value
-     * @return  ElementAbstract this
+     * @return  self this
      */
-    public function setValue($value)
+    public function setValue(mixed $value): self
     {
         if ($value == 0) {
             $value = '';

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use Ameos\AmeosForm\Form\Form;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
 class Date extends ElementAbstract
 {
     /**
@@ -37,9 +40,9 @@ class Date extends ElementAbstract
      * @param   string  $absolutename absolutename
      * @param   string  $name name
      * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param   Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
         if (!isset($this->configuration['format-output'])) {
@@ -63,7 +66,7 @@ class Date extends ElementAbstract
      *
      * @return  array rendering information
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
         $data['year']  = $this->renderYear();
@@ -77,7 +80,7 @@ class Date extends ElementAbstract
      *
      * @return  string the html
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $output = '';
         switch (substr($this->configuration['format-display'], 0, 1)) {
@@ -189,68 +192,41 @@ class Date extends ElementAbstract
 
     /**
      * return available years value
-     * @return array
      */
     protected function getYearsItems()
     {
-        /*
-        when yield will avaiblable on most of server
         for($year = 1900; $year <= date('Y') + 20; $year++) {
             yield $year;
         }
-        */
-        $years = [''] ;
-        for ($year = $this->yearMaximumLimit; $year >= $this->yearMinimumLimit; $year--) {
-            $years[] = $year;
-        }
-        return $years;
     }
 
     /**
      * return available months value
-     * @return array
      */
     protected function getMonthsItems()
     {
-        /*
-        when yield will avaiblable on most of server
-        for($day = 1; $day <= 31; $day++) {
-            yield $day;
-        }
-        */
-        $months = [''] ;
         for ($month = 1; $month <= 12; $month++) {
-            $months[] = $month;
+            yield $month;
         }
-        return $months;
     }
 
     /**
      * return available days value
-     * @return array
      */
     protected function getDaysItems()
     {
-        /*
-        when yield will avaiblable on most of server
         for($day = 1; $day <= 31; $day++) {
             yield $day;
         }
-        */
-        $days = [''] ;
-        for ($day = 1; $day <= 31; $day++) {
-            $days[] = $day;
-        }
-        return $days;
     }
 
     /**
      * set the value
      *
-     * @param   string  $value value
-     * @return  ElementAbstract this
+     * @param   mixed $value
+     * @return  self this
      */
-    public function setValue($value)
+    public function setValue(mixed $value): self
     {
         if (is_array($value)) {
             $this->valueDay   = (int)$value['day'];
@@ -261,7 +237,7 @@ class Date extends ElementAbstract
                 $value = '';
             } else {
                 if (!checkdate($this->valueMonth, $this->valueDay, $this->valueYear)) {
-                    $this->systemerror[] = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('error.date.valid', 'AmeosForm');
+                    $this->systemerror[] = LocalizationUtility::translate('error.date.valid', 'AmeosForm');
                     return $this;
                 }
                 $date  = new \DateTime($value['year'] . '-' . $value['month'] . '-' . $value['day']);
@@ -286,9 +262,9 @@ class Date extends ElementAbstract
     /**
      * return the value
      *
-     * @return  string value
+     * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         $value = parent::getValue();
         if ($value == '') {
