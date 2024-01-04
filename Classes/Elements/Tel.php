@@ -9,12 +9,13 @@ class Tel extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $pattern = isset($this->configuration['pattern']) ? ' pattern="' . $this->configuration['pattern'] . '"' : '';
 
-        return '<input type="tel" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . $pattern . ' />' . $this->getDatalist();
+        return '<input type="tel" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" ' 
+            . 'value="' . $this->getValue() . '"' . $this->getAttributes() . $pattern . ' />' . $this->getDatalist();
     }
 }

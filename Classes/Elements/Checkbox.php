@@ -11,9 +11,9 @@ class Checkbox extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $attributes = '';
         $attributes .= isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
@@ -40,9 +40,9 @@ class Checkbox extends ElementAbstract
     /**
      * return rendering information
      *
-     * @return  array rendering information
+     * @return array
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
         $data['items'] = [];
@@ -63,10 +63,10 @@ class Checkbox extends ElementAbstract
     /**
      * set the value
      *
-     * @param   string  $value value
-     * @return  ElementAbstract this
+     * @param mixed $value value
+     * @return self
      */
-    public function setValue($value)
+    public function setValue(mixed $value): self
     {
         if (is_array($value)) {
             $value = implode(',', $value);
@@ -78,9 +78,9 @@ class Checkbox extends ElementAbstract
     /**
      * return the value
      *
-     * @return  array value
+     * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         $value = parent::getValue();
         if (!is_array($value)) {
@@ -93,9 +93,9 @@ class Checkbox extends ElementAbstract
     /**
      * return where clause
      *
-     * @return  bool|array FALSE if no search. Else array with search type and value
+     * @return array|false
      */
-    public function getClause()
+    public function getClause(): array|false
     {
         $values = $this->getValue();
         if (!empty($values)) {

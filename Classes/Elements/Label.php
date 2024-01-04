@@ -9,10 +9,10 @@ class Label extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
-        return $this->getValue();
+        return (string)$this->getValue();
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\ViewHelpers;
 
+use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -27,7 +28,7 @@ class FormViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('form', \Ameos\AmeosForm\Form\AbstractForm::class, 'form instance', false);
+        $this->registerArgument('form', Form::class, 'form instance', false);
         $this->registerArgument('method', 'string', 'method attribute', false);
         $this->registerArgument('enctype', 'string', 'method attribute', false);
         $this->registerArgument('action', 'string', 'action attribute', false);
@@ -56,22 +57,19 @@ class FormViewHelper extends AbstractViewHelper
         foreach ($form->getElements() as $elementName => $element) {
             $this->templateVariableContainer->add($elementName, $element);
         }
-        if (strpos($form->getMode(), 'crud') !== false) {
-            $errors = $form->getErrors();
-            if (!empty($errors)) {
-                $this->templateVariableContainer->add('errors', $errors);
-            }
-        }
 
+        $errors = $form->getErrors();
+        if (!empty($errors)) {
+            $this->templateVariableContainer->add('errors', $errors);
+        }
+        
         $output = $this->renderChildren();
 
         foreach ($form->getElements() as $elementName => $element) {
             $this->templateVariableContainer->remove($elementName);
         }
 
-        if (strpos($form->getMode(), 'crud') !== false && !empty($errors)) {
-            $this->templateVariableContainer->remove('errors');
-        }
+        $this->templateVariableContainer->remove('errors');
 
         if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             if (!$form->isSubmitted()) {

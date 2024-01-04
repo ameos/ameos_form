@@ -9,10 +9,11 @@ class Textarea extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
-        return '<textarea id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . '>' . $this->getValue() . '</textarea>';
+        return '<textarea id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '"' 
+            . $this->getAttributes() . '>' . $this->getValue() . '</textarea>';
     }
 }

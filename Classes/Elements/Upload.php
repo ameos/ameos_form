@@ -34,7 +34,7 @@ class Upload extends ElementAbstract
     {
         parent::__construct($absolutename, $name, $configuration, $form);
         if (isset($this->configuration['directory'])) {
-            $this->configuration['directory'] = $this->form->stringUtility->smart($this->configuration['directory']);
+            $this->configuration['directory'] = $this->configuration['directory'];
         }
         if (!file_exists(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/')) {
             GeneralUtility::mkdir_deep(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/');
@@ -168,11 +168,11 @@ class Upload extends ElementAbstract
     /**
      * determine errors
      *
-     * @return    \Ameos\AmeosForm\Form this
+     * @return self
      */
-    public function determineErrors()
+    public function determineErrors(): self
     {
-        if ($this->elementConstraintsAreChecked === false) {
+        if ($this->isVerified === false) {
             if ($this->form !== false && $this->form->isSubmitted()) {
                 $values = $this->getValue();
 
@@ -181,7 +181,7 @@ class Upload extends ElementAbstract
                     foreach ($this->constraints as $constraint) {
                         if (is_a($constraint, Required::class)) {
                             if (!$constraint->isValid($values)) {
-                                $this->form->getErrorManager()->add($constraint->getMessage(), $this);
+                                $this->form->getErrorManager()->add($constraint->getMessage(), $this->getName());
                             }
                         }
                     }
@@ -193,16 +193,16 @@ class Upload extends ElementAbstract
                         foreach ($this->constraints as $constraint) {
                             if (!is_a($constraint, Required::class)) {
                                 if (!$constraint->isValid($value)) {
-                                    $this->form->getErrorManager()->add($constraint->getMessage(), $this);
+                                    $this->form->getErrorManager()->add($constraint->getMessage(), $this->getName());
                                 }
                             }
                         }
                     }
                 }
                 foreach ($this->systemerror as $error) {
-                    $this->form->getErrorManager()->add($error, $this);
+                    $this->form->getErrorManager()->add($error, $this->getName());
                 }
-                $this->elementConstraintsAreChecked = true;
+                $this->isVerified = true;
             }
         }
         return $this;

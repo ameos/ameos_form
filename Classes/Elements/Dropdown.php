@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use Ameos\AmeosForm\Form\Form;
+
 class Dropdown extends ElementAbstract
 {
     /**
      * @constuctor
      *
-     * @param   string  $absolutename absolutename
-     * @param   string  $name name
-     * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
         if (!isset($this->configuration['optionValueField'])) {
@@ -25,9 +27,9 @@ class Dropdown extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         if ($this->isMultiple()) {
             $output = '<select id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '[]"' . $this->getAttributes() . '>';
@@ -86,30 +88,32 @@ class Dropdown extends ElementAbstract
 
     /**
      * return html attribute
-     * @return string html attribute
+     *
+     * @return string
      */
-    public function getAttributes()
+    public function getAttributes(): string
     {
         $output = parent::getAttributes();
-        $output .= isset($this->configuration['multiple']) && $this->configuration['multiple'] == true  ? ' multiple="multiple"' :   '';
+        $output .= isset($this->configuration['multiple']) && $this->configuration['multiple'] == true  ? ' multiple="multiple"' : '';
         return $output;
     }
 
     /**
      * return true if it's a multiple dropdown
+     *
      * @return bool
      */
-    public function isMultiple()
+    public function isMultiple(): bool
     {
-        return  isset($this->configuration['multiple']) && $this->configuration['multiple'] == true;
+        return isset($this->configuration['multiple']) && $this->configuration['multiple'] == true;
     }
 
     /**
      * return where clause
      *
-     * @return  bool|array FALSE if no search. Else array with search type and value
+     * @return array|false
      */
-    public function getClause()
+    public function getClause(): array|false
     {
         $value = $this->getValue();
         if (!empty($value)) {

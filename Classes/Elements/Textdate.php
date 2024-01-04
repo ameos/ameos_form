@@ -23,28 +23,8 @@ class Textdate extends ElementAbstract
      */
     public function setValue($value): Textdate
     {
-        $this->valueSetted = true;
-        if (!is_a($value, \DateTime::class)) {
-            if ($value != '') {
-                $this->value = new \DateTime($value);
-            } else {
-                $this->value = '';
-            }
-        } else {
-            $this->value = $value;
-        }
-        if ($this->form !== false) {
-            if ($this->form->getMode() == 'crud/extbase') {
-                $method = 'set' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
-                if (method_exists($this->form->getModel(), $method) && is_a($this->value, \DateTime::class)) {
-                    $this->form->getModel()->$method($this->value);
-                }
-            }
-
-            if ($this->form->getMode() == 'crud/classic') {
-                $this->form->setData($this->name, $this->value);
-            }
-        }
+        // todo convert datetime ?
+        parent::setValue($value);
         return $this;
     }
 

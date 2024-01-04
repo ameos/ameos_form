@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
-use Ameos\AmeosForm\Utility\Events;
 
 class Password extends ElementAbstract
 {
@@ -18,12 +18,12 @@ class Password extends ElementAbstract
     /**
      * @constuctor
      *
-     * @param    string    $absolutename absolutename
-     * @param    string    $name name
-     * @param    array    $configuration configuration
-     * @param    \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         $configuration['encrypt'] = isset($configuration['encrypt']) ? (bool)$configuration['encrypt'] : true;
         $configuration['fill_value'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value'] : false;
@@ -35,9 +35,9 @@ class Password extends ElementAbstract
     /**
      * form to html
      *
-     * @return    string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $attributes = $this->getAttributes();
         if (
@@ -52,34 +52,17 @@ class Password extends ElementAbstract
     /**
      * set the value
      *
-     * @param    string    $value value
-     * @return     ElementAbstract this
+     * @param mixed $value value
+     * @return self
      */
-    public function setValue($value)
+    public function setValue(mixed $value): self
     {
-        if ($this->configuration['encrypt'] && $value) {
+/*        if ($this->configuration['encrypt'] && $value) {
             Events::getInstance($this->form->getIdentifier())->registerEvent('form_is_valid', [$this, 'encryptPassword'], [
                 'password' => $value,
             ]);
-        }
-
-        $this->valueSetted = true;
-        $this->value = $value;
-
-        if ($this->form !== false) {
-            if ($this->form->getMode() == 'crud/extbase' && $value != '') {
-                $method = 'set' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
-                if (method_exists($this->form->getModel(), $method)) {
-                    $this->form->getModel()->$method($value);
-                }
-            }
-
-            if ($this->form->getMode() == 'crud/classic' && $value != '') {
-                if ($this->form->hasData($this->name)) {
-                    $this->form->setData($this->name, $value);
-                }
-            }
-        }
+        }*/
+        parent::setValue($value);
 
         return $this;
     }

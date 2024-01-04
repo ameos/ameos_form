@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
-use TYPO3\CMS\Core\Page\AssetCollector;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Ameos\AmeosForm\Form\Form;
 
 class Rating extends Radio
 {
     /**
      * @constuctor
      *
-     * @param   string  $absolutename absolutename
-     * @param   string  $name name
-     * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
@@ -39,9 +38,9 @@ class Rating extends Radio
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $output = parent::toHtml();
         return '<span class="rating">' . str_replace('<br />', '', $output) . '<span class="clear"></span></span>';

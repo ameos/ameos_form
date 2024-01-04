@@ -9,9 +9,9 @@ class Color extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string the html
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         return
             '<input type="color"'

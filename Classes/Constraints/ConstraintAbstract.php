@@ -37,7 +37,7 @@ abstract class ConstraintAbstract implements ConstraintInterface
     public function __construct($message, $configuration, $element, $form)
     {
         $this->configuration = $configuration;
-        $this->message       = $form->stringUtility->smart($message);
+        $this->message       = $message;
         $this->element       = $element;
         $this->form          = $form;
     }

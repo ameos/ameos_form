@@ -9,9 +9,9 @@ class Range extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $additionnalAttributes = '';
         if (isset($this->configuration['min'])) {
@@ -30,9 +30,9 @@ class Range extends ElementAbstract
     /**
      * return rendering information
      *
-     * @return  array rendering information
+     * @return array
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
 
@@ -52,9 +52,9 @@ class Range extends ElementAbstract
     /**
      * return where clause
      *
-     * @return  bool|array FALSE if no search. Else array with search type and value
+     * @return array|false
      */
-    public function getClause()
+    public function getClause(): array|false
     {
         if ($this->getValue() != '') {
             if ($this->overrideClause !== false) {

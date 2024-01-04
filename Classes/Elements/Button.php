@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 class Button extends ElementAbstract
 {
+    public const TYPE_BUTTON = 'button';
+    public const TYPE_SUBMIT = 'submit';
+
     /**
      * @var bool $searchable searchable
      */
@@ -16,9 +17,9 @@ class Button extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $label = isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
         return '<button id="' . $this->getHtmlId() . '"'
@@ -29,46 +30,50 @@ class Button extends ElementAbstract
 
     /**
      * return label
-     * @return string the label
+     *
+     * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
     }
 
     /**
      * return type
-     * @return string the type
+     *
+     * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         $configuration = $this->getConfiguration();
         if (is_array($configuration) && array_key_exists('type', $configuration)) {
             return $configuration['type'];
         } else {
-            return 'button';
+            return self::TYPE_BUTTON;
         }
     }
 
     /**
      * return true if the button is clicked
+     *
      * @return bool
      */
-    public function isClicked()
+    public function isClicked(): bool
     {
         if ($this->form->isSubmitted()) {
-            $post = GeneralUtility::_POST($this->form->getIdentifier());
-            return isset($post[$this->getName()]);
+            $post = $this->form->getBodyData();
+            return isset($post[$this->name]);
         }
         return false;
     }
 
     /**
      * return true if must check constraints
+     *
      * @return bool
      */
-    public function checkConstraints()
+    public function checkConstraints(): bool
     {
-        return isset($this->configuration['check_constraints']) ? $this->configuration['check_constraints'] : true;
+        return isset($this->configuration['check_constraints']) ? (bool)$this->configuration['check_constraints'] : true;
     }
 }

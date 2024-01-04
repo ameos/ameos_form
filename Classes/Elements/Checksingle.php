@@ -9,9 +9,9 @@ class Checksingle extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $checked = ($this->getValue() == 1) ? ' checked="checked"' : '';
         return

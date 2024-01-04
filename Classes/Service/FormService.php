@@ -2,25 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Ameos\AmeosForm\Form;
+namespace Ameos\AmeosForm\Service;
 
+use Ameos\AmeosForm\Domain\Repository\SearchableRepositoryInterface;
+use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use Ameos\AmeosForm\Domain\Repository\Trait\SearchableRepository;
 
-class Factory
+class FormService
 {
     /**
      * create and return FORM
      *
-     * @deprecated
      * @return Form the form
      */
-    public static function make(...$arguments): Form
+    public function create(...$arguments): Form
     {
-        // todo deprecated error trigger
         $form = GeneralUtility::makeInstance(Form::class, $arguments[0]);
-        if (isset($arguments[1]) && is_a($arguments[1], SearchableRepository::class)) {
+        if (isset($arguments[1]) && is_a($arguments[1], SearchableRepositoryInterface::class)) {
             $form->attachRepository($arguments[1]);
         }
 
