@@ -37,7 +37,7 @@ class Numericcaptcha extends ElementAbstract
         $this->getDigit($key);
     }
 
-    public function getDigit($key): string
+    public function getDigit($key): int
     {
         $sessionKey = 'form-' . $this->form->getIdentifier() . '-' . $this->getHtmlId() . '-digit-' . $key;
         if ($GLOBALS["TSFE"]->fe_user->getKey("ses", $sessionKey) == false) {

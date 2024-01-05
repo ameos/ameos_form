@@ -22,7 +22,6 @@ class Element
     public const DATEPICKER = 'datepicker';
     public const TIME = 'time';
     public const TIMEPICKER = 'timepicker';
-    public const CAPTCHA = 'captcha';
     public const NUMERICCAPTCHA = 'numericcaptcha';
     public const RECAPTCHA = 'recaptcha';
     public const LABEL = 'label';
