@@ -1,21 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Constraints;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Elements\ElementAbstract;
 
-abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\ConstraintInterface
+abstract class ConstraintAbstract implements ConstraintInterface
 {
     /**
      * @var string $message message
@@ -33,7 +24,7 @@ abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\Constr
     protected $form;
 
     /**
-     * @var \Ameos\AmeosForm\Elements\ElementAbstract $element element
+     * @var ElementAbstract $element element
      */
     protected $element;
 
@@ -46,7 +37,7 @@ abstract class ConstraintAbstract implements \Ameos\AmeosForm\Constraints\Constr
     public function __construct($message, $configuration, $element, $form)
     {
         $this->configuration = $configuration;
-        $this->message       = $form->stringUtility->smart($message);
+        $this->message       = $message;
         $this->element       = $element;
         $this->form          = $form;
     }

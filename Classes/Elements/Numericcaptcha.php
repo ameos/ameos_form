@@ -1,34 +1,24 @@
 <?php
 
-namespace Ameos\AmeosForm\Elements;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Elements;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Constraints\Numericcaptcha as NumericcaptchaConstraint;
+use Ameos\AmeosForm\Form\Form;
 
 class Numericcaptcha extends ElementAbstract
 {
     /**
      * @constuctor
      *
-     * @param   string  $absolutename absolutename
-     * @param   string  $name name
-     * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
         if (!$this->form->isSubmitted()) {
@@ -40,14 +30,14 @@ class Numericcaptcha extends ElementAbstract
         $this->addConstraint($constraint);
     }
 
-    public function reloadDigit($key)
+    public function reloadDigit($key): void
     {
         $sessionKey = 'form-' . $this->form->getIdentifier() . '-' . $this->getHtmlId() . '-digit-' . $key;
         $GLOBALS['TSFE']->fe_user->setKey("ses", $sessionKey, false);
         $this->getDigit($key);
     }
 
-    public function getDigit($key)
+    public function getDigit($key): int
     {
         $sessionKey = 'form-' . $this->form->getIdentifier() . '-' . $this->getHtmlId() . '-digit-' . $key;
         if ($GLOBALS["TSFE"]->fe_user->getKey("ses", $sessionKey) == false) {
@@ -59,9 +49,9 @@ class Numericcaptcha extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $sid = md5(uniqid());
         return $this->renderLabel() . $this->renderCaptchaInput();
@@ -70,19 +60,20 @@ class Numericcaptcha extends ElementAbstract
 
     /**
      * render captcha picture
-     * @return string html
+     *
+     * @return string
      */
-    protected function renderCaptchaInput()
+    protected function renderCaptchaInput(): string
     {
         return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
     }
 
-    protected function renderLabel()
+    protected function renderLabel(): string
     {
         return '<label for="' . $this->getHtmlId() . '">' . $this->renderOperation() . '</label>';
     }
 
-    protected function renderOperation()
+    protected function renderOperation(): string
     {
         return $this->getDigit(1) . ' + ' . $this->getDigit(2);
     }
@@ -90,9 +81,9 @@ class Numericcaptcha extends ElementAbstract
     /**
      * return rendering information
      *
-     * @return  array rendering information
+     * @return array
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
         $data['input']   = $this->renderCaptchaInput();

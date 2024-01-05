@@ -1,21 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Elements;
-
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Submit extends ElementAbstract
 {
@@ -27,9 +14,9 @@ class Submit extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         if (isset($this->configuration['src'])) {
             return '<input type="image" src="' . $this->configuration['src'] . '" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
@@ -40,31 +27,34 @@ class Submit extends ElementAbstract
 
     /**
      * return label
-     * @return string the label
+     *
+     * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
     }
 
     /**
      * return true if must check constraints
+     *
      * @return bool
      */
-    public function checkConstraints()
+    public function checkConstraints(): bool
     {
         return isset($this->configuration['check_constraints']) ? $this->configuration['check_constraints'] : true;
     }
 
     /**
      * return true if the button is clicked
+     *
      * @return bool
      */
-    public function isClicked()
+    public function isClicked(): bool
     {
         if ($this->form->isSubmitted()) {
-            $post = GeneralUtility::_POST($this->form->getIdentifier());
-            return isset($post[$this->getName()]);
+            $post = $this->form->getBodyData();
+            return isset($post[$this->name]);
         }
         return false;
     }

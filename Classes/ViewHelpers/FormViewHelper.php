@@ -1,23 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\ViewHelpers;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Form\Form;
+use TYPO3\CMS\Core\Http\ApplicationType;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+class FormViewHelper extends AbstractViewHelper
 {
     /**
      * @var boolean
@@ -37,7 +28,7 @@ class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('form', \Ameos\AmeosForm\Form\AbstractForm::class, 'form instance', false);
+        $this->registerArgument('form', Form::class, 'form instance', false);
         $this->registerArgument('method', 'string', 'method attribute', false);
         $this->registerArgument('enctype', 'string', 'method attribute', false);
         $this->registerArgument('action', 'string', 'action attribute', false);
@@ -66,26 +57,23 @@ class FormViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
         foreach ($form->getElements() as $elementName => $element) {
             $this->templateVariableContainer->add($elementName, $element);
         }
-        if (strpos($form->getMode(), 'crud') !== false) {
-            $errors = $form->getErrors();
-            if (!empty($errors)) {
-                $this->templateVariableContainer->add('errors', $errors);
-            }
-        }
 
+        $errors = $form->getErrors();
+        if (!empty($errors)) {
+            $this->templateVariableContainer->add('errors', $errors);
+        }
+        
         $output = $this->renderChildren();
 
         foreach ($form->getElements() as $elementName => $element) {
             $this->templateVariableContainer->remove($elementName);
         }
 
-        if (strpos($form->getMode(), 'crud') !== false && !empty($errors)) {
-            $this->templateVariableContainer->remove('errors');
-        }
+        $this->templateVariableContainer->remove('errors');
 
-        if (TYPO3_MODE == 'FE') {
+        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             if (!$form->isSubmitted()) {
-                $csrftoken = GeneralUtility::shortMD5(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+                $csrftoken = sha1(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
                 $GLOBALS['TSFE']->fe_user->setKey('ses', $form->getIdentifier() . '-csrftoken', $csrftoken);
                 $GLOBALS['TSFE']->fe_user->storeSessionData();
             } else {

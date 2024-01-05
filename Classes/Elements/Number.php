@@ -1,28 +1,17 @@
 <?php
 
-namespace Ameos\AmeosForm\Elements;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Elements;
 
 class Number extends ElementAbstract
 {
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $additionnalAttributes = '';
         if (isset($this->configuration['min'])) {
@@ -35,15 +24,17 @@ class Number extends ElementAbstract
             $additionnalAttributes .= ' step="' . $this->configuration['step'] . '"';
         }
 
-        return '<input type="number" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . $additionnalAttributes . ' />';
+        return '<input type="number" id="' . $this->getHtmlId() . '" ' 
+            . 'name="' . $this->absolutename . '" ' 
+            . 'value="' . $this->getValue() . '"' . $this->getAttributes() . $additionnalAttributes . ' />';
     }
 
     /**
      * return rendering information
      *
-     * @return  array rendering information
+     * @return array
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
 

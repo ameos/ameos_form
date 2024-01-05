@@ -1,22 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Elements;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
+use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Datepicker extends ElementAbstract
 {
@@ -26,9 +15,9 @@ class Datepicker extends ElementAbstract
      * @param   string  $absolutename absolutename
      * @param   string  $name name
      * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param   Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
@@ -54,12 +43,12 @@ class Datepicker extends ElementAbstract
             $this->configuration['landingDate'] *= 1000;
         }
 
-        $this->pageRenderer->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/css/pikaday.css');
-        $this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Momentjs/moment.js');
-        $this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Pikaday/pikaday.js');
-        $this->pageRenderer->addJsFooterFile('/typo3conf/ext/ameos_form/Resources/Public/Elements/datepicker.js');
+        $this->assetCollector->addStyleSheet('ameos-form-pikaday', 'EXT:ameos_form/Resources/Public/Pikaday/css/pikaday.css');
+        $this->assetCollector->addJavaScript('ameos-form-moment', 'EXT:ameos_form/Resources/Public/Momentjs/moment.js');
+        $this->assetCollector->addJavaScript('ameos-form-pikaday', 'EXT:ameos_form/Resources/Public/Pikaday/pikaday.js');
+        $this->assetCollector->addJavaScript('ameos-form-datepicker', 'EXT:ameos_form/Resources/Public/Elements/datepicker.js');
 
-        $this->pageRenderer->addJsFooterInlineCode('init-datepicker-' . $name, '
+        $this->assetCollector->addInlineJavaScript('init-datepicker-' . $name, '
 			var i18n = {
 				previousMonth: "' . LocalizationUtility::translate('previousMonth', 'AmeosForm') . '",
 				nextMonth: "' . LocalizationUtility::translate('nextMonth', 'AmeosForm') . '",
@@ -122,32 +111,40 @@ class Datepicker extends ElementAbstract
      *
      * @return  string the html
      */
-    public function toHtml()
+    public function toHtml(): string
     {
+        $value = $this->getValue();
+        if (is_a($value, \DateTimeInterface::class)) {
+            $value = $value->getTimestamp();
+        }
+
         return '<input type="text" autocomplete="off" id="' . $this->getHtmlId() . '-datepicker" name="' . $this->absolutename . '-datepicker" ' . $this->getAttributes() . ' />'
-            . '<input type="hidden" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '" />';
+            . '<input type="hidden" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $value . '" />';
     }
 
     /**
      * set the value
      *
-     * @param   string  $value value
-     * @return  \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @param   mixed  $value value
+     * @return  self this
      */
-    public function setValue($value)
+    public function setValue(mixed $value): self
     {
         if ($value == 0) {
             $value = '';
         }
         parent::setValue($value);
-        if ($value != '') {
-            $this->pageRenderer->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
+        if (!empty($value)) {
+            if (is_a($value, \DateTimeInterface::class)) {
+                $value = $value->getTimestamp();
+            }
+            $this->assetCollector->addInlineJavaScript('setvalue-datepicker-' . $this->getName() . '-' . $value, '
 				if(document.getElementById("' . $this->getHtmlId() . '-datepicker")) {
 					document.getElementById("' . $this->getHtmlId() . '-datepicker").value = moment(' . $value . ', "X").format("' . $this->configuration['format'] . '");
 				}
 			');
         } else {
-            $this->pageRenderer->addJsFooterInlineCode('setvalue-datepicker-' . $this->getName() . '-' . $value, '
+            $this->assetCollector->addInlineJavaScript('setvalue-datepicker-' . $this->getName() . '-' . $value, '
 				if(document.getElementById("' . $this->getHtmlId() . '-datepicker")) {
 					document.getElementById("' . $this->getHtmlId() . '-datepicker").value = "";
 				}

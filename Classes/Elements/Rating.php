@@ -1,35 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Elements;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Form\Form;
 
 class Rating extends Radio
 {
     /**
      * @constuctor
      *
-     * @param   string  $absolutename absolutename
-     * @param   string  $name name
-     * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
-        $GLOBALS['TSFE']->getPageRenderer()->addCssFile('/typo3conf/ext/ameos_form/Resources/Public/Elements/rating.css');
+        $this->assetCollector->addStyleSheet('ameos-form-rating', 'EXT:ameos_form/Resources/Public/Elements/rating.css');
 
         $min   = isset($this->configuration['min'])   ? (int)$this->configuration['min']  : 1;
         $max   = isset($this->configuration['max'])   ? (int)$this->configuration['max']  : 5;
@@ -47,9 +38,9 @@ class Rating extends Radio
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $output = parent::toHtml();
         return '<span class="rating">' . str_replace('<br />', '', $output) . '<span class="clear"></span></span>';

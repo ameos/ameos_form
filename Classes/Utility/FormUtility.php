@@ -1,278 +1,144 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Utility;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Ameos\AmeosForm\Constraints;
 use Ameos\AmeosForm\Elements;
+use Ameos\AmeosForm\Enum\Constraint;
+use Ameos\AmeosForm\Enum\Element;
+use Ameos\AmeosForm\Exception\TypeNotFoundException;
 
 class FormUtility
 {
     /**
-     * add element fo the form
+     * return class name of constraint $type
      *
-     * @param   string  $type element type
-     * @param   string  $absolutename absolute element name
-     * @param   string  $name element name
-     * @param   string  $configuration element configuration
-     * @param   \Ameos\AmeosForm\Form   $form
-     * @return  \Ameos\AmeosForm\Elements\InterfaceElement
+     * @param string  $type element type
+     * @return string
      */
-    public static function makeElementInstance($absolutename, $name, $type = '', $configuration, $form = false)
+    public static function getConstrainClassNameByType(string $type): string
     {
+        $className = '';
         switch ($type) {
-            case 'textarea':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Textarea::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
+            case Constraint::EMAIL:
+                $className = Constraints\Email::class;
                 break;
-            case 'password':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Password::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                )
-                    ;
+            case Constraint::UNIQUE:
+                $className = Constraints\Unique::class;
                 break;
-            case 'dropdown':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Dropdown::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
+            case Constraint::FILEEXTENSION:
+                $className = Constraints\Fileextension::class;
                 break;
-            case 'checkbox':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Checkbox::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
+            case Constraint::FILESIZE:
+                $className = Constraints\Filesize::class;
                 break;
-            case 'checksingle':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Checksingle::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
+            case Constraint::CUSTOM:
+                $className = Constraints\Custom::class;
                 break;
-            case 'submit':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Submit::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
+            case Constraint::REQUIRED:
+                $className = Constraints\Required::class;
                 break;
-            case 'hidden':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Hidden::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'button':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Button::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'upload':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Upload::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'radio':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Radio::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'date':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Date::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'datepicker':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Datepicker::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'time':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Time::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'timepicker':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Timepicker::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'captcha':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Captcha::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'numericcaptcha':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Numericcaptcha::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'recaptcha':
-                $element = GeneralUtility::makeInstance(
-                    Elements\ReCaptcha::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'label':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Label::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'color':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Color::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'range':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Range::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'number':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Number::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'email':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Email::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'url':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Url::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'tel':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Tel::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-            case 'rating':
-                $element = GeneralUtility::makeInstance(
-                    Elements\Rating::class,
-                    $absolutename,
-                    $name,
-                    $configuration,
-                    $form
-                );
-                break;
-
             default:
-                if ($type != '' && $type != 'text' && class_exists($type)) {
-                    $element = GeneralUtility::makeInstance($type, $absolutename, $name, $configuration, $form);
-                } else {
-                    $element = GeneralUtility::makeInstance(Elements\Text::class, $absolutename, $name, $configuration, $form);
-                }
+                throw new TypeNotFoundException(sprintf('constraint %s not found', $type));
                 break;
         }
+        return $className;
+    }
 
-        if (!is_a($element, Elements\ElementInterface::class)) {
-            throw new \Exception(get_class($element) . ' must implements ' . Elements\ElementInterface::class);
+    /**
+     * return class name of element $type
+     *
+     * @param string  $type element type
+     * @return string
+     */
+    public static function getElementClassNameByType(string $type): string
+    {
+        $className = '';
+        switch ($type) {
+            case Element::TEXT:
+                $className = Elements\Text::class;
+                break;
+            case Element::TEXTAREA:
+                $className = Elements\Textarea::class;
+                break;
+            case Element::PASSWORD:
+                $className = Elements\Password::class;
+                break;
+            case Element::DROPDOWN:
+                $className = Elements\Dropdown::class;
+                break;
+            case Element::CHECKBOX:
+                $className = Elements\Checkbox::class;
+                break;
+            case Element::CHECKSINGLE:
+                $className = Elements\Checksingle::class;
+                break;
+            case Element::SUBMIT:
+                $className = Elements\Submit::class;
+                break;
+            case Element::HIDDEN:
+                $className = Elements\Hidden::class;
+                break;
+            case Element::BUTTON:
+                $className = Elements\Button::class;
+                break;
+            case Element::UPLOAD:
+                $className = Elements\Upload::class;
+                break;
+            case Element::RADIO:
+                $className = Elements\Radio::class;
+                break;
+            case Element::DATE:
+                $className = Elements\Date::class;
+                break;
+            case Element::TEXTDATE:
+                $className = Elements\Textdate::class;
+                break;
+            case Element::DATEPICKER:
+                $className = Elements\Datepicker::class;
+                break;
+            case Element::TIME:
+                $className = Elements\Time::class;
+                break;
+            case Element::TIMEPICKER:
+                $className = Elements\Timepicker::class;
+                break;
+            case Element::NUMERICCAPTCHA:
+                $className = Elements\Numericcaptcha::class;
+                break;
+            case Element::RECAPTCHA:
+                $className = Elements\ReCaptcha::class;
+                break;
+            case Element::LABEL:
+                $className = Elements\Label::class;
+                break;
+            case Element::COLOR:
+                $className = Elements\Color::class;
+                break;
+            case Element::RANGE:
+                $className = Elements\Range::class;
+                break;
+            case Element::NUMBER:
+                $className = Elements\Number::class;
+                break;
+            case Element::EMAIL:
+                $className = Elements\Email::class;
+                break;
+            case Element::URL:
+                $className = Elements\Url::class;
+                break;
+            case Element::TEL:
+                $className = Elements\Tel::class;
+                break;
+            case Element::RATING:
+                $className = Elements\Rating::class;
+                break;
+            default:
+                throw new TypeNotFoundException(sprintf('element %s not found', $type));
+                break;
         }
-
-        return $element;
+        return $className;
     }
 }

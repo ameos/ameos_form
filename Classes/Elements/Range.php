@@ -1,28 +1,17 @@
 <?php
 
-namespace Ameos\AmeosForm\Elements;
+declare(strict_types=1);
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+namespace Ameos\AmeosForm\Elements;
 
 class Range extends ElementAbstract
 {
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $additionnalAttributes = '';
         if (isset($this->configuration['min'])) {
@@ -41,9 +30,9 @@ class Range extends ElementAbstract
     /**
      * return rendering information
      *
-     * @return  array rendering information
+     * @return array
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
 
@@ -63,9 +52,9 @@ class Range extends ElementAbstract
     /**
      * return where clause
      *
-     * @return  bool|array FALSE if no search. Else array with search type and value
+     * @return array|false
      */
-    public function getClause()
+    public function getClause(): array|false
     {
         if ($this->getValue() != '') {
             if ($this->overrideClause !== false) {

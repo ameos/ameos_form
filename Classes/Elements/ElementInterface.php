@@ -1,109 +1,133 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Elements;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Constraints\ConstraintInterface;
+use Ameos\AmeosForm\Form\Form;
 
 interface ElementInterface
 {
     /**
      * @constuctor
      *
-     * @param   string  $absolutename absolutename
-     * @param   string  $name name
-     * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form);
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form);
 
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml();
+    public function toHtml(): string;
 
     /**
      * return true if the element is valide
      *
-     * @return  bool true if the element is valide
+     * @return bool
      */
-    public function isValid();
+    public function isValid(): bool;
 
     /**
      * add configuration
      *
-     * @param   string  $key configuration key
-     * @param   string  $value value
-     * @return  \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @param string $key configuration key
+     * @param mixed $value value
+     * @return self
      */
-    public function addConfiguration($key, $value);
+    public function addConfiguration(string $key, mixed $value): self;
 
     /**
      * return search field
      *
-     * @return  string search field
+     * @return string
      */
-    public function getSearchField();
+    public function getSearchField(): string;
 
     /**
      * return where clause
      *
-     * @return  bool|array FALSE if no search. Else array with search type and value
+     * @return array|false
      */
-    public function getClause();
+    public function getClause(): array|false;
 
     /**
      * set the value
      *
-     * @param   string  $value value
-     * @return  \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @param mixed $value value
+     * @return self
      */
-    public function setValue($value);
+    public function setValue(mixed $value): self;
 
     /**
      * return the value
      *
-     * @return  string value
+     * @return mixed
      */
-    public function getValue();
+    public function getValue(): mixed;
 
     /**
      * return the name
      *
-     * @return  string name
+     * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
-     * return the name
+     * return the html id
      *
-     * @return  string name
+     * @return string
      */
-    public function getHtmlId();
+    public function getHtmlId(): string;
 
     /**
      * return errors
      *
-     * @return  array errors
+     * @return array
      */
-    public function getErrors();
+    public function getErrors(): array;
+
+    /**
+     * return the configuration
+     *
+     * @return array
+     */
+    public function getConfiguration(): array;
 
     /**
      * return rendering information
      *
-     * @return  array rendering information
+     * @return array
      */
-    public function getRenderingInformation();
+    public function getRenderingInformation(): array;
+
+    /**
+     * add configuration
+     *
+     * alias addConfiguration
+     * @param string $key configuration key
+     * @param mixed $value value
+     * @return self
+     */
+    public function with(string $key, mixed $value): self;
+
+    /**
+     * add constraint
+     *
+     * @param ConstraintInterface $constraint
+     * @return self
+     */
+    public function addConstraint(ConstraintInterface $constraint): self;
+
+    /**
+     * determine errors
+     *
+     * @return self
+     */
+    public function determineErrors(): self;
 }

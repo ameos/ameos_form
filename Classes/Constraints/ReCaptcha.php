@@ -1,23 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Constraints;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Exception\MissingDependencyException;
+use ReCaptcha\ReCaptcha as GoogleReCaptcha;
 
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-
-class ReCaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
+class ReCaptcha extends ConstraintAbstract
 {
     /**
      * return true if the element is valide
@@ -27,9 +17,15 @@ class ReCaptcha extends \Ameos\AmeosForm\Constraints\ConstraintAbstract
      */
     public function isValid($value)
     {
-        require_once ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/ReCaptcha/autoload.php';
+        if (!isset($_POST['g-recaptcha-response'])) {
+            return false;
+        }
 
-        $recaptcha = new \ReCaptcha\ReCaptcha($this->configuration['privateKey']);
+        if (!class_exists(GoogleReCaptcha::class)) {
+            throw new MissingDependencyException('install recaptcha library (composer require google/recaptcha)');
+        }
+        
+        $recaptcha = new GoogleReCaptcha($this->configuration['privateKey']);
         $response  = $recaptcha->verify($_POST['g-recaptcha-response']);
 
         if ($response->isSuccess()) {

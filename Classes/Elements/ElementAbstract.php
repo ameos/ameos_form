@@ -1,30 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Elements;
 
-use TYPO3\CMS\Core\Page\PageRenderer;
+use Ameos\AmeosForm\Constraints\ConstraintInterface;
+use Ameos\AmeosForm\Constraints\Required;
+use Ameos\AmeosForm\Form\Form;
+use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
 
 abstract class ElementAbstract implements ElementInterface
 {
     /**
-     * @var \TYPO3\CMS\Core\Page\PageRenderer
+     * @var AssetCollector
      */
-    protected $pageRenderer;
+    protected $assetCollector;
 
     /**
      * @var string $name name
@@ -40,11 +31,6 @@ abstract class ElementAbstract implements ElementInterface
      * @var string $value value
      */
     protected $value;
-
-    /**
-     * @var bool $valueSetted valueSetted
-     */
-    protected $valueSetted = false;
 
     /**
      * @var array $configuration configuration
@@ -67,7 +53,7 @@ abstract class ElementAbstract implements ElementInterface
     protected $constraints = [];
 
     /**
-     * @var \Ameos\AmeosForm\Form $form form
+     * @var Form $form form
      */
     protected $form;
 
@@ -82,35 +68,34 @@ abstract class ElementAbstract implements ElementInterface
     protected $overrideClause = false;
 
     /**
-     * @var bool $elementConstraintsAreChecked true if element constraints are checked
+     * @var bool $isVerified true if element constraints are checked
      */
-    protected $elementConstraintsAreChecked = false;
+    protected $isVerified = false;
 
     /**
      * @constuctor
      *
-     * @param    string    $absolutename absolutename
-     * @param    string    $name name
-     * @param    array    $configuration configuration
-     * @param    \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->pageRenderer = $objectManager->get(PageRenderer::class);
+        $this->assetCollector = GeneralUtility::makeInstance(AssetCollector::class);
 
         $this->name = $name;
         $this->form = $form;
         $this->configuration = $configuration;
         $this->absolutename  = $absolutename;
-        $this->initValue();
     }
 
     /**
      * return html attribute
-     * @return string html attribute
+     *
+     * @return string
      */
-    public function getAttributes()
+    public function getAttributes(): string
     {
         $output = '';
         $output .= isset($this->configuration['placeholder']) ? ' placeholder="' . $this->configuration['placeholder'] . '"' : '';
@@ -118,7 +103,7 @@ abstract class ElementAbstract implements ElementInterface
         $output .= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true ? ' disabled="disabled"' : '';
         $output .= isset($this->configuration['title']) ? ' title="' . $this->configuration['title'] . '"' : '';
         $output .= isset($this->configuration['datalist']) ? ' list="' . $this->getHtmlId() . '-datalist"' : '';
-                $output .= isset($this->configuration['type']) ? ' type="' . $this->configuration['type'] . '"' : '';
+        $output .= isset($this->configuration['type']) ? ' type="' . $this->configuration['type'] . '"' : '';
         $output .= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
 
         $cssclass = isset($this->configuration['class']) ? $this->configuration['class'] : '';
@@ -133,9 +118,10 @@ abstract class ElementAbstract implements ElementInterface
 
     /**
      * return html datalist
-     * @return string html datalist
+     *
+     * @return string
      */
-    public function getDatalist()
+    public function getDatalist(): string
     {
         if (isset($this->configuration['datalist']) && is_array($this->configuration['datalist'])) {
             $output = '<datalist id="' . $this->getHtmlId() . '-datalist">';
@@ -151,12 +137,12 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * add configuration
      *
-     * alias    addConfiguration
-     * @param    string    $key configuration key
-     * @param    string    $value value
-     * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
+     * alias addConfiguration
+     * @param string $key configuration key
+     * @param mixed $value value
+     * @return self
      */
-    public function with($key, $value)
+    public function with(string $key, mixed $value): self
     {
         return $this->addConfiguration($key, $value);
     }
@@ -164,97 +150,67 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * add configuration
      *
-     * @param    string    $key configuration key
-     * @param    string    $value value
-     * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @param string $key configuration key
+     * @param mixed $value value
+     * @return self
      */
-    public function addConfiguration($key, $value)
+    public function addConfiguration(string $key, mixed $value): self
     {
         $this->configuration[$key] = $value;
+
         return $this;
     }
 
     /**
      * set the value
      *
-     * @param    string    $value value
-     * @return     \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @param mixed $value value
+     * @return self
      */
-    public function setValue($value)
+    public function setValue(mixed $value): self
     {
-        $this->valueSetted = true;
         $this->value = $value;
+        $this->form->updateEntityProperty($this->name, $value);
 
-        if ($this->form !== false) {
-            if ($this->form->getMode() == 'crud/extbase') {
-                $method = 'set' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
-                if (method_exists($this->form->getModel(), $method)) {
-                    $this->form->getModel()->$method($value);
-                }
-            }
-
-            if ($this->form->getMode() == 'crud/classic') {
-                $this->form->setData($this->name, $value);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * init value from the context
-     */
-    protected function initValue()
-    {
-        if ($this->form !== false) {
-            if ($this->form->getMode() == 'crud/extbase') {
-                $method = 'get' . \Ameos\AmeosForm\Utility\StringUtility::camelCase($this->name);
-                if (method_exists($this->form->getModel(), $method)) {
-                    $this->setValue($this->form->getModel()->$method());
-                }
-            }
-
-            if ($this->form->getMode() == 'crud/classic') {
-                $this->setValue($this->form->getData($this->name));
-            }
-        }
-
-        if (!$this->valueSetted && isset($this->configuration['defaultValue'])) {
-            $this->setValue($this->configuration['defaultValue']);
-        }
         return $this;
     }
 
     /**
      * return the value
      *
-     * @return    string value
+     * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
-        if ($this->valueSetted === true) {
-            return $this->value;
-        }
-        $this->initValue();
         return $this->value;
     }
 
     /**
      * return the name
      *
-     * @return    string name
+     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
+     * return the configuration
+     *
+     * @return array
+     */
+    public function getConfiguration(): array
+    {
+        return $this->configuration;
+    }
+
+    /**
      * return search field
      *
-     * @return    string search field
+     * @return string
      */
-    public function getSearchField()
+    public function getSearchField(): string
     {
         if (isset($this->configuration['searchfield'])) {
             return $this->configuration['searchfield'];
@@ -263,11 +219,11 @@ abstract class ElementAbstract implements ElementInterface
     }
 
     /**
-     * return the name
+     * return the html id
      *
-     * @return    string name
+     * @return string
      */
-    public function getHtmlId()
+    public function getHtmlId(): string
     {
         return str_replace(['.', '[', ']'], ['_', '_', ''], $this->absolutename);
     }
@@ -275,11 +231,11 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * return where clause
      *
-     * @return    bool|array FALSE if no search. Else array with search type and value
+     * @return array|false
      */
-    public function getClause()
+    public function getClause(): array|false
     {
-        if ($this->getValue() != '') {
+        if (!empty($this->getValue())) {
             if ($this->overrideClause !== false) {
                 $function = $this->overrideClause;
                 $searchInformation = $function($this->getValue(), $this, $this->form);
@@ -301,23 +257,25 @@ abstract class ElementAbstract implements ElementInterface
 
     /**
      * set ovrride clause method
-     * @param    function $overrideClause function
-     * @return    \Ameos\AmeosForm\Form this
+     *
+     * @param \Closure $overrideClause function
+     * @return self
      */
-    public function setOverrideClause($overrideClause)
+    public function setOverrideClause(\Closure $overrideClause): self
     {
         $this->overrideClause = $overrideClause;
-        return $overrideClause;
+
+        return $this;
     }
 
     /**
      * add validator
      *
-     * @param    \Ameos\AmeosForm\Validators\ValidatorInterface $constraint
-     * @return    \Ameos\AmeosForm\Form this
+     * @param ConstraintInterface $constraint
+     * @return self
      * @alias    addConstraint
      */
-    public function validator($constraint)
+    public function validator(ConstraintInterface $constraint): self
     {
         return $this->addConstraint($constraint);
     }
@@ -325,34 +283,35 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * add constraint
      *
-     * @param    \Ameos\AmeosForm\Validators\ValidatorInterface $constraint
-     * @return    \Ameos\AmeosForm\Form this
+     * @param ConstraintInterface $constraint
+     * @return self
      */
-    public function addConstraint($constraint)
+    public function addConstraint(ConstraintInterface $constraint): self
     {
         $this->constraints[] = $constraint;
+
         return $this;
     }
 
     /**
      * determine errors
      *
-     * @return    \Ameos\AmeosForm\Form this
+     * @return self
      */
-    public function determineErrors()
+    public function determineErrors(): self
     {
-        if ($this->elementConstraintsAreChecked === false) {
+        if ($this->isVerified === false) {
             if ($this->form !== false && $this->form->isSubmitted()) {
                 $value = $this->getValue();
                 foreach ($this->constraints as $constraint) {
                     if (!$constraint->isValid($value)) {
-                        $this->form->getErrorManager()->add($constraint->getMessage(), $this);
+                        $this->form->getErrorManager()->add($constraint->getMessage(), $this->getName());
                     }
                 }
                 foreach ($this->systemerror as $error) {
-                    $this->form->getErrorManager()->add($error, $this);
+                    $this->form->getErrorManager()->add($error, $this->getName());
                 }
-                $this->elementConstraintsAreChecked = true;
+                $this->isVerified = true;
             }
         }
         return $this;
@@ -361,9 +320,9 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * return true if the element is valide
      *
-     * @return    bool true if the element is valide
+     * @return bool
      */
-    public function isValid()
+    public function isValid(): bool
     {
         return $this->form->getErrorManager()->elementIsValid($this);
     }
@@ -371,19 +330,44 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * return errors
      *
-     * @return    array errors
+     * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
-        return $this->form->getErrorManager()->getErrors($this);
+        return $this->form->getErrorManager()->getErrorsFor($this);
+    }
+
+    /**
+     * return true if the element is valide
+     *
+     * @return bool
+     */
+    public function getIsRequired(): bool
+    {
+        foreach ($this->constraints as $constraint) {
+            if (is_a($constraint, Required::class)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * return true if the element is valide
+     *
+     * @return bool
+     */
+    public function isRequired(): bool
+    {
+        return $this->getIsRequired();
     }
 
     /**
      * return rendering information
      *
-     * @return    array rendering information
+     * @return array
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = $this->configuration;
         $data['__compiled']   = $this->toHtml();
@@ -393,6 +377,7 @@ abstract class ElementAbstract implements ElementInterface
         $data['htmlid']       = $this->getHtmlId();
         $data['errors']       = $this->getErrors();
         $data['isvalid']      = $this->isValid();
+        $data['required']     = $this->isRequired();
         $data['hasError']     = !$this->isValid();
         if (isset($this->configuration['datalist'])) {
             $data['datalist'] = 'datalist';
@@ -403,25 +388,26 @@ abstract class ElementAbstract implements ElementInterface
     /**
      * return true if element is searchable
      *
-     * @return     bool
+     * @return bool
      */
-    public function isSearchable()
+    public function isSearchable(): bool
     {
         return $this->searchable;
     }
 
-
     /**
      * form to html
      *
-     * @return    string the html
+     * @return string
      */
-    abstract public function toHtml();
+    abstract public function toHtml(): string;
 
     /**
      * to string
+     *
+     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->toHtml();
     }

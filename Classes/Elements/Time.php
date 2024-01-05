@@ -1,19 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Elements;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Form\Form;
 
 class Time extends ElementAbstract
 {
@@ -30,24 +21,25 @@ class Time extends ElementAbstract
     /**
      * @constuctor
      *
-     * @param   string  $absolutename absolutename
-     * @param   string  $name name
-     * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
-        $this->configuration['minutestep'] = isset($this->configuration['minutestep']) ? $this->configuration['minutestep'] : 1;
+        $this->configuration['minutestep'] = isset($this->configuration['minutestep']) 
+            ? $this->configuration['minutestep'] : 1;
     }
 
     /**
      * return rendering information
      *
-     * @return  array rendering information
+     * @return array
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
         $data['hour']   = $this->renderHour();
@@ -58,9 +50,9 @@ class Time extends ElementAbstract
     /**
      * form to html
      *
-     * @return  string the html
+     * @return string
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         return $this->renderHour() . ':' . $this->renderMinute();
     }
@@ -68,14 +60,14 @@ class Time extends ElementAbstract
     /**
      * return hour html selector
      *
-     * @return  string
+     * @return string
      */
-    public function renderHour()
+    public function renderHour(): string
     {
         $output = '<input type="text" id="' . $this->getHtmlId() . '-hour" list="' . $this->getHtmlId() . '-hour-datalist" size="2" name="' . $this->absolutename . '[hour]" value="' . $this->valueHour . '"' . $this->getAttributes() . ' placeholder="hh" />';
         $output .= '<datalist id="' . $this->getHtmlId() . '-hour-datalist">';
         for ($hour = 0; $hour < 24; $hour++) {
-            $output .= '<option value="' . str_pad($hour, 2, '0', STR_PAD_LEFT) . '">' . str_pad($hour, 2, '0', STR_PAD_LEFT) . '</option>';
+            $output .= '<option value="' . str_pad((string)$hour, 2, '0', STR_PAD_LEFT) . '">' . str_pad((string)$hour, 2, '0', STR_PAD_LEFT) . '</option>';
         }
         $output .= '</datalist>';
         return $output;
@@ -84,14 +76,14 @@ class Time extends ElementAbstract
     /**
      * return minute html selector
      *
-     * @return  string
+     * @return string
      */
-    public function renderMinute()
+    public function renderMinute(): string
     {
         $output = '<input type="text" id="' . $this->getHtmlId() . '-minute" list="' . $this->getHtmlId() . '-minute-datalist" size="2" name="' . $this->absolutename . '[minute]" value="' . $this->valueMinute . '"' . $this->getAttributes() . ' placeholder="mm" />';
         $output .= '<datalist id="' . $this->getHtmlId() . '-minute-datalist">';
         for ($minute = 0; $minute < 60; $minute += $this->configuration['minutestep']) {
-            $output .= '<option value="' . str_pad($minute, 2, '0', STR_PAD_LEFT) . '">' . str_pad($minute, 2, '0', STR_PAD_LEFT) . '</option>';
+            $output .= '<option value="' . str_pad((string)$minute, 2, '0', STR_PAD_LEFT) . '">' . str_pad((string)$minute, 2, '0', STR_PAD_LEFT) . '</option>';
         }
         $output .= '</datalist>';
         return $output;
@@ -100,10 +92,10 @@ class Time extends ElementAbstract
     /**
      * set the value
      *
-     * @param   string  $value value
-     * @return  \Ameos\AmeosForm\Elements\ElementAbstract this
+     * @param mixed $value value
+     * @return self
      */
-    public function setValue($value)
+    public function setValue(mixed $value): self
     {
         if (is_array($value)) {
             $this->valueHour   = $value['hour'];
