@@ -6,3 +6,18 @@ services:
 
   Ameos\AmeosForm\:
     resource: "../Classes/*"
+
+  Ameos\AmeosForm\EventListener\EncryptPassword:
+    tags:
+      - name: event.listener
+        identifier: 'encryptPassword'
+
+  Ameos\AmeosForm\EventListener\MoveTemporaryFile:
+    tags:
+      - name: event.listener
+        identifier: 'moveTemporaryFile'
+
+  Ameos\AmeosForm\EventListener\UploadTemporaryFile:
+    tags:
+      - name: event.listener
+        identifier: 'uploadTemporaryFile'

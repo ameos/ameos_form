@@ -18,7 +18,7 @@ class Factory
      */
     public static function make(...$arguments): Form
     {
-        // todo deprecated error trigger
+        trigger_error('Use FormService or instanciate Form manually.', E_USER_DEPRECATED);
         $form = GeneralUtility::makeInstance(Form::class, $arguments[0]);
         if (isset($arguments[1]) && is_a($arguments[1], SearchableRepository::class)) {
             $form->attachRepository($arguments[1]);

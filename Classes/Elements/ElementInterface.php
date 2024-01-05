@@ -93,6 +93,13 @@ interface ElementInterface
     public function getErrors(): array;
 
     /**
+     * return the configuration
+     *
+     * @return array
+     */
+    public function getConfiguration(): array;
+
+    /**
      * return rendering information
      *
      * @return array

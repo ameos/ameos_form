@@ -6,6 +6,7 @@ namespace Ameos\AmeosForm\Elements;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Constraints\Captcha as CaptchaConstraint;
+use Ameos\AmeosForm\Form\Form;
 
 class Captcha extends ElementAbstract
 {
@@ -17,12 +18,12 @@ class Captcha extends ElementAbstract
     /**
      * @constuctor
      *
-     * @param   string  $absolutename absolutename
-     * @param   string  $name name
-     * @param   array   $configuration configuration
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function __construct($absolutename, $name, $configuration, $form)
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
@@ -36,7 +37,7 @@ class Captcha extends ElementAbstract
      *
      * @return  string the html
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $this->sid = md5(uniqid());
         return $this->renderCaptchaPicture() . $this->renderCaptchaRefresh() . $this->renderCaptchaInput();
@@ -76,7 +77,7 @@ class Captcha extends ElementAbstract
      *
      * @return  array rendering information
      */
-    public function getRenderingInformation()
+    public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
         $data['captcha'] = $this->renderCaptchaPicture();

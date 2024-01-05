@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Ameos\AmeosForm\Elements;
 
 use Ameos\AmeosForm\Form\Form;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 
 class Password extends ElementAbstract
 {
@@ -47,34 +45,5 @@ class Password extends ElementAbstract
             $attributes .= ' value="' . $this->getValue() . '"';
         }
         return '<input type="password" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '"' . $attributes . ' />';
-    }
-
-    /**
-     * set the value
-     *
-     * @param mixed $value value
-     * @return self
-     */
-    public function setValue(mixed $value): self
-    {
-/*        if ($this->configuration['encrypt'] && $value) {
-            Events::getInstance($this->form->getIdentifier())->registerEvent('form_is_valid', [$this, 'encryptPassword'], [
-                'password' => $value,
-            ]);
-        }*/
-        parent::setValue($value);
-
-        return $this;
-    }
-
-    /**
-     * encrypt password
-     * @param string $password password
-     */
-    public function encryptPassword($password)
-    {
-        $hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)
-            ->getDefaultHashInstance('FE');
-        $this->setValue($hashInstance->getHashedPassword($password));
     }
 }

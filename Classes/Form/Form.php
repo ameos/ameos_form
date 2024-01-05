@@ -8,10 +8,14 @@ use Ameos\AmeosForm\Domain\Repository\SearchableRepositoryInterface;
 use Ameos\AmeosForm\Elements\Button;
 use Ameos\AmeosForm\Elements\ElementInterface;
 use Ameos\AmeosForm\Elements\Submit;
+use Ameos\AmeosForm\Enum\Element;
 use Ameos\AmeosForm\ErrorManager;
+use Ameos\AmeosForm\Event\BindValueFromRequestEvent;
+use Ameos\AmeosForm\Event\ValidFormEvent;
 use Ameos\AmeosForm\Exception\RepositoryNotFoundException;
 use Ameos\AmeosForm\Exception\RepositoryNotValidException;
 use Ameos\AmeosForm\Utility\FormUtility;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -70,9 +74,19 @@ class Form
     protected $entity = null;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var array $bodyData
      */
     protected $bodyData;
+
+    /**
+     * @var array $uploadedFiles
+     */
+    protected $uploadedFiles;
 
     /**
      * @constuctor
@@ -83,10 +97,14 @@ class Form
     {
         $this->identifier = $identifier;
         $this->errorManager = GeneralUtility::makeInstance(ErrorManager::class, $this);
+        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcherInterface::class);
         $this->request = $GLOBALS['TYPO3_REQUEST'];
 
         $parsedBody = $this->request->getParsedBody();
+        $uploadedFiles = $this->request->getUploadedFiles();
+
         $this->bodyData = isset($parsedBody[$identifier]) ? $parsedBody[$identifier] : [];
+        $this->uploadedFiles = isset($uploadedFiles[$identifier]) ? $uploadedFiles[$identifier] : [];
     }
 
     /**
@@ -158,11 +176,28 @@ class Form
 
     /**
      * return elements
-     * @return array elements
+     * @return array<ElementInterface> elements
      */
     public function getElements(): array
     {
         return $this->elements;
+    }
+
+    /**
+     * return elements
+     * @return array<Submit|Button> elements
+     */
+    public function getSubmitterElements(): array
+    {
+        $submitters = [];
+        foreach ($this->elements as $element) {
+            if (is_a($element, Submit::class)
+                || (is_a($element, Button::class) && $element->getType() === Button::TYPE_SUBMIT)
+            ) {
+                $submitters[] = $element;
+            }
+        }
+        return $submitters;
     }
 
     /**
@@ -236,7 +271,17 @@ class Form
         }
 
         if (isset($this->bodyData[$name])) {
-            $element->setValue($this->bodyData[$name]);
+            $bindEvent = new BindValueFromRequestEvent($this, $element, $this->bodyData[$name]);
+            $this->eventDispatcher->dispatch($bindEvent);
+
+            $element->setValue($bindEvent->getValue());
+        }
+
+        if ($type === Element::UPLOAD && isset($this->uploadedFiles[$name])) {
+            $bindEvent = new BindValueFromRequestEvent($this, $element, $this->uploadedFiles[$name]);
+            $this->eventDispatcher->dispatch($bindEvent);
+
+            $element->setValue($bindEvent->getValue());
         }
 
         $this->elements[$name] = $element;
@@ -274,13 +319,8 @@ class Form
     public function getSubmitter(): ElementInterface|false
     {
         if ($this->isSubmitted()) {
-            foreach ($this->getElements() as $element) {
-                if ($element->isClicked()
-                    && (
-                        is_a($element, Submit::class)
-                        || (is_a($element, Button::class) && $element->getType() === Button::TYPE_SUBMIT)
-                    )
-                ) {
+            foreach ($this->getSubmitterElements() as $element) {
+                if ($element->isClicked()) {
                     return $element;
                 }
             }
@@ -384,11 +424,12 @@ class Form
      */
     public function isValid(): bool
     {
-        /**if ($this->errorManager->isValid()) {
-            Events::getInstance($this->getIdentifier())->trigger('form_is_valid');
-        }*/
+        $isValid = $this->errorManager->isValid();
+        if ($isValid) {
+            $this->eventDispatcher->dispatch(new ValidFormEvent($this));
+        }
 
-        return $this->errorManager->isValid();
+        return $isValid;
     }
 
     /**
@@ -411,7 +452,6 @@ class Form
      */
     public function getResults(?string $orderby = null, string $direction = 'ASC'): iterable
     {
-        // todo
         if ($this->repository === null) {
             throw new RepositoryNotFoundException('Repository not found');
         }
