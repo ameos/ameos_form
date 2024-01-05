@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Constraints;
 
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use Ameos\AmeosForm\Exception\MissingDependencyException;
+use ReCaptcha\ReCaptcha as GoogleReCaptcha;
 
 class ReCaptcha extends ConstraintAbstract
 {
@@ -16,13 +17,15 @@ class ReCaptcha extends ConstraintAbstract
      */
     public function isValid($value)
     {
-        require_once ExtensionManagementUtility::extPath('ameos_form') . 'Classes/Contrib/ReCaptcha/autoload.php';
-
         if (!isset($_POST['g-recaptcha-response'])) {
             return false;
         }
 
-        $recaptcha = new \ReCaptcha\ReCaptcha($this->configuration['privateKey']);
+        if (!class_exists(GoogleReCaptcha::class)) {
+            throw new MissingDependencyException('install recaptcha library (composer require google/recaptcha)');
+        }
+        
+        $recaptcha = new GoogleReCaptcha($this->configuration['privateKey']);
         $response  = $recaptcha->verify($_POST['g-recaptcha-response']);
 
         if ($response->isSuccess()) {
