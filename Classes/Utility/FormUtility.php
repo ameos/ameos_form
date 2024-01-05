@@ -108,9 +108,6 @@ class FormUtility
             case Element::TIMEPICKER:
                 $className = Elements\Timepicker::class;
                 break;
-            case Element::CAPTCHA:
-                $className = Elements\Captcha::class;
-                break;
             case Element::NUMERICCAPTCHA:
                 $className = Elements\Numericcaptcha::class;
                 break;
