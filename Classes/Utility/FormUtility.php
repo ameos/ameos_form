@@ -34,9 +34,6 @@ class FormUtility
             case Constraint::FILESIZE:
                 $className = Constraints\Filesize::class;
                 break;
-            case Constraint::CAPTCHA:
-                $className = Constraints\Captcha::class;
-                break;
             case Constraint::CUSTOM:
                 $className = Constraints\Custom::class;
                 break;
