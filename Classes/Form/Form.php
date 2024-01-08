@@ -367,7 +367,7 @@ class Form
      */
     public function bindRequest(): self
     {
-        // todo trigger deprecated
+        trigger_error('Bind request is not longer useful', E_USER_DEPRECATED);
 
         return $this;
     }
