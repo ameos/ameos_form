@@ -16,6 +16,8 @@ use Ameos\AmeosForm\Exception\RepositoryNotFoundException;
 use Ameos\AmeosForm\Exception\RepositoryNotValidException;
 use Ameos\AmeosForm\Utility\FormUtility;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -44,6 +46,11 @@ class Form
     protected $enableHoneypot = true;
 
     /**
+     * @var bool $enableHoneypot store search in session
+     */
+    protected $storeSearchInSession = true;
+
+    /**
      * @var bool $elementsConstraintsAreChecked true if elements constraints are checked
      */
     protected $elementsConstraintsAreChecked = false;
@@ -64,6 +71,11 @@ class Form
     protected $request;
 
     /**
+     * @var AbstractUserAuthentication;
+     */
+    protected $userAuthentication;
+
+    /**
      * @var Repository $repository
      */
     protected $repository = null;
@@ -77,6 +89,16 @@ class Form
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
+
+    /**
+     * @var Context
+     */
+    protected $context;
+
+    /**
+     * @var array
+     */
+    protected $defaultClause;
 
     /**
      * @var array $bodyData
@@ -98,10 +120,13 @@ class Form
         $this->identifier = $identifier;
         $this->errorManager = GeneralUtility::makeInstance(ErrorManager::class, $this);
         $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcherInterface::class);
+        $this->context = GeneralUtility::makeInstance(Context::class);
         $this->request = $GLOBALS['TYPO3_REQUEST'];
+        $this->userAuthentication = $GLOBALS['TSFE']->fe_user;
+        $this->defaultClause = [];
 
         $parsedBody = $this->request->getParsedBody();
-        $uploadedFiles = $this->request->getUploadedFiles();
+        $uploadedFiles = $this->request->getUploadedFiles();        
 
         $this->bodyData = isset($parsedBody[$identifier]) ? $parsedBody[$identifier] : [];
         $this->uploadedFiles = isset($uploadedFiles[$identifier]) ? $uploadedFiles[$identifier] : [];
@@ -123,6 +148,7 @@ class Form
     public function enableCsrftoken(): self
     {
         $this->enableCsrftoken = true;
+
         return $this;
     }
 
@@ -133,6 +159,7 @@ class Form
     public function disableCsrftoken(): self
     {
         $this->enableCsrftoken = false;
+
         return $this;
     }
 
@@ -152,6 +179,7 @@ class Form
     public function enableHoneypot(): self
     {
         $this->enableHoneypot = true;
+
         return $this;
     }
 
@@ -162,6 +190,7 @@ class Form
     public function disableHoneypot(): self
     {
         $this->enableHoneypot = false;
+
         return $this;
     }
 
@@ -172,6 +201,37 @@ class Form
     public function honeypotIsEnabled(): bool
     {
         return $this->enableHoneypot;
+    }
+
+    /**
+     * store search in session
+     * @return self
+     */
+    public function storeSearchInSession(): self
+    {
+        $this->storeSearchInSession = true;
+
+        return $this;
+    }
+
+    /**
+     * disable search in session
+     * @return self
+     */
+    public function disableSearchStoringInSession(): self
+    {
+        $this->storeSearchInSession = false;
+
+        return $this;
+    }
+
+    /**
+     * return TRUE if search is stored in session
+     * @return bool
+     */
+    public function searchIsStoredInSession(): bool
+    {
+        return $this->storeSearchInSession;
     }
 
     /**
@@ -275,6 +335,16 @@ class Form
             $this->eventDispatcher->dispatch($bindEvent);
 
             $element->setValue($bindEvent->getValue());
+        } else if ($this->repository !== null && $this->storeSearchInSession()) {
+            $clauses = null;
+            if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {                
+                $clauses = $this->userAuthentication->getKey('user', 'form-' . $this->getIdentifier() . '-clauses');
+            } else {
+                $clauses = $this->userAuthentication->getKey('ses', 'form-' . $this->getIdentifier() . '-clauses');
+            }
+            if (is_array($clauses) && isset($clauses[$name])) {
+                $element->setValue($clauses[$name]['elementvalue']);
+            }
         }
 
         if ($type === Element::UPLOAD && isset($this->uploadedFiles[$name])) {
@@ -297,7 +367,7 @@ class Form
      */
     public function bindRequest(): self
     {
-        // todo trigger deprecated
+        trigger_error('Bind request is not longer useful', E_USER_DEPRECATED);
 
         return $this;
     }
@@ -418,6 +488,19 @@ class Form
     }
 
     /**
+     * add where clause
+     *
+     * @param array $clause
+     * @return self
+     */
+    public function addWhereClause($clause): self
+    {
+        $this->defaultClause[] = $clause;
+
+        return $this;
+    }
+
+    /**
      * return true if the form is valide
      *
      * @return bool true if is a valid form
@@ -439,8 +522,7 @@ class Form
      */
     public function getErrors(): array
     {
-        // todo
-        return [];
+        return $this->getErrorManager()->getFlatErrors();
     }
 
     /**
@@ -472,7 +554,14 @@ class Form
             }
         }
 
-        //$clauses = array_merge($this->clauses, $this->defaultClause); TODO
+        if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {                
+            $this->userAuthentication->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $clauses);
+        } else {
+            $this->userAuthentication->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $clauses);
+        }
+        $this->userAuthentication->storeSessionData();
+
+        $clauses = array_merge($clauses, $this->defaultClause);
         return $this->repository->findByClausesArray($clauses, $orderby, $direction);
     }
 
