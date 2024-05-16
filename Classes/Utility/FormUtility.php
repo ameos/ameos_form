@@ -40,6 +40,9 @@ class FormUtility
             case Constraint::REQUIRED:
                 $className = Constraints\Required::class;
                 break;
+            case Constraint::SAMEAS:
+                $className = Constraints\Sameas::class;
+                break;
             default:
                 throw new TypeNotFoundException(sprintf('constraint %s not found', $type));
                 break;
