@@ -20,6 +20,7 @@ class Element
     public const DATE = 'date';
     public const TEXTDATE = 'textdate';
     public const DATEPICKER = 'datepicker';
+    public const DATEINPUT = 'dateinput';
     public const TIME = 'time';
     public const TIMEPICKER = 'timepicker';
     public const NUMERICCAPTCHA = 'numericcaptcha';
