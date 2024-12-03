@@ -44,6 +44,13 @@ class Upload extends ElementAbstract
         }
     }
 
+    public function removeFileFromValue(string $fileName): void
+    {
+        if (($key = array_search($fileName, $this->value)) !== false) {
+            unset($this->value[$key]);
+        }
+    }
+
     /**
      * return true if show link
      * @return bool
@@ -125,18 +132,21 @@ class Upload extends ElementAbstract
 
         /** @var array */
         $values = $this->getValue();
-        if (!is_array($values)) {
-            $values = [$values];
-        }
 
-        if ($this->uploadState == self::STATE_PENDING) {
-            foreach ($values as $value) {
-                $output .= '<a target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '">Voir le fichier ' . $value . '</a> ';
-                $output .= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
+        if ($values) {
+            if (!is_array($values)) {
+                $values = [$values];
             }
-        } elseif ($this->showLink()) {
-            foreach ($values as $value) {
-                $output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '">Voir le fichier ' . $value . '</a> ';
+
+            if ($this->uploadState == self::STATE_PENDING) {
+                foreach ($values as $value) {
+                    $output .= '<a target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '">Voir le fichier ' . $value . '</a> ';
+                    $output .= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
+                }
+            } elseif ($this->showLink()) {
+                foreach ($values as $value) {
+                    $output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '">Voir le fichier ' . $value . '</a> ';
+                }
             }
         }
 

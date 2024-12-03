@@ -10,6 +10,7 @@ class Constraint
     public const SAMEAS = 'sameas';
     public const UNIQUE = 'unique';
     public const FILEEXTENSION = 'fileextension';
+    public const FILEMIME = 'filemime';
     public const FILESIZE = 'filesize';
     public const CUSTOM = 'custom';
     public const REQUIRED = 'required';

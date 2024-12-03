@@ -31,8 +31,8 @@ class FormUtility
             case Constraint::FILEEXTENSION:
                 $className = Constraints\Fileextension::class;
                 break;
-            case Constraint::FILESIZE:
-                $className = Constraints\Filesize::class;
+            case Constraint::FILEMIME:
+                $className = Constraints\Filemime::class;
                 break;
             case Constraint::CUSTOM:
                 $className = Constraints\Custom::class;
