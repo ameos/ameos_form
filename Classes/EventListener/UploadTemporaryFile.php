@@ -7,6 +7,7 @@ namespace Ameos\AmeosForm\EventListener;
 use Ameos\AmeosForm\Elements\Upload;
 use Ameos\AmeosForm\Event\BindValueFromRequestEvent;
 use TYPO3\CMS\Core\Http\UploadedFile;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 final class UploadTemporaryFile
 {
@@ -38,7 +39,17 @@ final class UploadTemporaryFile
                         $newValue[] = basename($temporaryFilepath);
                     } else {
                         $event->getForm()->getErrorManager()->add(
-                            'La taille du fichier "' . $fileName . '" excéde la limite autorisée de ' . $maxSize . '.',
+                            str_replace(
+                                [
+                                    '%file_name%',
+                                    '%max_size%'
+                                ],
+                                [
+                                    $fileName,
+                                    $maxSize
+                                ],
+                                LocalizationUtility::translate('fileSizeError', 'ameos_form')
+                            ),
                             $element->getName()
                         );
                     }

@@ -82,9 +82,13 @@ class Upload extends ElementAbstract
      * Return directory
      * @return string
      */
-    public function getUploadDirectory(): string
+    public function getUploadDirectory($absolute = true): string
     {
-        return Environment::getPublicPath() . '/' . trim($this->configuration['directory'], '/') . '/';
+        $directory = '';
+        if ($absolute) {
+            $directory .= Environment::getPublicPath() . '/';
+        }
+        return $directory . trim($this->configuration['directory'], '/') . '/';
     }
 
     /**
