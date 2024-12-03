@@ -6,6 +6,8 @@ namespace Ameos\AmeosForm\Constraints;
 
 class Filemime extends ConstraintAbstract
 {
+    use Traits\DisableGlobalErrorMessage;
+    
     /**
      * @var array<string|array>
      */
@@ -949,7 +951,7 @@ class Filemime extends ConstraintAbstract
      * @param   string $value value to test
      * @return  bool true if the element is valide
      */
-    public function isValid($value)
+    /*public function isValid($value)
     {
         if (!is_array($value) && empty($value)) {
             return true;
@@ -976,5 +978,40 @@ class Filemime extends ConstraintAbstract
         }
 
         return false;
+    }*/
+
+    public function isValid($value)
+    {
+        if (!is_array($value) && empty($value)) {
+            return true;
+        }
+
+        $valid = true;
+        $values = $value;
+
+        foreach ($values as $fileKey => $fileName) {
+            $pathInfo = pathinfo($fileName);
+            $filePath = $this->element->getTemporaryDirectory() . $fileName;
+            $fileMime = mime_content_type($filePath);
+            $extension = strtolower($pathInfo['extension']);
+            $authorizedMimes = $this->mimesMap[$extension];
+
+            if (is_array($authorizedMimes)) {
+                $mimeValid = in_array($fileMime, $authorizedMimes);
+            } else {
+                $mimeValid = ($authorizedMimes == $fileMime);
+            }
+
+            if (!$mimeValid) {
+                $this->element->removeFileFromValue($fileName);
+                $this->form->getErrorManager()->add(
+                    str_replace('%file_name%', $fileName, $this->message),
+                    $this->element->getName()
+                );
+                $valid = false;
+            }
+        }
+
+        return $valid;
     }
 }

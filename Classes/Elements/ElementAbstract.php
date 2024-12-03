@@ -182,6 +182,9 @@ abstract class ElementAbstract implements ElementInterface
      */
     public function getValue(): mixed
     {
+        if (is_null($this->value)) {
+            return isset($this->configuration['defaultValue']) ? $this->configuration['defaultValue'] : '';
+        }
         return $this->value;
     }
 
@@ -305,7 +308,10 @@ abstract class ElementAbstract implements ElementInterface
                 $value = $this->getValue();
                 foreach ($this->constraints as $constraint) {
                     if (!$constraint->isValid($value)) {
-                        $this->form->getErrorManager()->add($constraint->getMessage(), $this->getName());
+                        $errorMessage = $constraint->getMessage();
+                        if ($errorMessage !== null) {
+                            $this->form->getErrorManager()->add($errorMessage, $this->getName());
+                        }
                     }
                 }
                 foreach ($this->systemerror as $error) {

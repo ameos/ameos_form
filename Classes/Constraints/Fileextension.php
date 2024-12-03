@@ -8,6 +8,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Fileextension extends ConstraintAbstract
 {
+    use Traits\DisableGlobalErrorMessage;
+
     /**
      * return true if the element is valide
      *
@@ -20,11 +22,36 @@ class Fileextension extends ConstraintAbstract
             return true;
         }
 
-        if (is_array($value)) {
-            $pathfinfo = pathinfo($value['name']);
-            return GeneralUtility::inList($this->configuration['allowed'], strtolower($pathfinfo['extension']));
+        $valid = true;
+        $values = $value;
+
+        foreach ($values as $fileKey => $fileName) {
+            $pathInfo = pathinfo($fileName);
+            $extensionValid = GeneralUtility::inList(
+                $this->configuration['allowed'],
+                strtolower($pathInfo['extension'])
+            );
+
+            if (!$extensionValid) {
+                $this->element->removeFileFromValue($fileName);
+                $this->form->getErrorManager()->add(
+                    str_replace(
+                        [
+                            '%file_name%',
+                            '%extensions%'
+                        ],
+                        [
+                            $fileName,
+                            implode(', ', explode(',', $this->configuration['allowed']))
+                        ],
+                        $this->message
+                    ),
+                    $this->element->getName()
+                );
+                $valid = false;
+            }
         }
 
-        return false;
+        return $valid;
     }
 }
