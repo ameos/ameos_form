@@ -39,6 +39,7 @@
 
 			<trans-unit id="previousMonth" xml:space="preserve"><source>Previous month</source><target>Mois précédent</target></trans-unit>
 			<trans-unit id="nextMonth" xml:space="preserve"><source>Next month</source><target>Mois suivant</target></trans-unit>
+			<trans-unit id="fileSizeError" xml:space="preserve"><source>The size of the file "%file_name%" exceeds the allowed limit of %max_size%.</source><target>La taille du fichier "%file_name%" excéde la limite autorisée de %max_size%.</target></trans-unit>
 		</body>
 	</file>
 </xliff>

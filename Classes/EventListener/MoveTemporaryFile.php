@@ -46,6 +46,10 @@ final class MoveTemporaryFile
         if ($element->getForcedFilename()) {
             return $directory . $element->getForcedFilename();
         }
+                
+        if (!file_exists($directory)) {
+            mkdir($directory);
+        }
         
         if (file_exists($directory . $clientFilename) && !$element->canOverwrite()) {
             $fileIndex = 1;

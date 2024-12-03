@@ -35,7 +35,7 @@
 			<trans-unit id="weekdaysShort.7" xml:space="preserve"><source>Sat</source></trans-unit>
 
 			<trans-unit id="previousMonth" xml:space="preserve"><source>Previous month</source></trans-unit>
-			<trans-unit id="nextMonth" xml:space="preserve"><source>Next month</source></trans-unit>
+			<trans-unit id="fileSizeError" xml:space="preserve"><source>The size of the file "%file_name%" exceeds the allowed limit of %max_size%.</source></trans-unit>
 		</body>
 	</file>
 </xliff>
