@@ -8,7 +8,7 @@ $EM_CONF['ameos_form'] = [
     'author_email'     => 'typo3dev@ameos.com',
     'author_company'   => 'Ameos',
     'state'            => 'beta',
-    'version'          => '2.3.0',
+    'version'          => '2.3.2',
     'constraints'      => [
         'depends' => [
             'typo3' => '12.4.0-12.4.99',
@@ -17,5 +17,4 @@ $EM_CONF['ameos_form'] = [
         'conflicts' => [],
         'suggests'  => [],
     ],
-    
 ];
