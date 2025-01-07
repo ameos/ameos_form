@@ -28,9 +28,8 @@ final class UploadTemporaryFile
             if (isset($value['upload']) && is_array($value['upload'])) {
                 foreach ($value['upload'] as $uploadedFile) {
                     /** @var UploadedFile $uploadedFile */
-                    
+                    $fileName = $uploadedFile->getClientFilename();
                     if ($this->isFileSizeValid($uploadedFile, $maxSizeValue)) {
-                        $fileName = $uploadedFile->getClientFilename();
                         $temporaryFilepath = $this->getTemporaryUpdateFilepath(
                             $element,
                             $fileName
