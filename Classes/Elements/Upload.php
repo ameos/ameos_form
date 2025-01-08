@@ -7,7 +7,6 @@ namespace Ameos\AmeosForm\Elements;
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Resource\StorageRepository;
 
 class Upload extends ElementAbstract
 {
