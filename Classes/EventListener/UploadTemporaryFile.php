@@ -19,7 +19,6 @@ final class UploadTemporaryFile
             /** @var array */
             $value = $event->getValue();
             $newValue = [];
-            $uploadedFiles = [];
 
             $elementConfiguration = $element->getConfiguration();
             $maxSize = array_key_exists('maxSize', $elementConfiguration) ? $elementConfiguration['maxSize'] : '5M';
@@ -59,6 +58,9 @@ final class UploadTemporaryFile
                 }
             } elseif (isset($value['temporary']) && is_array($value['temporary'])) {
                 $newValue = $value['temporary'];
+                if (!empty($newValue)) {
+                    $element->updateState(Upload::STATE_PENDING);
+                }
             }
 
             $event->setValue($newValue);

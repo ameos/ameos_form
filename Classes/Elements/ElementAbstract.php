@@ -28,7 +28,7 @@ abstract class ElementAbstract implements ElementInterface
     protected $absolutename;
 
     /**
-     * @var string $value value
+     * @var mixed $value value
      */
     protected $value;
 
