@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Ameos\AmeosForm\Elements;
 
 use Ameos\AmeosForm\Form\Form;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Page\AssetCollector;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class Upload extends ElementAbstract
 {
@@ -143,15 +145,20 @@ class Upload extends ElementAbstract
 
             if ($this->uploadState == self::STATE_PENDING) {
                 foreach ($values as $value) {
-                    $output .= '<a target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '">Voir le fichier ' . $value . '</a> ';
-                    $output .= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
+                        $output .= '<a id="'.$this->getHtmlId() . '-temporary-' . $value.'-viewlink" target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '" class="ameos-form-elementupload-viewlink"><span class="ameos-form-elementupload-viewlink-inner">'.LocalizationUtility::translate('view-file', 'ameos_form').'&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">' . $value . '</span></span></a> ';
+                        $output .= '<button type="button" id="'.$this->getHtmlId() . '-temporary-' . $value.'-deletebutton" class="ameos-form-elementupload-deletebutton" title="'.LocalizationUtility::translate('delete-file', 'ameos_form').'&nbsp;: ' . $value . '"><span class="ameos-form-elementupload-deletebutton-inner">'.LocalizationUtility::translate('delete-file', 'ameos_form').'</span></button>';
+                        $output .= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
                 }
             } elseif ($this->showLink()) {
                 foreach ($values as $value) {
-                    $output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '">Voir le fichier ' . $value . '</a> ';
+                    $output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '" class="ameos-form-elementupload-viewlink"><span class="ameos-form-elementupload-viewlink-inner">'.LocalizationUtility::translate('view-file', 'ameos_form').'&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">' . $value . '</span></span></a> ';
                 }
             }
         }
+
+        GeneralUtility::makeInstance(AssetCollector::class)
+            ->addJavaScript('ameos-form-elementupload', 'EXT:ameos_form/Resources/Public/Elements/upload.js');
+
 
         $output .= '<input type="file" ' . $multiple . 'id="' . $this->getHtmlId() . '-upload" name="' . $this->absolutename . '[upload][]"' . $this->getAttributes() . ' />';
         return $output;
