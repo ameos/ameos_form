@@ -39,6 +39,7 @@
 			
 			<trans-unit id="view-file" xml:space="preserve"><source><![CDATA[View the file]]></source></trans-unit>
 			<trans-unit id="delete-file" xml:space="preserve"><source><![CDATA[Delete the file]]></source></trans-unit>
+			<trans-unit id="reset-upload" xml:space="preserve"><source><![CDATA[Reset the upload field]]></source></trans-unit>
 		</body>
 	</file>
 </xliff>
