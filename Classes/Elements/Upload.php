@@ -156,12 +156,14 @@ class Upload extends ElementAbstract
             }
         }
 
-        GeneralUtility::makeInstance(AssetCollector::class)
-            ->addJavaScript('ameos-form-elementupload', 'EXT:ameos_form/Resources/Public/Elements/upload.js');
-
-
         $output .= '<input type="file" ' . $multiple . 'id="' . $this->getHtmlId() . '-upload" name="' . $this->absolutename . '[upload][]"' . $this->getAttributes() . ' />';
+        $output .= '<button type="button" id="'.$this->getHtmlId() . '-uploadreset" class="ameos-form-elementupload-resetbutton" title="'.LocalizationUtility::translate('reset-upload', 'ameos_form').'"><span class="ameos-form-elementupload-resetbutton-inner">'.LocalizationUtility::translate('reset-upload', 'ameos_form').'</span></button>';
+
+        GeneralUtility::makeInstance(AssetCollector::class)
+        ->addJavaScript('ameos-form-elementupload', 'EXT:ameos_form/Resources/Public/Elements/upload.js');
+        
         return $output;
+
     }
 
     /**

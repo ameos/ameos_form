@@ -14,4 +14,18 @@ document.addEventListener("DOMContentLoaded", (event) => {
 			});
 		});
 	}
+
+	resetUploadFieldsButtons = document.querySelectorAll('.ameos-form-elementupload-resetbutton');
+	if(resetUploadFieldsButtons.length > 0){
+		[].slice.call(resetUploadFieldsButtons).forEach(function(elem){
+			elem.addEventListener('click',function(e){
+				target = elem.id.replace('-uploadreset','');
+				targetUploadInput = document.getElementById(target+'-upload');
+				if(targetUploadInput.value){
+					targetUploadInput.value = '';
+				}
+				targetUploadInput.focus();
+			});
+		});
+	}
 });
