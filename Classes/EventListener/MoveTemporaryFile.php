@@ -13,15 +13,15 @@ final class MoveTemporaryFile
     {
         $elements = $event->getForm()->getElements();
         foreach ($elements as $element) {
-            if (is_a($element, Upload::class)) {
+            if (is_a($element, Upload::class) && !empty($element->getValue())) {
                 /** @var Upload $element */
-                
+
                 /** @var array */
                 $values = $element->getValue();
                 $newValues = [];
-                
+
                 foreach ($values as $value) {
-                    $temporaryFilepath = $element->getTemporaryDirectory() . $value; 
+                    $temporaryFilepath = $element->getTemporaryDirectory() . $value;
                     $destinationFilepath = $this->getFinalUpdateFilepath($element, $value);
 
                     rename($temporaryFilepath, $destinationFilepath);
@@ -46,11 +46,11 @@ final class MoveTemporaryFile
         if ($element->getForcedFilename()) {
             return $directory . $element->getForcedFilename();
         }
-                
+
         if (!file_exists($directory)) {
             mkdir($directory);
         }
-        
+
         if (file_exists($directory . $clientFilename) && !$element->canOverwrite()) {
             $fileIndex = 1;
             do {
