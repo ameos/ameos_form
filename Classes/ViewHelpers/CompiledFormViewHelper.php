@@ -26,7 +26,7 @@ class CompiledFormViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('form', \Ameos\AmeosForm\Form\AbstractForm::class, 'form instance', false);
+        $this->registerArgument('form', \Ameos\AmeosForm\Form\Form::class, 'form instance', false);
     }
 
     /**

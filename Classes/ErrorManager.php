@@ -50,7 +50,7 @@ class ErrorManager
 
     /**
      * add an error
-     * 
+     *
      * @param string $message
      * @param string $element
      * @return self

@@ -32,7 +32,7 @@ final class UploadTemporaryFile
                         $temporaryFilepath = $this->getTemporaryUpdateFilepath(
                             $element,
                             $fileName
-                        );                    
+                        );
                         $uploadedFile->moveTo($temporaryFilepath);
                         $newValue[] = basename($temporaryFilepath);
                     } else {
@@ -79,9 +79,9 @@ final class UploadTemporaryFile
         $twoLetters = strtoupper(substr($maxSizeStr, -2));
         if ($oneLetter == 'K' || $twoLetters == 'KO') {
             $maxSize = $intValue * 1024;
-        } else if ($oneLetter == 'M' || $twoLetters == 'MO') {
+        } elseif ($oneLetter == 'M' || $twoLetters == 'MO') {
             $maxSize = $intValue * 1024 * 1024;
-        } else if ($oneLetter == 'G' || $twoLetters == 'GO'){
+        } elseif ($oneLetter == 'G' || $twoLetters == 'GO') {
             $maxSize = $intValue * 1024 * 1024 * 1024;
         }
 

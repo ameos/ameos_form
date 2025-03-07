@@ -24,7 +24,7 @@ class ReCaptcha extends ConstraintAbstract
         if (!class_exists(GoogleReCaptcha::class)) {
             throw new MissingDependencyException('install recaptcha library (composer require google/recaptcha)');
         }
-        
+
         $recaptcha = new GoogleReCaptcha($this->configuration['privateKey']);
         $response  = $recaptcha->verify($_POST['g-recaptcha-response']);
 

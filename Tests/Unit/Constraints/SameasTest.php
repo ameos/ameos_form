@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
 class SameasTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -30,7 +29,7 @@ class SameasTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'test'));
         $result = $form->get('input-text-2')->isValid();
 
@@ -49,7 +48,7 @@ class SameasTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'othervalue'));
         $result = $form->get('input-text-2')->isValid();
 

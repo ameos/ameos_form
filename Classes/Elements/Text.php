@@ -13,7 +13,7 @@ class Text extends ElementAbstract
      */
     public function toHtml(): string
     {
-        return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" ' 
+        return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" '
             . 'value="' . $this->getValue() . '"' . $this->getAttributes() . ' />' . $this->getDatalist();
     }
 }

@@ -94,7 +94,7 @@ class Dropdown extends ElementAbstract
     public function getAttributes(): string
     {
         $output = parent::getAttributes();
-        $output .= isset($this->configuration['multiple']) && $this->configuration['multiple'] == true  ? ' multiple="multiple"' : '';
+        $output .= isset($this->configuration['multiple']) && $this->configuration['multiple'] == true ? ' multiple="multiple"' : '';
         return $output;
     }
 

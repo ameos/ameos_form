@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
 class CustomTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -30,7 +29,7 @@ class CustomTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         }]);
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text' => 'test'));
         $result = $form->get('input-text')->isValid();
 
@@ -49,7 +48,7 @@ class CustomTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         }]);
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text' => 'othervalue'));
         $result = $form->get('input-text')->isValid();
 

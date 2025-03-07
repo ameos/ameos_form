@@ -195,7 +195,7 @@ class Date extends ElementAbstract
      */
     protected function getYearsItems()
     {
-        for($year = 1900; $year <= date('Y') + 20; $year++) {
+        for ($year = 1900; $year <= date('Y') + 20; $year++) {
             yield $year;
         }
     }
@@ -215,7 +215,7 @@ class Date extends ElementAbstract
      */
     protected function getDaysItems()
     {
-        for($day = 1; $day <= 31; $day++) {
+        for ($day = 1; $day <= 31; $day++) {
             yield $day;
         }
     }

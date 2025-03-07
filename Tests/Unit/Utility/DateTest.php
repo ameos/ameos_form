@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Utility;
 
 class DateTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -34,7 +33,7 @@ class DateTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             '2005 12 24'            => \Ameos\AmeosForm\Utility\Date::dateToTimestamp('2005 12 24', '%Y %m %d'),
             '10 Jan 2003'           => \Ameos\AmeosForm\Utility\Date::dateToTimestamp('10 Jan 2003', '%d %b %Y'),
         ];
-        
+
         $this->assertEquals($result, $expectedResult);
     }
 
@@ -54,7 +53,7 @@ class DateTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             '1135882400' => \Ameos\AmeosForm\Utility\Date::timestampToDate('1135882400', '%d/%m/%Y - %H:%M:%S'),
             '1242156800' => \Ameos\AmeosForm\Utility\Date::timestampToDate('1242156800', '%d/%m/%Y'),
         ];
-        
+
         $this->assertEquals($result, $expectedResult);
     }
 }

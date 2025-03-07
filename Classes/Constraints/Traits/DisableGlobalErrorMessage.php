@@ -6,7 +6,7 @@ namespace Ameos\AmeosForm\Constraints\Traits;
 
 trait DisableGlobalErrorMessage
 {
-    function getMessage()
+    public function getMessage()
     {
         return null;
     }

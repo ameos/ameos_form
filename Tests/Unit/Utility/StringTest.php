@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Utility;
 
 class StringTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -34,7 +33,7 @@ class StringTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             'foobar'      => \Ameos\AmeosForm\Utility\String::camelCase('foobar'),
             'foo_barTest' => \Ameos\AmeosForm\Utility\String::camelCase('foo_barTest'),
         ];
-        
+
         $this->assertEquals($result, $expectedResult);
     }
 }

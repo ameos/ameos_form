@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
 class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -29,13 +28,13 @@ class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             ->addConstraint('input-text', 'email', 'email not valid');
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text' => ''));
         $result = $form->get('input-text')->isValid();
 
         $this->assertFalse($result);
     }
-    
+
     /**
      * @test
      */
@@ -45,13 +44,13 @@ class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text' => ''));
         $result = $form->get('input-text')->isValid();
 
         $this->assertTrue($result);
     }
-    
+
     /**
      * @test
      */
@@ -61,7 +60,7 @@ class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text' => 'test@example.com'));
         $result = $form->get('input-text')->isValid();
 
@@ -77,7 +76,7 @@ class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'email', 'email not valid');
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text' => 'notmail'));
         $result = $form->get('input-text')->isValid();
 
