@@ -454,7 +454,7 @@ class Form
      * @param   string  $type validator type
      * @param   string  $message message
      * @param   array   $configuration configuration
-     * @return  \Ameos\AmeosForm\Form this
+     * @return  self
      * alias    addConstraint
      */
     public function validator($elementName, $type, $message, $configuration = [])
@@ -469,7 +469,7 @@ class Form
      * @param   string  $type constraint type
      * @param   string  $message message
      * @param   array   $configuration configuration
-     * @return  \Ameos\AmeosForm\Form this
+     * @return  self
      */
     public function addConstraint($elementName, $type, $message, $configuration = [])
     {
