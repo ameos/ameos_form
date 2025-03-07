@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Elements;
 
 class GeneralTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -60,7 +59,7 @@ class GeneralTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             . 'title="My text field" '
             . 'customattr="custom-value" '
             . 'class="my-css-class" />';
-            
+
         $expectedResult = [
             'defaultValue' => 'my-value',
             'class'        => 'my-css-class',
@@ -91,7 +90,7 @@ class GeneralTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $form->add('input-text', 'text', $elementConfiguration);
         $form->get('input-text')->with('style', 'display: block;');
-        
+
         $result = $form->get('input-text')->getRenderingInformation();
 
         $this->assertEquals($result, $expectedResult);

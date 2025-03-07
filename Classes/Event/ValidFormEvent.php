@@ -15,7 +15,6 @@ final class ValidFormEvent
      */
     public function __construct(private readonly Form $form)
     {
-        
     }
 
     /**

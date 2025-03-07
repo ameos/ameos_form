@@ -14,7 +14,7 @@ final class EncryptPassword
     public function __invoke(ValidFormEvent $event): void
     {
         $hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance('FE');
-            
+
         $elements = $event->getForm()->getElements();
         foreach ($elements as $element) {
             $configuration = $element->getConfiguration();

@@ -15,7 +15,7 @@ class Tel extends ElementAbstract
     {
         $pattern = isset($this->configuration['pattern']) ? ' pattern="' . $this->configuration['pattern'] . '"' : '';
 
-        return '<input type="tel" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" ' 
+        return '<input type="tel" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" '
             . 'value="' . $this->getValue() . '"' . $this->getAttributes() . $pattern . ' />' . $this->getDatalist();
     }
 }

@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Utility;
 
 class ErrorManagerTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -29,7 +28,7 @@ class ErrorManagerTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $form->disableCsrftoken()->add('input-text-required-2', 'text')->addConstraint('input-text-required-2', 'required', 'field mandatory');
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(['input-text-required' => '', 'input-text-email' => 'mail-not-valid', 'input-text-required-2' => 'test']);
 
         $expectedResult = [
@@ -39,7 +38,7 @@ class ErrorManagerTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             'errors_for_text'   => ['field mandatory'],
             'errors_for_mail'   => ['email not valid'],
         ];
-        
+
         $result = [
             'is_valid' => $form->isValid(),
             'errors_merged'     => $form->getErrors(),

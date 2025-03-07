@@ -17,7 +17,7 @@ class Required extends ConstraintAbstract
      */
     public function isValid($value)
     {
-        $value = is_null($value) ? '': $value;
+        $value = is_null($value) ? '' : $value;
         if (is_a($this->element, Upload::class)) {
             if (is_array($value) && array_key_exists('upload', $value) && is_array($value['upload'])) {
                 return true;

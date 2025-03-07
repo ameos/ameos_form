@@ -22,10 +22,10 @@ class Rating extends Radio
 
         $this->assetCollector->addStyleSheet('ameos-form-rating', 'EXT:ameos_form/Resources/Public/Elements/rating.css');
 
-        $min   = isset($this->configuration['min'])   ? (int)$this->configuration['min']  : 1;
-        $max   = isset($this->configuration['max'])   ? (int)$this->configuration['max']  : 5;
-        $step  = isset($this->configuration['step'])  ? (int)$this->configuration['step'] : 1;
-        $label = isset($this->configuration['label']) ? $this->configuration['label']     : '★';
+        $min   = isset($this->configuration['min']) ? (int)$this->configuration['min'] : 1;
+        $max   = isset($this->configuration['max']) ? (int)$this->configuration['max'] : 5;
+        $step  = isset($this->configuration['step']) ? (int)$this->configuration['step'] : 1;
+        $label = isset($this->configuration['label']) ? $this->configuration['label'] : '★';
 
         if (!isset($this->configuration['items'])) {
             $this->configuration['items'] = [];

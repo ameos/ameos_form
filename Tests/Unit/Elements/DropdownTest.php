@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Elements;
 
 class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -67,7 +66,7 @@ class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
                 . '<option value="value-2" selected="selected">Value 2</option>'
                 . '<option value="value-3">Value 3</option>'
             . '</select>';
-            
+
         $expectedResult = [
             'defaultValue' => 'value-2',
             'class'        => 'my-css-class',
@@ -101,7 +100,7 @@ class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $form->add('my-select', 'dropdown', $elementConfiguration);
         $form->get('my-select')->with('style', 'display: block;');
-        
+
         $result = $form->get('my-select')->getRenderingInformation();
 
         $this->assertEquals($result, $expectedResult);

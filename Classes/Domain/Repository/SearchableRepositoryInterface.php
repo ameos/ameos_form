@@ -12,7 +12,7 @@ interface SearchableRepositoryInterface
      * @param   array $clauses where clauses
      * @param   string $orderby order by
      * @param   string $direction direction
-     * @return  object
+     * @return  iterable
      */
     public function findByClausesArray($clauses, $orderby = null, $direction = 'ASC');
 }

@@ -7,7 +7,7 @@ namespace Ameos\AmeosForm\Constraints;
 class Filemime extends ConstraintAbstract
 {
     use Traits\DisableGlobalErrorMessage;
-    
+
     /**
      * @var array<string|array>
      */

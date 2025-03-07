@@ -13,7 +13,7 @@ class Email extends ElementAbstract
      */
     public function toHtml(): string
     {
-        return '<input type="email" id="' . $this->getHtmlId() . '" ' 
+        return '<input type="email" id="' . $this->getHtmlId() . '" '
             . 'name="' . $this->absolutename . '" '
             . 'value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
     }

@@ -13,7 +13,7 @@ class Textdate extends ElementAbstract
      */
     public function toHtml(): string
     {
-        return '<input type="date" id="' . $this->getHtmlId() 
+        return '<input type="date" id="' . $this->getHtmlId()
             . '" name="' . $this->absolutename
             . '" value="' . $this->getValue()
             . '"' . $this->getAttributes() . ' />' . $this->getDatalist();

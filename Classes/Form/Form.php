@@ -126,7 +126,7 @@ class Form
         $this->defaultClause = [];
 
         $parsedBody = $this->request->getParsedBody();
-        $uploadedFiles = $this->request->getUploadedFiles();        
+        $uploadedFiles = $this->request->getUploadedFiles();
 
         $this->bodyData = isset($parsedBody[$identifier]) ? $parsedBody[$identifier] : [];
         $this->uploadedFiles = isset($uploadedFiles[$identifier]) ? $uploadedFiles[$identifier] : [];
@@ -251,7 +251,8 @@ class Form
     {
         $submitters = [];
         foreach ($this->elements as $element) {
-            if (is_a($element, Submit::class)
+            if (
+                is_a($element, Submit::class)
                 || (is_a($element, Button::class) && $element->getType() === Button::TYPE_SUBMIT)
             ) {
                 $submitters[] = $element;
@@ -335,9 +336,9 @@ class Form
             $this->eventDispatcher->dispatch($bindEvent);
 
             $element->setValue($bindEvent->getValue());
-        } else if ($this->repository !== null && $this->storeSearchInSession()) {
+        } elseif ($this->repository !== null && $this->storeSearchInSession()) {
             $clauses = null;
-            if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {                
+            if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
                 $clauses = $this->userAuthentication->getKey('user', 'form-' . $this->getIdentifier() . '-clauses');
             } else {
                 $clauses = $this->userAuthentication->getKey('ses', 'form-' . $this->getIdentifier() . '-clauses');
@@ -435,10 +436,10 @@ class Form
     /**
      * attach repository for search
      *
-     * @param Repository $repository
+     * @param Repository|SearchableRepositoryInterface $repository
      * @return self
      */
-    public function attachRepository(Repository $repository): self
+    public function attachRepository(Repository|SearchableRepositoryInterface $repository): self
     {
         $this->repository = $repository;
 
@@ -554,7 +555,7 @@ class Form
             }
         }
 
-        if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {                
+        if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             $this->userAuthentication->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $clauses);
         } else {
             $this->userAuthentication->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $clauses);

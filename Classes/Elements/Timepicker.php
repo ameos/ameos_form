@@ -13,7 +13,7 @@ class Timepicker extends ElementAbstract
      */
     public function toHtml(): string
     {
-        return '<input type="time" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" ' 
+        return '<input type="time" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" '
             . 'value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
     }
 }

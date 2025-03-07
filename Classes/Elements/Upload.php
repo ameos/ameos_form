@@ -103,7 +103,7 @@ class Upload extends ElementAbstract
 
     /**
      * return forced filename or false
-     * 
+     *
      * @return string|false
      */
     public function getForcedFilename(): string|false
@@ -145,25 +145,24 @@ class Upload extends ElementAbstract
 
             if ($this->uploadState == self::STATE_PENDING) {
                 foreach ($values as $value) {
-                        $output .= '<a id="'.$this->getHtmlId() . '-temporary-' . $value.'-viewlink" target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '" class="ameos-form-elementupload-viewlink"><span class="ameos-form-elementupload-viewlink-inner">'.LocalizationUtility::translate('view-file', 'ameos_form').'&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">' . $value . '</span></span></a> ';
-                        $output .= '<button type="button" id="'.$this->getHtmlId() . '-temporary-' . $value.'-deletebutton" class="ameos-form-elementupload-deletebutton" title="'.LocalizationUtility::translate('delete-file', 'ameos_form').'&nbsp;: ' . $value . '"><span class="ameos-form-elementupload-deletebutton-inner">'.LocalizationUtility::translate('delete-file', 'ameos_form').'</span></button>';
-                        $output .= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
+                    $output .= '<a id="' . $this->getHtmlId() . '-temporary-' . $value . '-viewlink" target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '" class="ameos-form-elementupload-viewlink"><span class="ameos-form-elementupload-viewlink-inner">' . LocalizationUtility::translate('view-file', 'ameos_form') . '&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">' . $value . '</span></span></a> ';
+                    $output .= '<button type="button" id="' . $this->getHtmlId() . '-temporary-' . $value . '-deletebutton" class="ameos-form-elementupload-deletebutton" title="' . LocalizationUtility::translate('delete-file', 'ameos_form') . '&nbsp;: ' . $value . '"><span class="ameos-form-elementupload-deletebutton-inner">' . LocalizationUtility::translate('delete-file', 'ameos_form') . '</span></button>';
+                    $output .= '<input type="hidden" value="' . $value . '" id="' . $this->getHtmlId() . '-temporary-' . $value . '" name="' . $this->absolutename . '[temporary][]" />';
                 }
             } elseif ($this->showLink()) {
                 foreach ($values as $value) {
-                    $output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '" class="ameos-form-elementupload-viewlink"><span class="ameos-form-elementupload-viewlink-inner">'.LocalizationUtility::translate('view-file', 'ameos_form').'&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">' . $value . '</span></span></a> ';
+                    $output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '" class="ameos-form-elementupload-viewlink"><span class="ameos-form-elementupload-viewlink-inner">' . LocalizationUtility::translate('view-file', 'ameos_form') . '&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">' . $value . '</span></span></a> ';
                 }
             }
         }
 
         $output .= '<input type="file" ' . $multiple . 'id="' . $this->getHtmlId() . '-upload" name="' . $this->absolutename . '[upload][]"' . $this->getAttributes() . ' />';
-        $output .= '<button type="button" id="'.$this->getHtmlId() . '-uploadreset" class="ameos-form-elementupload-resetbutton" title="'.LocalizationUtility::translate('reset-upload', 'ameos_form').'"><span class="ameos-form-elementupload-resetbutton-inner">'.LocalizationUtility::translate('reset-upload', 'ameos_form').'</span></button>';
+        $output .= '<button type="button" id="' . $this->getHtmlId() . '-uploadreset" class="ameos-form-elementupload-resetbutton" title="' . LocalizationUtility::translate('reset-upload', 'ameos_form') . '"><span class="ameos-form-elementupload-resetbutton-inner">' . LocalizationUtility::translate('reset-upload', 'ameos_form') . '</span></button>';
 
         GeneralUtility::makeInstance(AssetCollector::class)
         ->addJavaScript('ameos-form-elementupload', 'EXT:ameos_form/Resources/Public/Elements/upload.js');
-        
-        return $output;
 
+        return $output;
     }
 
     /**

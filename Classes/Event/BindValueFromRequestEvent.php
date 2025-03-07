@@ -19,7 +19,6 @@ final class BindValueFromRequestEvent
         private readonly ElementInterface $element,
         private mixed $value
     ) {
-        
     }
 
     /**

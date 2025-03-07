@@ -17,7 +17,6 @@ namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
 class RequiredTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
-
     /**
      * @test
      */
@@ -28,7 +27,7 @@ class RequiredTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'required', 'field mandatory');
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text' => 'test'));
         $result = $form->get('input-text')->isValid();
 
@@ -44,7 +43,7 @@ class RequiredTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $form->disableCsrftoken()->add('input-text', 'text')->addConstraint('input-text', 'required', 'field mandatory');
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
-        
+
         $form->bindRequest(array('input-text' => ''));
         $result = $form->get('input-text')->isValid();
 

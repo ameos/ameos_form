@@ -24,8 +24,8 @@ class Number extends ElementAbstract
             $additionnalAttributes .= ' step="' . $this->configuration['step'] . '"';
         }
 
-        return '<input type="number" id="' . $this->getHtmlId() . '" ' 
-            . 'name="' . $this->absolutename . '" ' 
+        return '<input type="number" id="' . $this->getHtmlId() . '" '
+            . 'name="' . $this->absolutename . '" '
             . 'value="' . $this->getValue() . '"' . $this->getAttributes() . $additionnalAttributes . ' />';
     }
 

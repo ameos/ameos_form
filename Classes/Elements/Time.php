@@ -30,7 +30,7 @@ class Time extends ElementAbstract
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
-        $this->configuration['minutestep'] = isset($this->configuration['minutestep']) 
+        $this->configuration['minutestep'] = isset($this->configuration['minutestep'])
             ? $this->configuration['minutestep'] : 1;
     }
 

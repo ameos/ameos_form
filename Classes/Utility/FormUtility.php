@@ -102,9 +102,9 @@ class FormUtility
             case Element::DATEPICKER:
                 $className = Elements\Datepicker::class;
                 break;
-                case Element::DATEINPUT:
-                    $className = Elements\Dateinput::class;
-                    break;
+            case Element::DATEINPUT:
+                $className = Elements\Dateinput::class;
+                break;
             case Element::TIME:
                 $className = Elements\Time::class;
                 break;
