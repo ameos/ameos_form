@@ -25,7 +25,9 @@ class Numericcaptcha extends ElementAbstract
             $this->reloadDigit(1);
             $this->reloadDigit(2);
         }
-        $errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'Numeric captcha is not valid';
+        $errorMessage = isset($configuration['errormessage'])
+            ? $configuration['errormessage']
+            : 'Numeric captcha is not valid';
         $constraint = GeneralUtility::makeInstance(NumericcaptchaConstraint::class, $errorMessage, [], $this, $form);
         $this->addConstraint($constraint);
     }
@@ -65,7 +67,11 @@ class Numericcaptcha extends ElementAbstract
      */
     protected function renderCaptchaInput(): string
     {
-        return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
+        return '<input type="text" '
+            . 'id="' . $this->getHtmlId() . '" '
+            . 'name="' . $this->absolutename . '" '
+            . 'value="' . $this->getValue() . '"'
+            . $this->getAttributes() . ' />';
     }
 
     protected function renderLabel(): string

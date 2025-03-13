@@ -31,7 +31,9 @@ class ReCaptcha extends ElementAbstract
             'https://www.google.com/recaptcha/api.js?onload=' . $onload . '&render=' . $render . '&hl=' . $language
         );
 
-        $errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'ReCaptcha is not valid';
+        $errorMessage = isset($configuration['errormessage'])
+            ? $configuration['errormessage']
+            : 'ReCaptcha is not valid';
         $constraint = GeneralUtility::makeInstance(
             ReCaptchaConstraint::class,
             $errorMessage,
@@ -54,7 +56,9 @@ class ReCaptcha extends ElementAbstract
         $size            = isset($this->configuration['size']) ? $this->configuration['size'] : 'normal';
         $tabindex        = isset($this->configuration['tabindex']) ? $this->configuration['tabindex'] : '0';
         $callback        = isset($this->configuration['callback']) ? $this->configuration['callback'] : '';
-        $expiredcallback = isset($this->configuration['expired-callback']) ? $this->configuration['expired-callback'] : '';
+        $expiredcallback = isset($this->configuration['expired-callback'])
+            ? $this->configuration['expired-callback']
+            : '';
 
         return '<div class="g-recaptcha" data-sitekey="' . ($this->configuration['publicKey'] ?? '')
             . '" data-theme="' . $theme . '" data-type="' . $type

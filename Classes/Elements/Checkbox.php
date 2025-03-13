@@ -53,7 +53,9 @@ class Checkbox extends ElementAbstract
             }
             $checked = in_array($value, $currentValue) ? ' checked="checked"' : '';
             $data['items'][$value] = array(
-                'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '[]" type="checkbox" value="' . $value . '"' . $checked . ' />',
+                'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" '
+                    . 'name="' . $this->absolutename . '[]" '
+                    . 'type="checkbox" value="' . $value . '"' . $checked . ' />',
                 'label' => '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>',
             );
         }

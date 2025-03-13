@@ -16,13 +16,18 @@ class Radio extends ElementAbstract
         $attributes = '';
         $attributes .= isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
         $attributes .= isset($this->configuration['style']) ? ' style="' . $this->configuration['style'] . '"' : '';
-        $attributes .= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true ? ' disabled="disabled"' : '';
+        $attributes .= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true
+            ? ' disabled="disabled"'
+            : '';
         $attributes .= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
 
         $output = '';
         foreach ($this->configuration['items'] as $value => $label) {
             $checked = ($this->getValue() == $value) ? ' checked="checked"' : '';
-            $output .= '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '" type="radio" value="' . $value . '"' . $checked . $attributes . ' />' .
+            $output .= '<input id="' . $this->getHtmlId() . '-' . $value . '" '
+                . 'name="' . $this->absolutename . '" '
+                . 'type="radio" '
+                . 'value="' . $value . '"' . $checked . $attributes . ' />' .
                 '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>';
         }
         return $output;
@@ -40,7 +45,10 @@ class Radio extends ElementAbstract
         foreach ($this->configuration['items'] as $value => $label) {
             $checked = ($this->getValue() == $value) ? ' checked="checked"' : '';
             $data['items'][$value] = array(
-                'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" name="' . $this->absolutename . '" type="radio" value="' . $value . '"' . $checked . ' />',
+                'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" '
+                    . 'name="' . $this->absolutename . '" '
+                    . 'type="radio" '
+                    . 'value="' . $value . '"' . $checked . ' />',
                 'label' => '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>',
             );
         }

@@ -24,7 +24,10 @@ class Range extends ElementAbstract
             $additionnalAttributes .= ' step="' . $this->configuration['step'] . '"';
         }
 
-        return '<input type="range" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . $additionnalAttributes . ' />' . $this->getDatalist();
+        return '<input type="range" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" '
+            . 'value="' . $this->getValue() . '"'
+            . $this->getAttributes() . $additionnalAttributes . ' />'
+            . $this->getDatalist();
     }
 
     /**

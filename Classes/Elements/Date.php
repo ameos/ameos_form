@@ -133,7 +133,8 @@ class Date extends ElementAbstract
 
         $availableYears = $this->getYearsItems();
 
-        $outputYears = '<select id="' . $this->getHtmlId() . '-year" name="' . $this->absolutename . '[year]"' . $cssclass  . '>';
+        $outputYears = '<select id="' . $this->getHtmlId() . '-year" '
+            . 'name="' . $this->absolutename . '[year]"' . $cssclass  . '>';
         foreach ($availableYears as $year) {
             $selected = ($this->valueYear == $year) ? ' selected="selected"' : '';
             $outputYears .= '<option value="' . $year . '"' . $selected . '>' . $year . '</option>';
@@ -181,7 +182,8 @@ class Date extends ElementAbstract
 
         $availableDays = $this->getDaysItems();
 
-        $outputDays = '<select id="' . $this->getHtmlId() . '-day" name="' . $this->absolutename . '[day]"' . $cssclass  . '>';
+        $outputDays = '<select id="' . $this->getHtmlId() . '-day" '
+            . 'name="' . $this->absolutename . '[day]"' . $cssclass  . '>';
         foreach ($availableDays as $day) {
             $selected = ($this->valueDay == $day) ? ' selected="selected"' : '';
             $outputDays .= '<option value="' . $day . '"' . $selected . '>' . $day . '</option>';

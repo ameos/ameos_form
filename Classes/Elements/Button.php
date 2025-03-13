@@ -74,6 +74,8 @@ class Button extends ElementAbstract
      */
     public function checkConstraints(): bool
     {
-        return isset($this->configuration['check_constraints']) ? (bool)$this->configuration['check_constraints'] : true;
+        return isset($this->configuration['check_constraints'])
+            ? (bool)$this->configuration['check_constraints']
+            : true;
     }
 }

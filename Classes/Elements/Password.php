@@ -24,8 +24,12 @@ class Password extends ElementAbstract
     public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         $configuration['encrypt'] = isset($configuration['encrypt']) ? (bool)$configuration['encrypt'] : true;
-        $configuration['fill_value'] = isset($configuration['fill_value']) ? (bool)$configuration['fill_value'] : false;
-        $configuration['fill_value_iferror'] = isset($configuration['fill_value_iferror']) ? (bool)$configuration['fill_value_iferror'] : true;
+        $configuration['fill_value'] = isset($configuration['fill_value'])
+            ? (bool)$configuration['fill_value']
+            : false;
+        $configuration['fill_value_iferror'] = isset($configuration['fill_value_iferror'])
+            ? (bool)$configuration['fill_value_iferror']
+            : true;
 
         parent::__construct($absolutename, $name, $configuration, $form);
     }
@@ -44,6 +48,7 @@ class Password extends ElementAbstract
         ) {
             $attributes .= ' value="' . $this->getValue() . '"';
         }
-        return '<input type="password" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '"' . $attributes . ' />';
+        return '<input type="password" id="' . $this->getHtmlId() . '" '
+            . 'name="' . $this->absolutename . '"' . $attributes . ' />';
     }
 }

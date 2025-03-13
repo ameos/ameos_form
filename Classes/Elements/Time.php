@@ -64,10 +64,16 @@ class Time extends ElementAbstract
      */
     public function renderHour(): string
     {
-        $output = '<input type="text" id="' . $this->getHtmlId() . '-hour" list="' . $this->getHtmlId() . '-hour-datalist" size="2" name="' . $this->absolutename . '[hour]" value="' . $this->valueHour . '"' . $this->getAttributes() . ' placeholder="hh" />';
+        $output = '<input type="text" '
+            . 'id="' . $this->getHtmlId() . '-hour" '
+            . 'list="' . $this->getHtmlId() . '-hour-datalist" '
+            . 'size="2" name="' . $this->absolutename . '[hour]" '
+            . 'value="' . $this->valueHour . '"' . $this->getAttributes() . ' placeholder="hh" />';
         $output .= '<datalist id="' . $this->getHtmlId() . '-hour-datalist">';
         for ($hour = 0; $hour < 24; $hour++) {
-            $output .= '<option value="' . str_pad((string)$hour, 2, '0', STR_PAD_LEFT) . '">' . str_pad((string)$hour, 2, '0', STR_PAD_LEFT) . '</option>';
+            $output .= '<option value="' . str_pad((string)$hour, 2, '0', STR_PAD_LEFT) . '">'
+                . str_pad((string)$hour, 2, '0', STR_PAD_LEFT)
+                . '</option>';
         }
         $output .= '</datalist>';
         return $output;
@@ -80,10 +86,18 @@ class Time extends ElementAbstract
      */
     public function renderMinute(): string
     {
-        $output = '<input type="text" id="' . $this->getHtmlId() . '-minute" list="' . $this->getHtmlId() . '-minute-datalist" size="2" name="' . $this->absolutename . '[minute]" value="' . $this->valueMinute . '"' . $this->getAttributes() . ' placeholder="mm" />';
+        $output = '<input type="text" '
+            . 'id="' . $this->getHtmlId() . '-minute" '
+            . 'list="' . $this->getHtmlId() . '-minute-datalist" '
+            . 'size="2" '
+            . 'name="' . $this->absolutename . '[minute]" '
+            . 'value="' . $this->valueMinute . '"' . $this->getAttributes() . ' '
+            . 'placeholder="mm" />';
         $output .= '<datalist id="' . $this->getHtmlId() . '-minute-datalist">';
         for ($minute = 0; $minute < 60; $minute += $this->configuration['minutestep']) {
-            $output .= '<option value="' . str_pad((string)$minute, 2, '0', STR_PAD_LEFT) . '">' . str_pad((string)$minute, 2, '0', STR_PAD_LEFT) . '</option>';
+            $output .= '<option value="' . str_pad((string)$minute, 2, '0', STR_PAD_LEFT) . '">'
+                . str_pad((string)$minute, 2, '0', STR_PAD_LEFT)
+                . '</option>';
         }
         $output .= '</datalist>';
         return $output;

@@ -45,7 +45,9 @@ class FormViewHelper extends AbstractViewHelper
     {
         $form = $this->arguments['form'];
         $method  = $this->arguments['method']  == '' ? 'POST' : $this->arguments['method'];
-        $enctype = $this->arguments['enctype'] == '' ? ' enctype="multipart/form-data"' : ' enctype="' . $this->arguments['enctype'] . '"';
+        $enctype = $this->arguments['enctype'] == ''
+            ? ' enctype="multipart/form-data"'
+            : ' enctype="' . $this->arguments['enctype'] . '"';
         $action  = $this->arguments['action']  == '' ? '' : ' action="' . $this->arguments['action'] . '"';
         $class   = $this->arguments['class']   == '' ? '' : ' class="' . $this->arguments['class'] . '"';
         $id      = $this->arguments['id']      == '' ? '' : ' id="' . $this->arguments['id'] . '"';
@@ -84,13 +86,20 @@ class FormViewHelper extends AbstractViewHelper
         }
 
         $output = '<form method="' . $method . '" ' . $id . $enctype . $class . $action . '>' . $output . '
-			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" value="1" name="' . $form->getIdentifier() . '[issubmitted]" />';
+			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" '
+                . 'value="1" '
+                . 'name="' . $form->getIdentifier() . '[issubmitted]" />';
 
         if ($form->csrftokenIsEnabled()) {
-            $output .= '<input type="hidden" id="' . $form->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $form->getIdentifier() . '[csrftoken]" />';
+            $output .= '<input type="hidden" '
+                . 'id="' . $form->getIdentifier() . '-csrftoken" '
+                . 'value="' . $csrftoken . '" '
+                . 'name="' . $form->getIdentifier() . '[csrftoken]" />';
         }
         if ($form->honeypotIsEnabled()) {
-            $output .= '<span style="position:absolute;left:-500000px"><input type="text" id="' . $form->getIdentifier() . '-winnie" value="" name="' . $form->getIdentifier() . '[winnie]" /></span>';
+            $output .= '<span style="position:absolute;left:-500000px">'
+                . '<input type="text" id="' . $form->getIdentifier() . '-winnie" '
+                . 'value="" name="' . $form->getIdentifier() . '[winnie]" /></span>';
         }
         $output .= '</form>';
         return $output;
