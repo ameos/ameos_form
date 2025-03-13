@@ -35,14 +35,6 @@ class ErrorManagerTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(
-            [
-                'input-text-required' => '',
-                'input-text-email' => 'mail-not-valid',
-                'input-text-required-2' => 'test'
-            ]
-        );
-
         $expectedResult = [
             'is_valid' => false,
             'errors_merged'     => ['field mandatory', 'email not valid'],
@@ -56,10 +48,10 @@ class ErrorManagerTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $result = [
             'is_valid' => $form->isValid(),
-            'errors_merged'     => $form->getErrors(),
-            'errors_by_element' => $form->getErrorsByElement(),
-            'errors_for_text'   => $form->getErrorsFormElement('input-text-required'),
-            'errors_for_mail'   => $form->getErrorsFormElement('input-text-email'),
+            'errors_merged'     => $form->getErrorManager()->getFlatErrors(),
+            'errors_by_element' => $form->getErrorManager()->getErrors(),
+            'errors_for_text'   => $form->getErrorManager()->getErrorsFor($form->get('input-text-required')),
+            'errors_for_mail'   => $form->getErrorManager()->getErrorsFor($form->get('input-text-email')),
         ];
 
         $this->assertEquals($result, $expectedResult);

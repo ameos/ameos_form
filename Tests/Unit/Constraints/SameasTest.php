@@ -30,7 +30,6 @@ class SameasTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'test'));
         $result = $form->get('input-text-2')->isValid();
 
         $this->assertTrue($result);
@@ -49,7 +48,6 @@ class SameasTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text-1' => 'test', 'input-text-2' => 'othervalue'));
         $result = $form->get('input-text-2')->isValid();
 
         $this->assertFalse($result);

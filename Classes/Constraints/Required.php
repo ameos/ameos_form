@@ -12,7 +12,7 @@ class Required extends ConstraintAbstract
     /**
      * return true if the element is valide
      *
-     * @param   string $value value to test
+     * @param   null|string|array|\DateTime $value value to test
      * @return  bool true if the element is valide
      */
     public function isValid($value)

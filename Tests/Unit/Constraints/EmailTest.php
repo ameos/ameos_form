@@ -29,7 +29,6 @@ class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text' => ''));
         $result = $form->get('input-text')->isValid();
 
         $this->assertFalse($result);
@@ -45,7 +44,6 @@ class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text' => ''));
         $result = $form->get('input-text')->isValid();
 
         $this->assertTrue($result);
@@ -61,7 +59,6 @@ class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text' => 'test@example.com'));
         $result = $form->get('input-text')->isValid();
 
         $this->assertTrue($result);
@@ -77,7 +74,6 @@ class EmailTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text' => 'notmail'));
         $result = $form->get('input-text')->isValid();
 
         $this->assertFalse($result);

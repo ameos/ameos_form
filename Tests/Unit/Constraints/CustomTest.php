@@ -30,7 +30,6 @@ class CustomTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text' => 'test'));
         $result = $form->get('input-text')->isValid();
 
         $this->assertTrue($result);
@@ -49,7 +48,6 @@ class CustomTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text' => 'othervalue'));
         $result = $form->get('input-text')->isValid();
 
         $this->assertFalse($result);

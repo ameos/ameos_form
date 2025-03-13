@@ -22,7 +22,6 @@ class RequiredTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
      */
     public function requiredIsValid()
     {
-        define(TYPO3_MODE, 'FE');
         $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
         $form
             ->disableCsrftoken()
@@ -31,7 +30,6 @@ class RequiredTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text' => 'test'));
         $result = $form->get('input-text')->isValid();
 
         $this->assertTrue($result);
@@ -50,7 +48,6 @@ class RequiredTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 
         $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
 
-        $form->bindRequest(array('input-text' => ''));
         $result = $form->get('input-text')->isValid();
 
         $this->assertFalse($result);
