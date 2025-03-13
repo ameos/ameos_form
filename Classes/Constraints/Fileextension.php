@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Constraints;
 
+use Ameos\AmeosForm\Elements\Upload;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Fileextension extends ConstraintAbstract
 {
     use Traits\DisableGlobalErrorMessage;
+
+    /**
+     * @var Upload $element element
+     */
+    protected $element;
 
     /**
      * return true if the element is valide

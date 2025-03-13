@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Constraints;
 
+use Ameos\AmeosForm\Elements\Upload;
+
 class Filemime extends ConstraintAbstract
 {
     use Traits\DisableGlobalErrorMessage;
+
+    /**
+     * @var Upload $element element
+     */
+    protected $element;
 
     /**
      * @var array<string|array>

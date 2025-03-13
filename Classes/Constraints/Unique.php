@@ -30,7 +30,10 @@ class Unique extends ConstraintAbstract
         $records = $this->configuration['repository']->$method($value);
         $isValid = true;
         foreach ($records as $record) {
-            if ($record->getUid() != $this->form->getModel()->getUid()) {
+            if (
+                $this->form->getAttachedEntity()
+                && (int)$record->getUid() !== (int)$this->form->getAttachedEntity()->getUid()
+            ) {
                 $isValid = false;
             }
         }

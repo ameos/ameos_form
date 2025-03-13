@@ -16,11 +16,11 @@ use Ameos\AmeosForm\Exception\RepositoryNotFoundException;
 use Ameos\AmeosForm\Exception\RepositoryNotValidException;
 use Ameos\AmeosForm\Utility\FormUtility;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class Form
 {
@@ -70,11 +70,6 @@ class Form
     protected $request;
 
     /**
-     * @var AbstractUserAuthentication $userAuthentication
-     */
-    protected $userAuthentication;
-
-    /**
      * @var SearchableRepositoryInterface $repository
      */
     protected $repository = null;
@@ -121,7 +116,6 @@ class Form
         $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcherInterface::class);
         $this->context = GeneralUtility::makeInstance(Context::class);
         $this->request = $GLOBALS['TYPO3_REQUEST'];
-        $this->userAuthentication = $GLOBALS['TSFE']->fe_user;
         $this->defaultClause = [];
 
         $parsedBody = $this->request->getParsedBody();
@@ -336,12 +330,10 @@ class Form
 
             $element->setValue($bindEvent->getValue());
         } elseif ($this->repository !== null && $this->storeSearchInSession()) {
-            $clauses = null;
-            if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
-                $clauses = $this->userAuthentication->getKey('user', 'form-' . $this->getIdentifier() . '-clauses');
-            } else {
-                $clauses = $this->userAuthentication->getKey('ses', 'form-' . $this->getIdentifier() . '-clauses');
-            }
+            /** @var FrontendUserAuthentication */
+            $frontendUser = $this->request->getAttribute('frontend.user');
+            $clauses = $frontendUser->getSessionData('form-' . $this->getIdentifier() . '-clauses');
+
             if (is_array($clauses) && isset($clauses[$name])) {
                 $element->setValue($clauses[$name]['elementvalue']);
             }
@@ -410,6 +402,16 @@ class Form
         $this->entity = $entity;
 
         return $this;
+    }
+
+    /**
+     * return entity
+     *
+     * @return ?AbstractEntity
+     */
+    public function getAttachedEntity(): ?AbstractEntity
+    {
+        return $this->entity;
     }
 
     /**
@@ -554,12 +556,9 @@ class Form
             }
         }
 
-        if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
-            $this->userAuthentication->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $clauses);
-        } else {
-            $this->userAuthentication->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $clauses);
-        }
-        $this->userAuthentication->storeSessionData();
+        /** @var FrontendUserAuthentication */
+        $frontendUser = $this->request->getAttribute('frontend.user');
+        $frontendUser->setAndSaveSessionData('form-' . $this->getIdentifier() . '-clauses', $clauses);
 
         $clauses = array_merge($clauses, $this->defaultClause);
         return $this->repository->findByClausesArray($clauses, $orderby, $direction);

@@ -6,6 +6,8 @@ namespace Ameos\AmeosForm\ViewHelpers;
 
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Http\ApplicationType;
+use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class FormViewHelper extends AbstractViewHelper
@@ -73,13 +75,17 @@ class FormViewHelper extends AbstractViewHelper
 
         $this->templateVariableContainer->remove('errors');
 
-        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
+        /** @var ServerRequest */
+        $request = $GLOBALS['TYPO3_REQUEST'];
+        if (ApplicationType::fromRequest($request)->isFrontend()) {
+            /** @var FrontendUserAuthentication */
+            $frontendUser = $request->getAttribute('frontend.user');
+
             if (!$form->isSubmitted()) {
                 $csrftoken = sha1(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-                $GLOBALS['TSFE']->fe_user->setKey('ses', $form->getIdentifier() . '-csrftoken', $csrftoken);
-                $GLOBALS['TSFE']->fe_user->storeSessionData();
+                $frontendUser->setAndSaveSessionData($form->getIdentifier() . '-csrftoken', $csrftoken);
             } else {
-                $csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $form->getIdentifier() . '-csrftoken');
+                $csrftoken = $frontendUser->getSessionData($form->getIdentifier() . '-csrftoken');
             }
         } else {
             $csrftoken = 'notoken';
