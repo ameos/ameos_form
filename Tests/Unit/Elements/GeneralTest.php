@@ -2,24 +2,17 @@
 
 namespace Ameos\AmeosForm\Tests\Unit\Elements;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Elements\Text;
+use Ameos\AmeosForm\ErrorManager;
+use Ameos\AmeosForm\Form\Form;
+use PHPUnit\Framework\Attributes\Test;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
-class GeneralTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
+class GeneralTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    protected bool $resetSingletonInstances = true;
+
+    #[Test]
     public function elementRenderer()
     {
         $expectedResult = '<input type="text" id="tx_ameosform-unittest_input-text" '
@@ -39,16 +32,14 @@ class GeneralTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $elementConfiguration['custom']       = 'customattr="custom-value"';
         $elementConfiguration['placeholder']  = 'Here your value';
 
-        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-        $form->add('input-text', 'text', $elementConfiguration);
-        $result = $form->get('input-text')->toHtml();
+        $form = $this->createMock(Form::class);
+        $element = new Text('tx_ameosform-unittest[input-text]', 'input-text', $elementConfiguration, $form);
+        $result = $element->toHtml();
 
         $this->assertEquals($result, $expectedResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function elementRendereringInformation()
     {
         $expectedHtmlResult = '<input type="text" id="tx_ameosform-unittest_input-text" '
@@ -76,6 +67,7 @@ class GeneralTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             'errors'       => [],
             'isvalid'      => true,
             'hasError'     => false,
+            'required'     => false,
         ];
 
         $elementConfiguration = [];
@@ -86,12 +78,12 @@ class GeneralTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $elementConfiguration['placeholder']  = 'Here your value';
         $elementConfiguration['otherdata']    = 'test';
 
-        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-
-        $form->add('input-text', 'text', $elementConfiguration);
-        $form->get('input-text')->with('style', 'display: block;');
-
-        $result = $form->get('input-text')->getRenderingInformation();
+        $form = $this->createMock(Form::class);
+        $errorManager = new ErrorManager($form);
+        $form->method('getErrorManager')->willReturn($errorManager);
+        $element = new Text('tx_ameosform-unittest[input-text]', 'input-text', $elementConfiguration, $form);
+        $element->with('style', 'display: block;');
+        $result = $element->getRenderingInformation();
 
         $this->assertEquals($result, $expectedResult);
     }

@@ -2,24 +2,17 @@
 
 namespace Ameos\AmeosForm\Tests\Unit\Elements;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Elements\Dropdown;
+use Ameos\AmeosForm\ErrorManager;
+use Ameos\AmeosForm\Form\Form;
+use PHPUnit\Framework\Attributes\Test;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
-class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
+class DropdownTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    protected bool $resetSingletonInstances = true;
+
+    #[Test]
     public function elementRenderer()
     {
         $expectedResult = '<select id="tx_ameosform-unittest_my-select" name="tx_ameosform-unittest[my-select]" '
@@ -47,16 +40,17 @@ class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             'value-3' => 'Value 3'
         ];
 
-        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-        $form->add('my-select', 'dropdown', $elementConfiguration);
-        $result = $form->get('my-select')->toHtml();
+        $form = $this->createMock(Form::class);
+        $errorManager = new ErrorManager($form);
+        $form->method('getErrorManager')->willReturn($errorManager);
+        $element = new Dropdown('tx_ameosform-unittest[my-select]', 'my-select', $elementConfiguration, $form);
+        $element->with('style', 'display: block;');
+        $result = $element->toHtml();
 
         $this->assertEquals($result, $expectedResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function elementRendereringInformation()
     {
         $expectedHtmlResult = '<select id="tx_ameosform-unittest_my-select" name="tx_ameosform-unittest[my-select]" '
@@ -88,6 +82,7 @@ class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             'errors'       => [],
             'isvalid'      => true,
             'hasError'     => false,
+            'required'     => false,
             'optionValueField' => 'uid',
         ];
 
@@ -104,12 +99,12 @@ class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
             'value-3' => 'Value 3'
         ];
 
-        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-
-        $form->add('my-select', 'dropdown', $elementConfiguration);
-        $form->get('my-select')->with('style', 'display: block;');
-
-        $result = $form->get('my-select')->getRenderingInformation();
+        $form = $this->createMock(Form::class);
+        $errorManager = new ErrorManager($form);
+        $form->method('getErrorManager')->willReturn($errorManager);
+        $element = new Dropdown('tx_ameosform-unittest[my-select]', 'my-select', $elementConfiguration, $form);
+        $element->with('style', 'display: block;');
+        $result = $element->getRenderingInformation();
 
         $this->assertEquals($result, $expectedResult);
     }
