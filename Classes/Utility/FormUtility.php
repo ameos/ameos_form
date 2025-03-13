@@ -45,7 +45,6 @@ class FormUtility
                 break;
             default:
                 throw new TypeNotFoundException(sprintf('constraint %s not found', $type));
-                break;
         }
         return $className;
     }
@@ -143,7 +142,6 @@ class FormUtility
                 break;
             default:
                 throw new TypeNotFoundException(sprintf('element %s not found', $type));
-                break;
         }
         return $className;
     }

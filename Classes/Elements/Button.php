@@ -46,7 +46,7 @@ class Button extends ElementAbstract
     public function getType(): string
     {
         $configuration = $this->getConfiguration();
-        if (is_array($configuration) && array_key_exists('type', $configuration)) {
+        if (array_key_exists('type', $configuration)) {
             return $configuration['type'];
         } else {
             return self::TYPE_BUTTON;

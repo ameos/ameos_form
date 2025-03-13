@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Form;
 
+use Ameos\AmeosForm\Domain\Repository\SearchableRepositoryInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use Ameos\AmeosForm\Domain\Repository\Trait\SearchableRepository;
 
 class Factory
 {
@@ -20,7 +20,7 @@ class Factory
     {
         trigger_error('Use FormService or instanciate Form manually.', E_USER_DEPRECATED);
         $form = GeneralUtility::makeInstance(Form::class, $arguments[0]);
-        if (isset($arguments[1]) && is_a($arguments[1], SearchableRepository::class)) {
+        if (isset($arguments[1]) && is_a($arguments[1], SearchableRepositoryInterface::class)) {
             $form->attachRepository($arguments[1]);
         }
 

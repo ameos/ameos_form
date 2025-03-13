@@ -21,7 +21,6 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class Form
 {
@@ -71,12 +70,12 @@ class Form
     protected $request;
 
     /**
-     * @var AbstractUserAuthentication;
+     * @var AbstractUserAuthentication $userAuthentication
      */
     protected $userAuthentication;
 
     /**
-     * @var Repository $repository
+     * @var SearchableRepositoryInterface $repository
      */
     protected $repository = null;
 
@@ -308,7 +307,7 @@ class Form
      *
      * @param   string  $type element type
      * @param   string  $name element name
-     * @param   string  $configuration element configuration
+     * @param   array  $configuration element configuration
      * @return  self
      */
     public function add(string $name, string $type = '', array $configuration = []): self
@@ -436,10 +435,10 @@ class Form
     /**
      * attach repository for search
      *
-     * @param Repository|SearchableRepositoryInterface $repository
+     * @param SearchableRepositoryInterface $repository
      * @return self
      */
-    public function attachRepository(Repository|SearchableRepositoryInterface $repository): self
+    public function attachRepository(SearchableRepositoryInterface $repository): self
     {
         $this->repository = $repository;
 
@@ -530,7 +529,7 @@ class Form
      * return results of seach
      *
      * @param ?string $orderby
-     * @param ?string $direction
+     * @param string $direction
      * @return iterable
      */
     public function getResults(?string $orderby = null, string $direction = 'ASC'): iterable

@@ -235,7 +235,7 @@ class Date extends ElementAbstract
             $this->valueMonth = (int)$value['month'];
             $this->valueYear  = (int)$value['year'];
 
-            if ($this->valueDay == '' || $this->valueMonth == '' || $this->valueYear == '') {
+            if ($this->valueDay === 0 || $this->valueMonth === 0 || $this->valueYear === 0) {
                 $value = '';
             } else {
                 if (!checkdate($this->valueMonth, $this->valueDay, $this->valueYear)) {
@@ -246,7 +246,6 @@ class Date extends ElementAbstract
                 $value = $date->getTimestamp();
             }
         } elseif (is_a($value, \DateTime::class)) {
-            /** @var \DateTime $value */
             $value = $value->getTimestamp();
 
             $this->valueDay   = (int)date('j', (int)$value);

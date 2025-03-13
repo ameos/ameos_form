@@ -11,11 +11,10 @@ final class MoveTemporaryFile
 {
     public function __invoke(ValidFormEvent $event): void
     {
+        /** @var Upload[] $elements */
         $elements = $event->getForm()->getElements();
         foreach ($elements as $element) {
             if (is_a($element, Upload::class) && !empty($element->getValue())) {
-                /** @var Upload $element */
-
                 /** @var array */
                 $values = $element->getValue();
                 $newValues = [];

@@ -308,7 +308,7 @@ abstract class ElementAbstract implements ElementInterface
     public function determineErrors(): self
     {
         if ($this->isVerified === false) {
-            if ($this->form !== false && $this->form->isSubmitted()) {
+            if ($this->form->isSubmitted()) {
                 $value = $this->getValue();
                 foreach ($this->constraints as $constraint) {
                     if (!$constraint->isValid($value)) {

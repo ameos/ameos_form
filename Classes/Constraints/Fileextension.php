@@ -13,7 +13,7 @@ class Fileextension extends ConstraintAbstract
     /**
      * return true if the element is valide
      *
-     * @param   string $value value to test
+     * @param   array|string $value value to test
      * @return  bool true if the element is valide
      */
     public function isValid($value)
@@ -23,9 +23,10 @@ class Fileextension extends ConstraintAbstract
         }
 
         $valid = true;
+        /** @var array */
         $values = $value;
 
-        foreach ($values as $fileKey => $fileName) {
+        foreach ($values as $fileName) {
             $pathInfo = pathinfo($fileName);
             $extensionValid = GeneralUtility::inList(
                 $this->configuration['allowed'],

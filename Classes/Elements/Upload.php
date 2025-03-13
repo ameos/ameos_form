@@ -135,7 +135,7 @@ class Upload extends ElementAbstract
 
         $output = '';
 
-        /** @var array */
+        /** @var string|array */
         $values = $this->getValue();
 
         if ($values) {

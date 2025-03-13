@@ -19,7 +19,7 @@ abstract class ConstraintAbstract implements ConstraintInterface
     protected $configuration;
 
     /**
-     * @var \Ameos\AmeosForm\Form $form form
+     * @var \Ameos\AmeosForm\Form\Form $form form
      */
     protected $form;
 
@@ -32,7 +32,7 @@ abstract class ConstraintAbstract implements ConstraintInterface
      * @constuctor
      *
      * @param   string  $message message
-     * @param   \Ameos\AmeosForm\Form $form form
+     * @param   \Ameos\AmeosForm\Form\Form $form form
      */
     public function __construct($message, $configuration, $element, $form)
     {
@@ -45,7 +45,7 @@ abstract class ConstraintAbstract implements ConstraintInterface
     /**
      * return the message
      *
-     * @return  string the message
+     * @return ?string the message
      */
     public function getMessage()
     {
