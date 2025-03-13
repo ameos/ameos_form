@@ -41,7 +41,11 @@ class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $elementConfiguration['title']        = 'My text field';
         $elementConfiguration['custom']       = 'customattr="custom-value"';
         $elementConfiguration['placeholder']  = 'Here your value';
-        $elementConfiguration['items']        = ['value-1' => 'Value 1', 'value-2' => 'Value 2', 'value-3' => 'Value 3'];
+        $elementConfiguration['items']        = [
+            'value-1' => 'Value 1',
+            'value-2' => 'Value 2',
+            'value-3' => 'Value 3'
+        ];
 
         $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
         $form->add('my-select', 'dropdown', $elementConfiguration);
@@ -94,7 +98,11 @@ class DropdownTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         $elementConfiguration['custom']       = 'customattr="custom-value"';
         $elementConfiguration['placeholder']  = 'Here your value';
         $elementConfiguration['otherdata']    = 'test';
-        $elementConfiguration['items']        = ['value-1' => 'Value 1', 'value-2' => 'Value 2', 'value-3' => 'Value 3'];
+        $elementConfiguration['items']        = [
+            'value-1' => 'Value 1',
+            'value-2' => 'Value 2',
+            'value-3' => 'Value 3'
+        ];
 
         $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
 

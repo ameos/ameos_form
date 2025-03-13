@@ -29,9 +29,18 @@ class DateTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
         ];
 
         $result = [
-            '12/01/1985 21:15:30'   => \Ameos\AmeosForm\Utility\Date::dateToTimestamp('12/01/1985 21:15:30', '%d/%m/%Y %H:%M:%S'),
-            '2005 12 24'            => \Ameos\AmeosForm\Utility\Date::dateToTimestamp('2005 12 24', '%Y %m %d'),
-            '10 Jan 2003'           => \Ameos\AmeosForm\Utility\Date::dateToTimestamp('10 Jan 2003', '%d %b %Y'),
+            '12/01/1985 21:15:30' => \Ameos\AmeosForm\Utility\Date::dateToTimestamp(
+                '12/01/1985 21:15:30',
+                '%d/%m/%Y %H:%M:%S'
+            ),
+            '2005 12 24' => \Ameos\AmeosForm\Utility\Date::dateToTimestamp(
+                '2005 12 24',
+                '%Y %m %d'
+            ),
+            '10 Jan 2003' => \Ameos\AmeosForm\Utility\Date::dateToTimestamp(
+                '10 Jan 2003',
+                '%d %b %Y'
+            ),
         ];
 
         $this->assertEquals($result, $expectedResult);
