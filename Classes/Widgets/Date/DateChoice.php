@@ -78,7 +78,9 @@ class DateChoice extends WidgetAbstract implements WidgetInterface
     protected function renderYear()
     {
         $value = $this->element->getValue();
-        if (is_numeric($value)) {
+        if ($value === '') {
+            $value = new \DateTime();
+        } elseif (is_numeric($value)) {
             $value = new \DateTime('@' . $value);
         }
 
@@ -93,7 +95,9 @@ class DateChoice extends WidgetAbstract implements WidgetInterface
     protected function renderMonth()
     {
         $value = $this->element->getValue();
-        if (is_numeric($value)) {
+        if ($value === '') {
+            $value = new \DateTime();
+        } elseif (is_numeric($value)) {
             $value = new \DateTime('@' . $value);
         }
 
@@ -108,7 +112,9 @@ class DateChoice extends WidgetAbstract implements WidgetInterface
     protected function renderDay()
     {
         $value = $this->element->getValue();
-        if (is_numeric($value)) {
+        if ($value === '') {
+            $value = new \DateTime();
+        } elseif (is_numeric($value)) {
             $value = new \DateTime('@' . $value);
         }
 

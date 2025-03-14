@@ -17,7 +17,9 @@ class DateText extends WidgetAbstract implements WidgetInterface
     public function toHtml(): string
     {
         $value = $this->element->getValue();
-        if (is_numeric($value)) {
+        if ($value === '') {
+            $value = new \DateTime();
+        } elseif (is_numeric($value)) {
             $value = new \DateTime('@' . $value);
         }
 
