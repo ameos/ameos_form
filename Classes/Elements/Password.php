@@ -48,7 +48,9 @@ class Password extends ElementAbstract
         ) {
             $attributes .= ' value="' . $this->getValue() . '"';
         }
-        return '<input type="password" id="' . $this->getHtmlId() . '" '
-            . 'name="' . $this->absolutename . '"' . $attributes . ' />';
+        return '<input type="password" '
+            . 'id="' . $this->getHtmlId() . '" '
+            . 'name="' . $this->absolutename
+            . '"' . $attributes . ' />';
     }
 }

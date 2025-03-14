@@ -29,16 +29,6 @@ class Button extends ElementAbstract
     }
 
     /**
-     * return label
-     *
-     * @return string
-     */
-    public function getLabel(): string
-    {
-        return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
-    }
-
-    /**
      * return type
      *
      * @return string
@@ -54,6 +44,16 @@ class Button extends ElementAbstract
     }
 
     /**
+     * return label
+     *
+     * @return string
+     */
+    public function getLabel(): string
+    {
+        return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
+    }
+
+    /**
      * return true if the button is clicked
      *
      * @return bool
@@ -65,17 +65,5 @@ class Button extends ElementAbstract
             return isset($post[$this->name]);
         }
         return false;
-    }
-
-    /**
-     * return true if must check constraints
-     *
-     * @return bool
-     */
-    public function checkConstraints(): bool
-    {
-        return isset($this->configuration['check_constraints'])
-            ? (bool)$this->configuration['check_constraints']
-            : true;
     }
 }

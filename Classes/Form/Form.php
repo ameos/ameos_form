@@ -8,13 +8,13 @@ use Ameos\AmeosForm\Domain\Repository\SearchableRepositoryInterface;
 use Ameos\AmeosForm\Elements\Button;
 use Ameos\AmeosForm\Elements\ElementInterface;
 use Ameos\AmeosForm\Elements\Submit;
+use Ameos\AmeosForm\Enum\Constraint;
 use Ameos\AmeosForm\Enum\Element;
 use Ameos\AmeosForm\ErrorManager;
 use Ameos\AmeosForm\Event\BindValueFromRequestEvent;
 use Ameos\AmeosForm\Event\ValidFormEvent;
 use Ameos\AmeosForm\Exception\RepositoryNotFoundException;
 use Ameos\AmeosForm\Exception\RepositoryNotValidException;
-use Ameos\AmeosForm\Utility\FormUtility;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\ServerRequest;
@@ -310,7 +310,7 @@ class Form
 
         /** @var ElementInterface */
         $element = GeneralUtility::makeInstance(
-            FormUtility::getElementClassNameByType($type),
+            Element::getElementClassName($type),
             $absolutename,
             $name,
             $configuration,
@@ -352,16 +352,13 @@ class Form
     }
 
     /**
-     * bind request to the form
+     * return request
      *
-     * @deprecated
-     * @return self
+     * @return ServerRequest
      */
-    public function bindRequest(): self
+    public function getCurrentRequest(): ServerRequest
     {
-        trigger_error('Bind request is not longer useful', E_USER_DEPRECATED);
-
-        return $this;
+        return $this->request;
     }
 
     /**
@@ -476,7 +473,7 @@ class Form
     {
         if ($this->has($elementName)) {
             $constraint = GeneralUtility::makeInstance(
-                FormUtility::getConstrainClassNameByType($type),
+                Constraint::getConstraintClassName($type),
                 $message,
                 $configuration,
                 $this->getElement($elementName),

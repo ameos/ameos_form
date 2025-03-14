@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\BadConstraintException;
+
 class Radio extends ElementAbstract
 {
     /**
@@ -13,24 +15,44 @@ class Radio extends ElementAbstract
      */
     public function toHtml(): string
     {
-        $attributes = '';
-        $attributes .= isset($this->configuration['class']) ? ' class="' . $this->configuration['class'] . '"' : '';
-        $attributes .= isset($this->configuration['style']) ? ' style="' . $this->configuration['style'] . '"' : '';
-        $attributes .= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true
-            ? ' disabled="disabled"'
-            : '';
-        $attributes .= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
+        if (!isset($this->configuration['items'])) {
+            throw new BadConstraintException('No items defined for this radio button');
+        }
 
         $output = '';
+        $separator = $this->getConfigurationItem('separator') ?? '';
         foreach ($this->configuration['items'] as $value => $label) {
-            $checked = ($this->getValue() == $value) ? ' checked="checked"' : '';
-            $output .= '<input id="' . $this->getHtmlId() . '-' . $value . '" '
-                . 'name="' . $this->absolutename . '" '
-                . 'type="radio" '
-                . 'value="' . $value . '"' . $checked . $attributes . ' />' .
-                '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>';
+            $output .= $this->renderSingleInput($value, $label) . $this->renderSingleLabel($value, $label) . $separator;
         }
         return $output;
+    }
+
+    protected function renderSingleInput(string|int $value, string $label): string
+    {
+        $currentValue = $this->getValue();
+        if ($currentValue === null) {
+            $currentValue = $this->configuration['defaultValue'];
+        }
+        $checked = ($currentValue == $value) ? ' checked="checked"' : '';
+
+        $attributes = '';
+        $attributes .= $this->getClassAttribute();
+        $attributes .= $this->getAttribute('style');
+        $attributes .= $this->getAttribute('disabled', 'bool');
+        $attributes .= $this->getCustomAttribute();
+
+        return  '<input '
+            . 'id="' . $this->getHtmlId() . '-' . $value . '" '
+            . 'name="' . $this->absolutename . '" '
+            . 'type="radio" '
+            . 'value="' . $value . '"'
+            . $checked
+            . $attributes . ' />';
+    }
+
+    protected function renderSingleLabel(string|int $value, string $label): string
+    {
+        return '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>';
     }
 
     /**
@@ -41,15 +63,16 @@ class Radio extends ElementAbstract
     public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
-        $data['items'] = [];
+        $data['choices'] = [];
+
+        if (!isset($this->configuration['items'])) {
+            throw new BadConstraintException('No items defined for this radio button');
+        }
+
         foreach ($this->configuration['items'] as $value => $label) {
-            $checked = ($this->getValue() == $value) ? ' checked="checked"' : '';
-            $data['items'][$value] = array(
-                'input' => '<input id="' . $this->getHtmlId() . '-' . $value . '" '
-                    . 'name="' . $this->absolutename . '" '
-                    . 'type="radio" '
-                    . 'value="' . $value . '"' . $checked . ' />',
-                'label' => '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>',
+            $data['choices'][$value] = array(
+                'input' => $this->renderSingleInput($value, $label),
+                'label' => $this->renderSingleLabel($value, $label),
             );
         }
         return $data;

@@ -13,7 +13,11 @@ class Url extends ElementAbstract
      */
     public function toHtml(): string
     {
-        return '<input type="url" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" '
-            . 'value="' . $this->getValue() . '"' . $this->getAttributes() . ' />' . $this->getDatalist();
+        return '<input type="url" '
+            . 'id="' . $this->getHtmlId() . '" '
+            . 'name="' . $this->absolutename . '" '
+            . 'value="' . $this->getValue() . '"'
+            . $this->getAttributes() . ' />'
+            . $this->getDatalist();
     }
 }

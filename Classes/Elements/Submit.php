@@ -45,16 +45,6 @@ class Submit extends ElementAbstract
     }
 
     /**
-     * return true if must check constraints
-     *
-     * @return bool
-     */
-    public function checkConstraints(): bool
-    {
-        return isset($this->configuration['check_constraints']) ? $this->configuration['check_constraints'] : true;
-    }
-
-    /**
      * return true if the button is clicked
      *
      * @return bool

@@ -7,6 +7,7 @@ namespace Ameos\AmeosForm\Elements;
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
+use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\BadConstraintException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class Dropdown extends ElementAbstract
@@ -50,6 +51,11 @@ class Dropdown extends ElementAbstract
         if (!is_array($currentValue)) {
             $currentValue = [$currentValue];
         }
+
+        if (!isset($this->configuration['items'])) {
+            throw new BadConstraintException('No items defined for this dropdown');
+        }
+
         if (is_array($this->configuration['items'])) {
             $optionValueFieldMethod = 'get' . ucfirst($this->configuration['optionValueField']);
             foreach ($currentValue as $currentValueKey => $currentValueItem) {
@@ -92,6 +98,22 @@ class Dropdown extends ElementAbstract
         return $output;
     }
 
+
+    /**
+     * return rendering information
+     *
+     * @return array
+     */
+    public function getRenderingInformation(): array
+    {
+        $data = parent::getRenderingInformation();
+        if (isset($this->configuration['items']) && is_array($this->configuration['items'])) {
+            $data['choices'] = $this->configuration['items'];
+        }
+
+        return $data;
+    }
+
     /**
      * return html attribute
      *
@@ -100,9 +122,7 @@ class Dropdown extends ElementAbstract
     public function getAttributes(): string
     {
         $output = parent::getAttributes();
-        $output .= isset($this->configuration['multiple']) && $this->configuration['multiple'] == true
-            ? ' multiple="multiple"'
-            : '';
+        $output .= $this->getAttribute('multiple', 'bool');
         return $output;
     }
 

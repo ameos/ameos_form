@@ -7,7 +7,6 @@ namespace Ameos\AmeosForm\Elements;
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class Upload extends ElementAbstract
@@ -182,8 +181,10 @@ class Upload extends ElementAbstract
             . '"><span class="ameos-form-elementupload-resetbutton-inner">'
             . LocalizationUtility::translate('reset-upload', 'ameos_form') . '</span></button>';
 
-        GeneralUtility::makeInstance(AssetCollector::class)
-            ->addJavaScript('ameos-form-elementupload', 'EXT:ameos_form/Resources/Public/Elements/upload.js');
+        $this->assetCollector->addJavaScript(
+            'ameos-form-elementupload',
+            'EXT:ameos_form/Resources/Public/Elements/upload.js'
+        );
 
         return $output;
     }
