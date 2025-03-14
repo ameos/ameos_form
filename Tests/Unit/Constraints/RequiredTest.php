@@ -1,54 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Constraints\Required;
+use Ameos\AmeosForm\Elements\Text;
+use Ameos\AmeosForm\ErrorManager;
+use Ameos\AmeosForm\Form\Form;
+use PHPUnit\Framework\Attributes\Test;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
-class RequiredTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
+class RequiredTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    protected bool $resetSingletonInstances = true;
+
+    #[Test]
     public function requiredIsValid()
     {
-        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-        $form
-            ->disableCsrftoken()
-            ->add('input-text', 'text')
-            ->addConstraint('input-text', 'required', 'field mandatory');
+        $form = $this->createMock(Form::class);
+        $errorManager = new ErrorManager($form);
+        $form->method('getErrorManager')->willReturn($errorManager);
 
-        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        $element = new Text('tx_ameosform-unittest[input-text]', 'input-text', [], $form);
+        $constraint = new Required('field mandatory', [], $element, $form);
 
-        $result = $form->get('input-text')->isValid();
+        $element->addConstraint($constraint);
+        $element->setValue('test');
+
+        $result = $constraint->isValid('test');
 
         $this->assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function requiredIsNotValid()
     {
-        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-        $form
-            ->disableCsrftoken()
-            ->add('input-text', 'text')
-            ->addConstraint('input-text', 'required', 'field mandatory');
+        $form = $this->createMock(Form::class);
+        $errorManager = new ErrorManager($form);
+        $form->method('getErrorManager')->willReturn($errorManager);
 
-        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        $element = new Text('tx_ameosform-unittest[input-text]', 'input-text', [], $form);
+        $constraint = new Required('field mandatory', [], $element, $form);
 
-        $result = $form->get('input-text')->isValid();
+        $element->addConstraint($constraint);
+        $element->setValue('');
+
+        $result = $constraint->isValid('');
 
         $this->assertFalse($result);
     }

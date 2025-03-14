@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Tests\Unit\Elements;
 
 use Ameos\AmeosForm\Elements\Dropdown;

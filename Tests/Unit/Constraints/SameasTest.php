@@ -1,54 +1,56 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ameos\AmeosForm\Tests\Unit\Validators;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+use Ameos\AmeosForm\Constraints\Sameas;
+use Ameos\AmeosForm\Elements\Text;
+use Ameos\AmeosForm\ErrorManager;
+use Ameos\AmeosForm\Form\Form;
+use PHPUnit\Framework\Attributes\Test;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
-class SameasTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
+class SameasTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    protected bool $resetSingletonInstances = true;
+
+    #[Test]
     public function sameasIsValid()
     {
-        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-        $form->disableCsrftoken();
-        $form->add('input-text-1', 'text');
-        $form->add('input-text-2', 'text');
-        $form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
+        $form = $this->createMock(Form::class);
+        $errorManager = new ErrorManager($form);
+        $element1 = new Text('tx_ameosform-unittest[input-text-1]', 'input-text-1', [], $form);
+        $element2 = new Text('tx_ameosform-unittest[input-text-2]', 'input-text-2', [], $form);
 
-        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        $form->method('getErrorManager')->willReturn($errorManager);
+        $form->method('getElement')->willReturn($element2);
 
-        $result = $form->get('input-text-2')->isValid();
+        $constraint = new Sameas('must be the same', ['sameas' => 'input-text-1'], $element2, $form);
+        $element2->addConstraint($constraint);
+        $element1->setValue('test');
+        $element2->setValue('test');
+        $result = $constraint->isValid('test');
 
         $this->assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sameasIsNotValid()
     {
-        $form = \Ameos\AmeosForm\Form\Factory::make('tx_ameosform-unittest');
-        $form->disableCsrftoken();
-        $form->add('input-text-1', 'text');
-        $form->add('input-text-2', 'text');
-        $form->addConstraint('input-text-2', 'sameas', 'must be the same', ['sameas' => 'input-text-1']);
+        $form = $this->createMock(Form::class);
+        $errorManager = new ErrorManager($form);
+        $element1 = new Text('tx_ameosform-unittest[input-text-1]', 'input-text-1', [], $form);
+        $element2 = new Text('tx_ameosform-unittest[input-text-2]', 'input-text-2', [], $form);
 
-        $_POST['tx_ameosform-unittest']['issubmitted'] = 1; // simulate post form
+        $form->method('getErrorManager')->willReturn($errorManager);
+        $form->method('getElement')->willReturn($element2);
 
-        $result = $form->get('input-text-2')->isValid();
+        $constraint = new Sameas('must be the same', ['sameas' => 'input-text-1'], $element2, $form);
+        $element2->addConstraint($constraint);
+        $element1->setValue('test');
+        $element2->setValue('test2');
+        $result = $constraint->isValid('test');
 
         $this->assertFalse($result);
     }
