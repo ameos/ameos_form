@@ -23,7 +23,6 @@ enum Element: string
     public const DATE = 'date';
     public const TEXTDATE = 'textdate';
     public const TIME = 'time';
-    public const TIMEPICKER = 'timepicker';
     public const NUMERICCAPTCHA = 'numericcaptcha';
     public const RECAPTCHA = 'recaptcha';
     public const COLOR = 'color';
@@ -79,9 +78,6 @@ enum Element: string
                 break;
             case self::TIME:
                 $className = Elements\Time::class;
-                break;
-            case self::TIMEPICKER:
-                $className = Elements\Timepicker::class;
                 break;
             case self::NUMERICCAPTCHA:
                 $className = Elements\Numericcaptcha::class;
