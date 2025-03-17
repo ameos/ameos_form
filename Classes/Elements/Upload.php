@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use Ameos\AmeosForm\Exception\BadConfigurationException;
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -36,8 +37,8 @@ class Upload extends ElementAbstract
     public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
-        if (isset($this->configuration['directory'])) {
-            $this->configuration['directory'] = $this->configuration['directory'];
+        if (!isset($this->configuration['directory'])) {
+            throw new BadConfigurationException('Directory is missing');
         }
         if (!file_exists(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/')) {
             GeneralUtility::mkdir_deep(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/');
