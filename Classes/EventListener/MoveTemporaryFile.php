@@ -14,7 +14,8 @@ final class MoveTemporaryFile
         /** @var Upload[] $elements */
         $elements = $event->getForm()->getElements();
         foreach ($elements as $element) {
-            if (is_a($element, Upload::class)
+            if (
+                is_a($element, Upload::class)
                 && !empty($element->getValue())
                 && $element->getState() === Upload::STATE_PENDING
             ) {
