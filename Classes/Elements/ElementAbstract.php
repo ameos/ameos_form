@@ -18,24 +18,9 @@ abstract class ElementAbstract implements ElementInterface
     protected $assetCollector;
 
     /**
-     * @var string $name name
-     */
-    protected $name;
-
-    /**
-     * @var string $absolutename absolutename
-     */
-    protected $absolutename;
-
-    /**
      * @var mixed $value value
      */
     protected $value;
-
-    /**
-     * @var array $configuration configuration
-     */
-    protected $configuration;
 
     /**
      * @var array $errors errors
@@ -51,11 +36,6 @@ abstract class ElementAbstract implements ElementInterface
      * @var array $constraints constraints
      */
     protected $constraints = [];
-
-    /**
-     * @var Form $form form
-     */
-    protected $form;
 
     /**
      * @var bool $searchable searchable
@@ -80,14 +60,53 @@ abstract class ElementAbstract implements ElementInterface
      * @param array $configuration configuration
      * @param Form $form form
      */
-    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
-    {
+    public function __construct(
+        protected string $absolutename,
+        protected string $name,
+        protected ?array $configuration,
+        protected Form $form
+    ) {
         $this->assetCollector = GeneralUtility::makeInstance(AssetCollector::class);
+    }
 
-        $this->name = $name;
-        $this->form = $form;
-        $this->configuration = $configuration;
-        $this->absolutename  = $absolutename;
+    /**
+     * return attribute based on configuration
+     *
+     * @param string $key
+     * @return string
+     */
+    public function getAttribute(string $key, string $type = 'text'): string
+    {
+        $configuration = $this->getConfigurationItem($key);
+        if ($type === 'bool') {
+            return $configuration ? ' ' . $key : '';
+        }
+        return $configuration ? ' ' . $key . '="' . $configuration . '"' : '';
+    }
+
+    /**
+     * return css class attribute
+     *
+     * @return string
+     */
+    public function getClassAttribute(): string
+    {
+        $cssclass = isset($this->configuration['class']) ? $this->configuration['class'] : '';
+        if (!$this->isValid()) {
+            $cssclass .= isset($this->configuration['errorclass']) ? ' ' . $this->configuration['errorclass'] : '';
+        }
+        return $cssclass !== '' ? ' class="' . $cssclass . '"' : '';
+    }
+
+    /**
+     * return custom attribute
+     *
+     * @return string
+     */
+    public function getCustomAttribute(): string
+    {
+        $configuration = $this->getConfigurationItem('custom');
+        return $configuration ? ' ' . $configuration : '';
     }
 
     /**
@@ -98,21 +117,16 @@ abstract class ElementAbstract implements ElementInterface
     public function getAttributes(): string
     {
         $output = '';
-        $output .= isset($this->configuration['placeholder']) ? ' placeholder="' . $this->configuration['placeholder'] . '"' : '';
-        $output .= isset($this->configuration['style']) ? ' style="' . $this->configuration['style'] . '"' : '';
-        $output .= isset($this->configuration['disabled']) && $this->configuration['disabled'] == true ? ' disabled="disabled"' : '';
-        $output .= isset($this->configuration['title']) ? ' title="' . $this->configuration['title'] . '"' : '';
-        $output .= isset($this->configuration['datalist']) ? ' list="' . $this->getHtmlId() . '-datalist"' : '';
-        $output .= isset($this->configuration['type']) ? ' type="' . $this->configuration['type'] . '"' : '';
-        $output .= isset($this->configuration['custom']) ? ' ' . $this->configuration['custom'] : '';
+        $output .= $this->getAttribute('placeholder');
+        $output .= $this->getAttribute('style');
+        $output .= $this->getAttribute('disabled', 'bool');
+        $output .= $this->getAttribute('title');
+        $output .= $this->getAttribute('type');
+        $output .= $this->getClassAttribute();
+        $output .= $this->getCustomAttribute();
 
-        $cssclass = isset($this->configuration['class']) ? $this->configuration['class'] : '';
-        if (!$this->isValid()) {
-            $cssclass .= isset($this->configuration['errorclass']) ? ' ' . $this->configuration['errorclass'] : '';
-        }
-        if ($cssclass != '') {
-            $output .= ' class="' . $cssclass . '"';
-        }
+        $output .= isset($this->configuration['datalist']) ? ' list="' . $this->getHtmlId() . '-datalist"' : '';
+
         return $output;
     }
 
@@ -123,15 +137,15 @@ abstract class ElementAbstract implements ElementInterface
      */
     public function getDatalist(): string
     {
+        $output = '';
         if (isset($this->configuration['datalist']) && is_array($this->configuration['datalist'])) {
             $output = '<datalist id="' . $this->getHtmlId() . '-datalist">';
             foreach ($this->configuration['datalist'] as $value => $label) {
                 $output .= '<option value="' . $value . '" label="' . $label . '">' . $label . '</option>';
             }
             $output .= '</datalist>';
-            return $output;
         }
-        return '';
+        return $output;
     }
 
     /**
@@ -209,6 +223,17 @@ abstract class ElementAbstract implements ElementInterface
     }
 
     /**
+     * return configuration item
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getConfigurationItem(string $key): mixed
+    {
+        return isset($this->configuration[$key]) ? $this->configuration[$key] : null;
+    }
+
+    /**
      * return search field
      *
      * @return string
@@ -229,6 +254,16 @@ abstract class ElementAbstract implements ElementInterface
     public function getHtmlId(): string
     {
         return str_replace(['.', '[', ']'], ['_', '_', ''], $this->absolutename);
+    }
+
+    /**
+     * return the absolute name
+     *
+     * @return string
+     */
+    public function getAbsoluteName(): string
+    {
+        return $this->absolutename;
     }
 
     /**
@@ -304,7 +339,7 @@ abstract class ElementAbstract implements ElementInterface
     public function determineErrors(): self
     {
         if ($this->isVerified === false) {
-            if ($this->form !== false && $this->form->isSubmitted()) {
+            if ($this->form->isSubmitted()) {
                 $value = $this->getValue();
                 foreach ($this->constraints as $constraint) {
                     if (!$constraint->isValid($value)) {
@@ -386,7 +421,7 @@ abstract class ElementAbstract implements ElementInterface
         $data['required']     = $this->isRequired();
         $data['hasError']     = !$this->isValid();
         if (isset($this->configuration['datalist'])) {
-            $data['datalist'] = 'datalist';
+            $data['datalist'] = $this->configuration['datalist'];
         }
         return $data;
     }

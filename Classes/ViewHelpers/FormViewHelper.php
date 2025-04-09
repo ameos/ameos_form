@@ -6,6 +6,8 @@ namespace Ameos\AmeosForm\ViewHelpers;
 
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Http\ApplicationType;
+use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class FormViewHelper extends AbstractViewHelper
@@ -45,7 +47,9 @@ class FormViewHelper extends AbstractViewHelper
     {
         $form = $this->arguments['form'];
         $method  = $this->arguments['method']  == '' ? 'POST' : $this->arguments['method'];
-        $enctype = $this->arguments['enctype'] == '' ? ' enctype="multipart/form-data"' : ' enctype="' . $this->arguments['enctype'] . '"';
+        $enctype = $this->arguments['enctype'] == ''
+            ? ' enctype="multipart/form-data"'
+            : ' enctype="' . $this->arguments['enctype'] . '"';
         $action  = $this->arguments['action']  == '' ? '' : ' action="' . $this->arguments['action'] . '"';
         $class   = $this->arguments['class']   == '' ? '' : ' class="' . $this->arguments['class'] . '"';
         $id      = $this->arguments['id']      == '' ? '' : ' id="' . $this->arguments['id'] . '"';
@@ -71,26 +75,37 @@ class FormViewHelper extends AbstractViewHelper
 
         $this->templateVariableContainer->remove('errors');
 
-        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
+        /** @var ServerRequest */
+        $request = $GLOBALS['TYPO3_REQUEST'];
+        if (ApplicationType::fromRequest($request)->isFrontend()) {
+            /** @var FrontendUserAuthentication */
+            $frontendUser = $request->getAttribute('frontend.user');
+
             if (!$form->isSubmitted()) {
                 $csrftoken = sha1(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-                $GLOBALS['TSFE']->fe_user->setKey('ses', $form->getIdentifier() . '-csrftoken', $csrftoken);
-                $GLOBALS['TSFE']->fe_user->storeSessionData();
+                $frontendUser->setAndSaveSessionData($form->getIdentifier() . '-csrftoken', $csrftoken);
             } else {
-                $csrftoken = $GLOBALS['TSFE']->fe_user->getKey('ses', $form->getIdentifier() . '-csrftoken');
+                $csrftoken = $frontendUser->getSessionData($form->getIdentifier() . '-csrftoken');
             }
         } else {
             $csrftoken = 'notoken';
         }
 
         $output = '<form method="' . $method . '" ' . $id . $enctype . $class . $action . '>' . $output . '
-			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" value="1" name="' . $form->getIdentifier() . '[issubmitted]" />';
+			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" '
+                . 'value="1" '
+                . 'name="' . $form->getIdentifier() . '[issubmitted]" />';
 
         if ($form->csrftokenIsEnabled()) {
-            $output .= '<input type="hidden" id="' . $form->getIdentifier() . '-csrftoken" value="' . $csrftoken . '" name="' . $form->getIdentifier() . '[csrftoken]" />';
+            $output .= '<input type="hidden" '
+                . 'id="' . $form->getIdentifier() . '-csrftoken" '
+                . 'value="' . $csrftoken . '" '
+                . 'name="' . $form->getIdentifier() . '[csrftoken]" />';
         }
         if ($form->honeypotIsEnabled()) {
-            $output .= '<span style="position:absolute;left:-500000px"><input type="text" id="' . $form->getIdentifier() . '-winnie" value="" name="' . $form->getIdentifier() . '[winnie]" /></span>';
+            $output .= '<span style="position:absolute;left:-500000px">'
+                . '<input type="text" id="' . $form->getIdentifier() . '-winnie" '
+                . 'value="" name="' . $form->getIdentifier() . '[winnie]" /></span>';
         }
         $output .= '</form>';
         return $output;

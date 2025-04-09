@@ -1,27 +1,44 @@
 # Ameos Form (ameos_form)
+
 Form api for extbase and TYPO3
 
 ## Example
 
-	$mymodel = $this->myModelRepository->findByUid($modelIdentifier);
+	use Ameos\AmeosForm\Service\FormService;
+	use Ameos\Test\Domain\Model\Movie;
+	use Ameos\Test\Domain\Repository\MovieRepository;
+	use Psr\Http\Message\ResponseInterface;
+	use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
-	$form = \Ameos\AmeosForm\Form\Factory::make('tx_myplugin', $mymodel);
-	$form->add('name', 'text')->addConstraint('name', 'required', 'Name is mandatory');
-	$form->add('email', 'email')->addConstraint('email', 'email', 'Email is not valid');
-	$form->add('submit', 'submit', array('label' => 'Send'));
-	
-	if($form->isSubmitted()) {
-		$form->bindRequest($this->request);
-		if($form->isValid()) {
-			
-			$this->myModelRepository->add($mymodel);
-			
-			$this->addFlashMessage('New record created');
-			$this->redirect('index')
+	class TestController extends ActionController
+	{
+		public function __construct(private FormService $formService, private MovieRepository $movieRepository)
+		{
+		}
+
+		public function addMovieAction(): ResponseInterface
+		{
+			$movie = new Movie();
+			$form = $this->formService->create('tx_test_testameosform', $movie);
+			$form->add('title', 'text')->add('year', 'text')->add('submit', 'submit');
+
+			if ($form->isSubmitted()) {
+				$form
+					->addConstraint('title', 'required', 'Title is required')
+					->addConstraint('year', 'required', 'Year is required');
+
+				if ($form->isValid()) {
+					$this->movieRepository->add($movie);
+					$this->addFlashMessage('Movie added');
+					$this->redirect('index');
+				}
+			}
+
+			$this->view->assign('form', $form);
+
+			return $this->htmlResponse();
 		}
 	}
-
-	$this->view->assign('form', $form);
 
 ## Documentation
 

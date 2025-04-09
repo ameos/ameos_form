@@ -20,7 +20,10 @@ class Rating extends Radio
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
-        $this->assetCollector->addStyleSheet('ameos-form-rating', 'EXT:ameos_form/Resources/Public/Elements/rating.css');
+        $this->assetCollector->addStyleSheet(
+            'ameos-form-rating',
+            'EXT:ameos_form/Resources/Public/Elements/rating.css'
+        );
 
         $min   = isset($this->configuration['min']) ? (int)$this->configuration['min'] : 1;
         $max   = isset($this->configuration['max']) ? (int)$this->configuration['max'] : 5;

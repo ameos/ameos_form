@@ -19,9 +19,18 @@ class Submit extends ElementAbstract
     public function toHtml(): string
     {
         if (isset($this->configuration['src'])) {
-            return '<input type="image" src="' . $this->configuration['src'] . '" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
+            return '<input type="image" '
+                . 'src="' . $this->configuration['src'] . '" '
+                . 'id="' . $this->getHtmlId() . '" '
+                . 'value="' . $this->getLabel() . '" '
+                . 'name="' . $this->absolutename . '"'
+                . $this->getAttributes() . ' />';
         } else {
-            return '<input type="submit" id="' . $this->getHtmlId() . '" value="' . $this->getLabel() . '" name="' . $this->absolutename . '"' . $this->getAttributes() . ' />';
+            return '<input type="submit" '
+                . 'id="' . $this->getHtmlId() . '" '
+                . 'value="' . $this->getLabel() . '" '
+                . 'name="' . $this->absolutename . '"'
+                . $this->getAttributes() . ' />';
         }
     }
 
@@ -33,16 +42,6 @@ class Submit extends ElementAbstract
     public function getLabel(): string
     {
         return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
-    }
-
-    /**
-     * return true if must check constraints
-     *
-     * @return bool
-     */
-    public function checkConstraints(): bool
-    {
-        return isset($this->configuration['check_constraints']) ? $this->configuration['check_constraints'] : true;
     }
 
     /**

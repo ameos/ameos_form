@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Constraints;
 
+use Ameos\AmeosForm\Elements\Upload;
+
 class Filemime extends ConstraintAbstract
 {
     use Traits\DisableGlobalErrorMessage;
+
+    /**
+     * @var Upload $element element
+     */
+    protected $element;
 
     /**
      * @var array<string|array>
@@ -18,7 +25,6 @@ class Filemime extends ConstraintAbstract
         '3gp' => 'video/3gpp',
         '7z' => 'application/x-7z-compressed',
         'aab' => 'application/x-authorware-bin',
-        'aac' => 'audio/x-aac',
         'aam' => 'application/x-authorware-map',
         'aas' => 'application/x-authorware-seg',
         'abw' => 'application/x-abiword',
@@ -323,7 +329,6 @@ class Filemime extends ConstraintAbstract
         'mny' => 'application/x-msmoney',
         'mods' => 'application/mods+xml',
         'movie' => 'video/x-sgi-movie',
-        'mp4' => 'application/mp4',
         'mp4' => 'video/mp4',
         'mp4a' => 'audio/mp4',
         'mpc' => 'application/vnd.mophun.certificate',
@@ -700,6 +705,9 @@ class Filemime extends ConstraintAbstract
         'zir' => 'application/vnd.zul'
     ];
 
+    /**
+     * @param array|string $value
+     */
     public function isValid($value)
     {
         if (!is_array($value) && empty($value)) {
@@ -707,6 +715,7 @@ class Filemime extends ConstraintAbstract
         }
 
         $valid = true;
+        /** @var array */
         $values = $value;
 
         foreach ($values as $fileKey => $fileName) {

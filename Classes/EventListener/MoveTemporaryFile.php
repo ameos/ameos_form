@@ -11,11 +11,14 @@ final class MoveTemporaryFile
 {
     public function __invoke(ValidFormEvent $event): void
     {
+        /** @var Upload[] $elements */
         $elements = $event->getForm()->getElements();
         foreach ($elements as $element) {
-            if (is_a($element, Upload::class) && !empty($element->getValue())) {
-                /** @var Upload $element */
-
+            if (
+                is_a($element, Upload::class)
+                && !empty($element->getValue())
+                && $element->getState() === Upload::STATE_PENDING
+            ) {
                 /** @var array */
                 $values = $element->getValue();
                 $newValues = [];
@@ -48,7 +51,11 @@ final class MoveTemporaryFile
         }
 
         if (!file_exists($directory)) {
-            mkdir($directory);
+            mkdir(
+                $directory,
+                (int)$GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask'],
+                true
+            );
         }
 
         if (file_exists($directory . $clientFilename) && !$element->canOverwrite()) {

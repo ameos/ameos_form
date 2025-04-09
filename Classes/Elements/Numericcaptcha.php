@@ -7,6 +7,7 @@ namespace Ameos\AmeosForm\Elements;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Constraints\Numericcaptcha as NumericcaptchaConstraint;
 use Ameos\AmeosForm\Form\Form;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class Numericcaptcha extends ElementAbstract
 {
@@ -25,7 +26,9 @@ class Numericcaptcha extends ElementAbstract
             $this->reloadDigit(1);
             $this->reloadDigit(2);
         }
-        $errorMessage = isset($configuration['errormessage']) ? $configuration['errormessage'] : 'Numeric captcha is not valid';
+        $errorMessage = isset($configuration['errormessage'])
+            ? $configuration['errormessage']
+            : 'Numeric captcha is not valid';
         $constraint = GeneralUtility::makeInstance(NumericcaptchaConstraint::class, $errorMessage, [], $this, $form);
         $this->addConstraint($constraint);
     }
@@ -33,17 +36,27 @@ class Numericcaptcha extends ElementAbstract
     public function reloadDigit($key): void
     {
         $sessionKey = 'form-' . $this->form->getIdentifier() . '-' . $this->getHtmlId() . '-digit-' . $key;
-        $GLOBALS['TSFE']->fe_user->setKey("ses", $sessionKey, false);
+
+        /** @var FrontendUserAuthentication */
+        $frontendUser = $this->form->getCurrentRequest()->getAttribute('frontend.user');
+        $frontendUser->setAndSaveSessionData($sessionKey, false);
+
         $this->getDigit($key);
     }
 
     public function getDigit($key): int
     {
         $sessionKey = 'form-' . $this->form->getIdentifier() . '-' . $this->getHtmlId() . '-digit-' . $key;
-        if ($GLOBALS["TSFE"]->fe_user->getKey("ses", $sessionKey) == false) {
-            $GLOBALS['TSFE']->fe_user->setKey("ses", $sessionKey, rand(1, 9));
+
+        /** @var FrontendUserAuthentication */
+        $frontendUser = $this->form->getCurrentRequest()->getAttribute('frontend.user');
+        $digit = $frontendUser->getSessionData($sessionKey);
+
+        if (!$digit) {
+            $digit = rand(1, 9);
+            $frontendUser->setAndSaveSessionData($sessionKey, $digit);
         }
-        return $GLOBALS["TSFE"]->fe_user->getKey("ses", $sessionKey);
+        return $digit;
     }
 
     /**
@@ -65,7 +78,11 @@ class Numericcaptcha extends ElementAbstract
      */
     protected function renderCaptchaInput(): string
     {
-        return '<input type="text" id="' . $this->getHtmlId() . '" name="' . $this->absolutename . '" value="' . $this->getValue() . '"' . $this->getAttributes() . ' />';
+        return '<input type="text" '
+            . 'id="' . $this->getHtmlId() . '" '
+            . 'name="' . $this->absolutename . '" '
+            . 'value="' . $this->getValue() . '"'
+            . $this->getAttributes() . ' />';
     }
 
     protected function renderLabel(): string

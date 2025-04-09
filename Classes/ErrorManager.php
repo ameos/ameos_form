@@ -19,7 +19,7 @@ class ErrorManager
     private $errors = [];
 
     /**
-     * @var
+     * @var array
      */
     private $verifiedElements = [];
 
@@ -151,7 +151,7 @@ class ErrorManager
 
     /**
      * determine errors for an element
-     * @param Ameos\AmeosForm\Elements\ElementAbstract|string $element element
+     * @param ElementInterface|string $element element
      */
     protected function determineErrorsForElement($element)
     {
