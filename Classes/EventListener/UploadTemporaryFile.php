@@ -13,9 +13,9 @@ final class UploadTemporaryFile
 {
     public function __invoke(BindValueFromRequestEvent $event): void
     {
+        /** @var Upload */
         $element = $event->getElement();
         if (is_a($element, Upload::class)) {
-            /** @var Upload $element */
             /** @var array */
             $value = $event->getValue();
             $newValue = [];
@@ -77,6 +77,7 @@ final class UploadTemporaryFile
         $intValue = intval($maxSizeStr);
         $oneLetter = strtoupper(substr($maxSizeStr, -1));
         $twoLetters = strtoupper(substr($maxSizeStr, -2));
+        $maxSize = 0;
         if ($oneLetter == 'K' || $twoLetters == 'KO') {
             $maxSize = $intValue * 1024;
         } elseif ($oneLetter == 'M' || $twoLetters == 'MO') {
@@ -90,7 +91,7 @@ final class UploadTemporaryFile
 
     /**
      * return if the size is valid for an uploaded file
-     * @param UploadFile $uploadedFile
+     * @param UploadedFile $uploadedFile
      * @param int $maxSize
      * @return bool
      */

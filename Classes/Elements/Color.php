@@ -15,9 +15,9 @@ class Color extends ElementAbstract
     {
         return
             '<input type="color"'
-            . ' id="' . $this->getHtmlId() . '"'
-            . ' name="' . $this->absolutename . '"'
-            . ' value="' . $this->getValue() . '"'
-            . $this->getAttributes() . ' />';
+                . ' id="' . $this->getHtmlId() . '"'
+                . ' name="' . $this->absolutename . '"'
+                . ' value="' . $this->getValue() . '"'
+                . $this->getAttributes() . ' />';
     }
 }

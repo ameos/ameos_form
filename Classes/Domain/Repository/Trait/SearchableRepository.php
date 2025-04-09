@@ -8,48 +8,48 @@ trait SearchableRepository
 {
     /**
      * return query clause
-     * @param array $clause clause
+     * @param ?array $clause clause
      * @param object $query query
-     * @return object
+     * @return ?object
      */
-    protected function getQueryClause($clause, $query)
+    protected function getQueryClause(?array $clause, $query)
     {
-        if (is_array($clause)) {
-            switch ($clause['type']) {
-                case 'contains':
-                    return $query->$clause['type']($clause['field'], $clause['value']);
-                    break;
+        $queryClause  = null;
+        switch ($clause['type']) {
+            case 'contains':
+                $queryClause = $query->$clause['type']($clause['field'], $clause['value']);
+                break;
 
-                case 'logicalOr':
-                    if (is_array($clause['clauses'])) {
-                        $subclauses = [];
-                        foreach ($clause['clauses'] as $subclause) {
-                            $subclauses[] = $this->getQueryClause($subclause, $query);
-                        }
-                        return $query->logicalOr(...$subclauses);
+            case 'logicalOr':
+                if (is_array($clause['clauses'])) {
+                    $subclauses = [];
+                    foreach ($clause['clauses'] as $subclause) {
+                        $subclauses[] = $this->getQueryClause($subclause, $query);
                     }
-                    break;
+                    $queryClause = $query->logicalOr(...$subclauses);
+                }
+                break;
 
-                case 'logicalAnd':
-                    if (is_array($clause['clauses'])) {
-                        $subclauses = [];
-                        foreach ($clause['clauses'] as $subclause) {
-                            $subclauses[] = $this->getQueryClause($subclause, $query);
-                        }
-                        return $query->logicalAnd(...$subclauses);
+            case 'logicalAnd':
+                if (is_array($clause['clauses'])) {
+                    $subclauses = [];
+                    foreach ($clause['clauses'] as $subclause) {
+                        $subclauses[] = $this->getQueryClause($subclause, $query);
                     }
-                    break;
+                    $queryClause = $query->logicalAnd(...$subclauses);
+                }
+                break;
 
-                case 'logicalNot':
-                    return $query->logicalNot($this->getQueryClause($clause['clause'], $query));
-                    break;
+            case 'logicalNot':
+                $queryClause = $query->logicalNot($this->getQueryClause($clause['clause'], $query));
+                break;
 
-                default:
-                    $type = (string)$clause['type'];
-                    return $query->$type($clause['field'], $clause['value']);
-                    break;
-            }
+            default:
+                $type = (string)$clause['type'];
+                $queryClause = $query->$type($clause['field'], $clause['value']);
+                break;
         }
+        return $queryClause;
     }
 
     /**

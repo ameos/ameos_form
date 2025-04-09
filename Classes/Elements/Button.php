@@ -29,16 +29,6 @@ class Button extends ElementAbstract
     }
 
     /**
-     * return label
-     *
-     * @return string
-     */
-    public function getLabel(): string
-    {
-        return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
-    }
-
-    /**
      * return type
      *
      * @return string
@@ -46,11 +36,21 @@ class Button extends ElementAbstract
     public function getType(): string
     {
         $configuration = $this->getConfiguration();
-        if (is_array($configuration) && array_key_exists('type', $configuration)) {
+        if (array_key_exists('type', $configuration)) {
             return $configuration['type'];
         } else {
             return self::TYPE_BUTTON;
         }
+    }
+
+    /**
+     * return label
+     *
+     * @return string
+     */
+    public function getLabel(): string
+    {
+        return isset($this->configuration['label']) ? $this->configuration['label'] : 'Envoyer';
     }
 
     /**
@@ -65,15 +65,5 @@ class Button extends ElementAbstract
             return isset($post[$this->name]);
         }
         return false;
-    }
-
-    /**
-     * return true if must check constraints
-     *
-     * @return bool
-     */
-    public function checkConstraints(): bool
-    {
-        return isset($this->configuration['check_constraints']) ? (bool)$this->configuration['check_constraints'] : true;
     }
 }

@@ -8,20 +8,19 @@ use Ameos\AmeosForm\Domain\Repository\SearchableRepositoryInterface;
 use Ameos\AmeosForm\Elements\Button;
 use Ameos\AmeosForm\Elements\ElementInterface;
 use Ameos\AmeosForm\Elements\Submit;
+use Ameos\AmeosForm\Enum\Constraint;
 use Ameos\AmeosForm\Enum\Element;
 use Ameos\AmeosForm\ErrorManager;
 use Ameos\AmeosForm\Event\BindValueFromRequestEvent;
 use Ameos\AmeosForm\Event\ValidFormEvent;
 use Ameos\AmeosForm\Exception\RepositoryNotFoundException;
 use Ameos\AmeosForm\Exception\RepositoryNotValidException;
-use Ameos\AmeosForm\Utility\FormUtility;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Persistence\Repository;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class Form
 {
@@ -71,12 +70,7 @@ class Form
     protected $request;
 
     /**
-     * @var AbstractUserAuthentication;
-     */
-    protected $userAuthentication;
-
-    /**
-     * @var Repository $repository
+     * @var SearchableRepositoryInterface $repository
      */
     protected $repository = null;
 
@@ -122,7 +116,6 @@ class Form
         $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcherInterface::class);
         $this->context = GeneralUtility::makeInstance(Context::class);
         $this->request = $GLOBALS['TYPO3_REQUEST'];
-        $this->userAuthentication = $GLOBALS['TSFE']->fe_user;
         $this->defaultClause = [];
 
         $parsedBody = $this->request->getParsedBody();
@@ -308,7 +301,7 @@ class Form
      *
      * @param   string  $type element type
      * @param   string  $name element name
-     * @param   string  $configuration element configuration
+     * @param   array  $configuration element configuration
      * @return  self
      */
     public function add(string $name, string $type = '', array $configuration = []): self
@@ -317,7 +310,7 @@ class Form
 
         /** @var ElementInterface */
         $element = GeneralUtility::makeInstance(
-            FormUtility::getElementClassNameByType($type),
+            Element::getElementClassName($type),
             $absolutename,
             $name,
             $configuration,
@@ -337,12 +330,10 @@ class Form
 
             $element->setValue($bindEvent->getValue());
         } elseif ($this->repository !== null && $this->storeSearchInSession()) {
-            $clauses = null;
-            if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
-                $clauses = $this->userAuthentication->getKey('user', 'form-' . $this->getIdentifier() . '-clauses');
-            } else {
-                $clauses = $this->userAuthentication->getKey('ses', 'form-' . $this->getIdentifier() . '-clauses');
-            }
+            /** @var FrontendUserAuthentication */
+            $frontendUser = $this->request->getAttribute('frontend.user');
+            $clauses = $frontendUser->getSessionData('form-' . $this->getIdentifier() . '-clauses');
+
             if (is_array($clauses) && isset($clauses[$name])) {
                 $element->setValue($clauses[$name]['elementvalue']);
             }
@@ -361,16 +352,13 @@ class Form
     }
 
     /**
-     * bind request to the form
+     * return request
      *
-     * @deprecated
-     * @return self
+     * @return ServerRequest
      */
-    public function bindRequest(): self
+    public function getCurrentRequest(): ServerRequest
     {
-        trigger_error('Bind request is not longer useful', E_USER_DEPRECATED);
-
-        return $this;
+        return $this->request;
     }
 
     /**
@@ -414,6 +402,16 @@ class Form
     }
 
     /**
+     * return entity
+     *
+     * @return ?AbstractEntity
+     */
+    public function getAttachedEntity(): ?AbstractEntity
+    {
+        return $this->entity;
+    }
+
+    /**
      * update entity property
      *
      * @param string $property
@@ -436,10 +434,10 @@ class Form
     /**
      * attach repository for search
      *
-     * @param Repository|SearchableRepositoryInterface $repository
+     * @param SearchableRepositoryInterface $repository
      * @return self
      */
-    public function attachRepository(Repository|SearchableRepositoryInterface $repository): self
+    public function attachRepository(SearchableRepositoryInterface $repository): self
     {
         $this->repository = $repository;
 
@@ -475,7 +473,7 @@ class Form
     {
         if ($this->has($elementName)) {
             $constraint = GeneralUtility::makeInstance(
-                FormUtility::getConstrainClassNameByType($type),
+                Constraint::getConstraintClassName($type),
                 $message,
                 $configuration,
                 $this->getElement($elementName),
@@ -530,7 +528,7 @@ class Form
      * return results of seach
      *
      * @param ?string $orderby
-     * @param ?string $direction
+     * @param string $direction
      * @return iterable
      */
     public function getResults(?string $orderby = null, string $direction = 'ASC'): iterable
@@ -555,12 +553,9 @@ class Form
             }
         }
 
-        if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
-            $this->userAuthentication->setKey('user', 'form-' . $this->getIdentifier() . '-clauses', $clauses);
-        } else {
-            $this->userAuthentication->setKey('ses', 'form-' . $this->getIdentifier() . '-clauses', $clauses);
-        }
-        $this->userAuthentication->storeSessionData();
+        /** @var FrontendUserAuthentication */
+        $frontendUser = $this->request->getAttribute('frontend.user');
+        $frontendUser->setAndSaveSessionData('form-' . $this->getIdentifier() . '-clauses', $clauses);
 
         $clauses = array_merge($clauses, $this->defaultClause);
         return $this->repository->findByClausesArray($clauses, $orderby, $direction);

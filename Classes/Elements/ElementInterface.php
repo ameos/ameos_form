@@ -86,6 +86,13 @@ interface ElementInterface
     public function getHtmlId(): string;
 
     /**
+     * return the absolute name
+     *
+     * @return string
+     */
+    public function getAbsoluteName(): string;
+
+    /**
      * return errors
      *
      * @return array
@@ -98,6 +105,14 @@ interface ElementInterface
      * @return array
      */
     public function getConfiguration(): array;
+
+    /**
+     * return configuration item
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getConfigurationItem(string $key): mixed;
 
     /**
      * return rendering information
@@ -130,4 +145,40 @@ interface ElementInterface
      * @return self
      */
     public function determineErrors(): self;
+
+    /**
+     * return html datalist
+     *
+     * @return string
+     */
+    public function getDatalist(): string;
+
+    /**
+     * return html attribute
+     *
+     * @return string
+     */
+    public function getAttributes(): string;
+
+    /**
+     * return attribute based on configuration
+     *
+     * @param string $key
+     * @return string
+     */
+    public function getAttribute(string $key, string $type = 'text'): string;
+
+    /**
+     * return css class attribute
+     *
+     * @return string
+     */
+    public function getClassAttribute(): string;
+
+    /**
+     * return custom attribute
+     *
+     * @return string
+     */
+    public function getCustomAttribute(): string;
 }

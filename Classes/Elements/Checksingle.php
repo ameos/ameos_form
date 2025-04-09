@@ -13,11 +13,13 @@ class Checksingle extends ElementAbstract
      */
     public function toHtml(): string
     {
-        $checked = ($this->getValue() == 1) ? ' checked="checked"' : '';
+        $checked = ((int)$this->getValue() === 1) ? ' checked="checked"' : '';
         return
             '<input type="checkbox"'
-            . ' id="' . $this->getHtmlId() . '"'
-            . ' name="' . $this->absolutename . '"'
-            . ' value="1"' . $this->getAttributes() . $checked . ' />';
+                . ' id="' . $this->getHtmlId() . '"'
+                . ' name="' . $this->absolutename . '"'
+                . ' value="1"'
+                . $this->getAttributes()
+                . $checked . ' />';
     }
 }

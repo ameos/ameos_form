@@ -14,19 +14,16 @@ class Number extends ElementAbstract
     public function toHtml(): string
     {
         $additionnalAttributes = '';
-        if (isset($this->configuration['min'])) {
-            $additionnalAttributes .= ' min="' . $this->configuration['min'] . '"';
-        }
-        if (isset($this->configuration['max'])) {
-            $additionnalAttributes .= ' max="' . $this->configuration['max'] . '"';
-        }
-        if (isset($this->configuration['step'])) {
-            $additionnalAttributes .= ' step="' . $this->configuration['step'] . '"';
-        }
+        $additionnalAttributes .= $this->getAttribute('min');
+        $additionnalAttributes .= $this->getAttribute('max');
+        $additionnalAttributes .= $this->getAttribute('step');
 
-        return '<input type="number" id="' . $this->getHtmlId() . '" '
+        return '<input type="number" '
+            . 'id="' . $this->getHtmlId() . '" '
             . 'name="' . $this->absolutename . '" '
-            . 'value="' . $this->getValue() . '"' . $this->getAttributes() . $additionnalAttributes . ' />';
+            . 'value="' . $this->getValue() . '"'
+            . $this->getAttributes()
+            . $additionnalAttributes . ' />';
     }
 
     /**

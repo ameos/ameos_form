@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
-class Textdate extends ElementAbstract
+use Ameos\AmeosForm\Form\Form;
+
+class Textdate extends Date
 {
     /**
-     * form to html
+     * @constuctor
      *
-     * @return  string the html
+     * @param string $absolutename absolutename
+     * @param string $name name
+     * @param array $configuration configuration
+     * @param Form $form form
      */
-    public function toHtml(): string
+    public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
-        return '<input type="date" id="' . $this->getHtmlId()
-            . '" name="' . $this->absolutename
-            . '" value="' . $this->getValue()
-            . '"' . $this->getAttributes() . ' />' . $this->getDatalist();
+        $configuration['widget'] = 'text';
+        parent::__construct($absolutename, $name, $configuration, $form);
     }
 }
