@@ -125,6 +125,16 @@ class Upload extends ElementAbstract
     }
 
     /**
+     * update upload state
+     *
+     * @return string
+     */
+    public function getState(): string
+    {
+        return $this->uploadState;
+    }
+
+    /**
      * form to html
      *
      * @return    string the html
