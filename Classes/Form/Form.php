@@ -324,22 +324,22 @@ class Form
             }
         }
 
-        if (isset($this->bodyData[$name])) {
-            $bindEvent = new BindValueFromRequestEvent($this, $element, $this->bodyData[$name]);
-            $this->eventDispatcher->dispatch($bindEvent);
-
-            $element->setValue($bindEvent->getValue());
-        } elseif ($this->repository !== null && $this->storeSearchInSession()) {
-            /** @var FrontendUserAuthentication */
-            $frontendUser = $this->request->getAttribute('frontend.user');
-            $clauses = $frontendUser->getSessionData('form-' . $this->getIdentifier() . '-clauses');
-
-            if (is_array($clauses) && isset($clauses[$name])) {
-                $element->setValue($clauses[$name]['elementvalue']);
+        if ($type !== Element::UPLOAD) {
+            if (isset($this->bodyData[$name])) {
+                $bindEvent = new BindValueFromRequestEvent($this, $element, $this->bodyData[$name]);
+                $this->eventDispatcher->dispatch($bindEvent);
+    
+                $element->setValue($bindEvent->getValue());
+            } elseif ($this->repository !== null && $this->storeSearchInSession()) {
+                /** @var FrontendUserAuthentication */
+                $frontendUser = $this->request->getAttribute('frontend.user');
+                $clauses = $frontendUser->getSessionData('form-' . $this->getIdentifier() . '-clauses');
+    
+                if (is_array($clauses) && isset($clauses[$name])) {
+                    $element->setValue($clauses[$name]['elementvalue']);
+                }
             }
-        }
-
-        if ($type === Element::UPLOAD && isset($this->uploadedFiles[$name])) {
+        } elseif (isset($this->uploadedFiles[$name])) {
             $bindEvent = new BindValueFromRequestEvent($this, $element, $this->uploadedFiles[$name]);
             $this->eventDispatcher->dispatch($bindEvent);
 
