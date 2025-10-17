@@ -141,7 +141,7 @@ class Upload extends ElementAbstract
      */
     public function toHtml(): string
     {
-        $multiple = $this->isMultiple() ? ' multiple="multiple"' : '';
+        $multiple = $this->isMultiple() ? ' multiple="multiple" ' : '';
 
         $output = '';
 
