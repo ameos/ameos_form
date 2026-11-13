@@ -29,7 +29,8 @@ final class SimpleElementsTest extends AbstractUnitTestCase
         yield 'checksingle unchecked' => [Elements\Checksingle::class, [], '', '<input type="checkbox" id="tx_test_field" name="tx_test[field]" value="1" />'];
         yield 'submit' => [Elements\Submit::class, ['label' => 'Send "now"'], null, '<input type="submit" id="tx_test_field" value="Send &quot;now&quot;" name="tx_test[field]" />'];
         yield 'submit image' => [Elements\Submit::class, ['src' => '/btn.png'], null, '<input type="image" src="/btn.png" id="tx_test_field" value="Envoyer" name="tx_test[field]" />'];
-        yield 'button' => [Elements\Button::class, ['label' => '<b>Go</b>', 'type' => 'submit'], null, '<button id="tx_test_field" name="tx_test[field]" type="submit"><b>Go</b></button>'];
+        yield 'button' => [Elements\Button::class, ['label' => '<b>Go</b>', 'type' => 'submit'], null, '<button id="tx_test_field" name="tx_test[field]" type="submit">&lt;b&gt;Go&lt;/b&gt;</button>'];
+        yield 'button with html label' => [Elements\Button::class, ['label' => '<b>Go</b>', 'htmllabel' => true], null, '<button id="tx_test_field" name="tx_test[field]"><b>Go</b></button>'];
         yield 'password not filled' => [Elements\Password::class, [], 'secret', '<input type="password" id="tx_test_field" name="tx_test[field]" />'];
         yield 'password filled' => [Elements\Password::class, ['fill_value' => true], 'secret', '<input type="password" id="tx_test_field" name="tx_test[field]" value="secret" />'];
     }

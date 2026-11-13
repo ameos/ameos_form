@@ -6,6 +6,7 @@ namespace Ameos\AmeosForm\EventListener;
 
 use Ameos\AmeosForm\Elements\Upload;
 use Ameos\AmeosForm\Event\BindValueFromRequestEvent;
+use Ameos\AmeosForm\Utility\FileNameUtility;
 use Psr\Http\Message\UploadedFileInterface;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Resource\Security\FileNameValidator;
@@ -68,16 +69,18 @@ final readonly class UploadTemporaryFile
         $maxSize = is_scalar($configuredMaxSize) ? (string) $configuredMaxSize : self::DEFAULT_MAX_SIZE;
         $maxBytes = $this->convertMaxSize($maxSize);
 
+        $element->removeExpiredTemporaryFiles();
         $fileNames = [];
         foreach ($uploadedFiles as $uploadedFile) {
-            $fileName = basename((string) $uploadedFile->getClientFilename());
+            $clientFileName = basename(str_replace('\\', '/', (string) $uploadedFile->getClientFilename()));
+            $fileName = FileNameUtility::sanitize($clientFileName);
             $error = match (true) {
                 (int) $uploadedFile->getSize() > $maxBytes => 'fileSizeError',
                 $fileName === '' || !$this->fileNameValidator->isValid($fileName) => 'fileNameError',
                 default => null,
             };
             if ($error !== null) {
-                $this->addError($event, $element, $error, ['%file_name%' => $fileName, '%max_size%' => $maxSize]);
+                $this->addError($event, $element, $error, ['%file_name%' => $clientFileName, '%max_size%' => $maxSize]);
                 continue;
             }
             $fileName = $element->createTemporaryFileName($fileName);

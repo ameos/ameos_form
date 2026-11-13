@@ -26,7 +26,9 @@ final class UploadTest extends AbstractUnitTestCase
 
         self::assertSame(Environment::getPublicPath() . '/fileadmin/uploads/', $element->getUploadDirectory());
         self::assertSame('fileadmin/uploads/', $element->getUploadDirectory(false));
-        self::assertSame(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/', $element->getTemporaryDirectory());
+        // temporary files are not public
+        self::assertSame(Environment::getVarPath() . '/transient/ameos_form/upload/', $element->getTemporaryDirectory());
+        self::assertStringStartsNotWith(Environment::getPublicPath() . '/', $element->getTemporaryDirectory());
         self::assertDirectoryExists($element->getTemporaryDirectory());
     }
 

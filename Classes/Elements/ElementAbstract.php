@@ -297,6 +297,15 @@ abstract class ElementAbstract implements ElementInterface, \Stringable
         return $clause;
     }
 
+    /**
+     * Label escaped for HTML output. With the "htmllabel" option (trusted configuration only), the label is
+     * output as is.
+     */
+    protected function renderLabelContent(string $label): string
+    {
+        return ($this->configuration['htmllabel'] ?? false) === true ? $label : $this->escapeConfiguration($label);
+    }
+
     protected function isEmptyValue(mixed $value): bool
     {
         return $value === null || $value === '' || $value === [] || $value === false;

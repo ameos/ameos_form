@@ -72,6 +72,9 @@ Custom contraint. You can add this contraint like this.
 		// your code here. return true if result is valid. Else, false
 	}));
 
+``method`` is executed as is: it must be a callable written in your code (closure, ``[$this, 'method']``),
+never a value built from request, records or any other external data.
+
 
 .. _constraints-filesize:
 

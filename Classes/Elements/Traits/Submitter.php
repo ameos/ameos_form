@@ -12,7 +12,7 @@ namespace Ameos\AmeosForm\Elements\Traits;
 trait Submitter
 {
     /**
-     * Label, may contain HTML for buttons
+     * Raw label (escaped when rendered, see the "htmllabel" option of buttons)
      */
     public function getLabel(): string
     {

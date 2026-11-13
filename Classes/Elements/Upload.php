@@ -11,7 +11,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
- * File upload. Files are first stored in a temporary directory, then moved to "directory" when the form is valid.
+ * File upload. Files are first stored in a temporary directory outside the public path (var/transient/), then
+ * moved to "directory" when the form is valid. Pending files are never served by the web server.
  * Options: directory (required, relative to the public path), multiple, maxSize (e.g. "5M"), canoverwrite,
  * filename (forced file name), show_link
  */
@@ -21,7 +22,10 @@ class Upload extends ElementAbstract
     public const string STATE_PENDING = 'pending';
     public const string STATE_DONE = 'done';
 
-    protected const string TEMPORARY_PATH = 'typo3temp/ameos_form/tempupload/';
+    /** Relative to the var path (not public) */
+    protected const string TEMPORARY_PATH = 'transient/ameos_form/upload/';
+    /** Temporary files older than this (abandoned forms) are deleted */
+    public const int TEMPORARY_FILE_LIFETIME = 86400;
     /** Temporary files are named "<16 hex chars>_<original name>", the random part cannot be guessed */
     protected const string TEMPORARY_NAME_PATTERN = '/^[0-9a-f]{16}_(.+)$/';
 
@@ -81,7 +85,20 @@ class Upload extends ElementAbstract
 
     public function getTemporaryDirectory(): string
     {
-        return Environment::getPublicPath() . '/' . self::TEMPORARY_PATH;
+        return Environment::getVarPath() . '/' . self::TEMPORARY_PATH;
+    }
+
+    /**
+     * Delete the temporary files of abandoned forms
+     */
+    public function removeExpiredTemporaryFiles(int $lifetime = self::TEMPORARY_FILE_LIFETIME): void
+    {
+        $limit = time() - $lifetime;
+        foreach (glob($this->getTemporaryDirectory() . '*') ?: [] as $file) {
+            if (is_file($file) && filemtime($file) < $limit) {
+                @unlink($file);
+            }
+        }
     }
 
     /**
@@ -101,7 +118,7 @@ class Upload extends ElementAbstract
     }
 
     /**
-     * Delete a temporary file (e.g. rejected by a constraint) so that it is not kept in the public directory
+     * Delete a temporary file (e.g. rejected by a constraint)
      */
     public function deleteTemporaryFile(string $fileName): void
     {
@@ -173,12 +190,17 @@ class Upload extends ElementAbstract
     {
         $data = parent::getRenderingInformation();
         $filePaths = [];
+        $pendingFiles = [];
         foreach ($this->getFileNames() as $fileName) {
             if ($this->uploadState === self::STATE_PENDING) {
-                $filePaths[] = '/' . self::TEMPORARY_PATH . rawurlencode($fileName);
+                // not validated yet, not public: only the name is available
+                $pendingFiles[] = $this->getOriginalFileName($fileName);
             } elseif (is_file($this->getUploadDirectory() . $fileName)) {
                 $filePaths[] = $this->getUploadDirectoryUri() . rawurlencode($fileName);
             }
+        }
+        if ($pendingFiles !== []) {
+            $data['pendingfiles'] = $pendingFiles;
         }
         if ($filePaths !== []) {
             $data['filepath'] = $filePaths[0];
@@ -202,7 +224,9 @@ class Upload extends ElementAbstract
     {
         $id = $this->getHtmlId() . '-temporary-' . $this->escape($fileName);
         $deleteLabel = $this->translate('delete-file');
-        return $this->renderViewLink('/' . self::TEMPORARY_PATH . rawurlencode($fileName), $this->getOriginalFileName($fileName), $id . '-viewlink')
+        // pending files are stored outside the public path: name only, no link
+        return '<span id="' . $id . '-viewlink" class="ameos-form-elementupload-pendingfile">'
+            . $this->escape($this->getOriginalFileName($fileName)) . '</span> '
             . '<button type="button" id="' . $id . '-deletebutton" class="ameos-form-elementupload-deletebutton" '
             . 'title="' . $deleteLabel . '&nbsp;: ' . $this->escape($this->getOriginalFileName($fileName)) . '">'
             . '<span class="ameos-form-elementupload-deletebutton-inner">' . $deleteLabel . '</span></button>'

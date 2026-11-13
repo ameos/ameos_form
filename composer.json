@@ -2,7 +2,6 @@
     "name": "ameos/ameos_form",
     "description": "This extension provides a form api for TYPO3 extension based on extbase and fluid with validation, list, search form, etc.",
     "type": "typo3-cms-extension",
-    "version": "4.0.0",
     "homepage": "https://github.com/ameos/ameos_form",
     "license": "GPL-3.0-or-later",
     "keywords": [

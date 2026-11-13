@@ -55,6 +55,7 @@ custom        custom html attribute                                        custo
 class         css class for the html tag                                   big
 errorclass    css class when there is an error                             error
 label         label of the button                                          click me!
+htmllabel     true to output the label(s) as HTML  false                   true (trusted labels only, never records or user input)
 ============  ===================================  ======================  ===================================================
 
 
@@ -112,6 +113,7 @@ custom        custom html attribute                                        custo
 class         css class for the html tag                                   big
 errorclass    css class when there is an error                             error
 items         avalaible choice for checkbox                                array('1' => 'Item 1', '2' => 'Item 2');
+htmllabel     true to output the label(s) as HTML  false                   true (trusted labels only, never records or user input)
 separator     html between the choices                                     <br />
 clausetype    search clause type for each value    contains                contains (relation) or inList (comma separated list)
 ============  ===================================  ======================  ===================================================
@@ -408,6 +410,7 @@ custom        custom html attribute                                        custo
 class         css class for the html tag                                   big
 errorclass    css class when there is an error                             error
 items         avalaible choice for checkbox                                array('1' => 'Item 1', '2' => 'Item 2');
+htmllabel     true to output the label(s) as HTML  false                   true (trusted labels only, never records or user input)
 ============  ===================================  ======================  ===================================================
 
 
@@ -637,8 +640,15 @@ You can add an upload field like this
 
 	$form->add('my-file', 'upload', $configuration);
 
-Files are first stored in ``typo3temp/ameos_form/tempupload/`` with a random prefix, and moved to ``directory``
-with their original name when the form is valid. Files rejected by a constraint are deleted.
+Files are first stored outside the public path, in ``var/transient/ameos_form/upload/``, with a random prefix
+(pending files are displayed by name, without link), and moved to ``directory`` with their sanitized original name
+when the form is valid. Files rejected by a constraint are deleted, abandoned temporary files after 24 hours.
+
+.. warning::
+
+	``directory`` is usually public (``fileadmin/...``): always restrict the allowed files with the
+	``fileextension`` (and ``filemime``) constraints, e.g. to avoid uploaded HTML or SVG files executing
+	scripts on your domain. Only PHP-like files are refused by default (``fileDenyPattern``).
 
 Available configuration
 
