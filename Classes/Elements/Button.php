@@ -20,7 +20,7 @@ class Button extends ElementAbstract
         return '<button id="' . $this->getHtmlId() . '"'
             . ' name="' . $this->absolutename . '"'
             . $this->getAttributes()
-            . '>' . $this->getLabel() . '</button>';
+            . '>' . $this->renderLabelContent($this->getLabel()) . '</button>';
     }
 
     public function getType(): string

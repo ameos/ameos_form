@@ -21,7 +21,7 @@ final class ChoicesTest extends AbstractUnitTestCase
 
         self::assertSame(
             '<input id="tx_test_opt-a" name="tx_test[opt][]" type="checkbox" value="a" /><label for="tx_test_opt-a">A</label><br />'
-            . '<input id="tx_test_opt-b" name="tx_test[opt][]" type="checkbox" value="b" checked="checked" /><label for="tx_test_opt-b"><i>B</i></label><br />',
+            . '<input id="tx_test_opt-b" name="tx_test[opt][]" type="checkbox" value="b" checked="checked" /><label for="tx_test_opt-b">&lt;i&gt;B&lt;/i&gt;</label><br />',
             $element->toHtml(),
         );
         self::assertSame(['b'], $element->getValue());

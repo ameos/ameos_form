@@ -44,11 +44,13 @@ trait Choices
     }
 
     /**
-     * Label may contain HTML on purpose (e.g. a link to terms and conditions)
+     * Label is escaped, unless the "htmllabel" option is set (e.g. a link to terms and conditions).
+     * Never enable it for labels coming from records or user input.
      */
     protected function renderSingleLabel(string|int $value, string $label): string
     {
-        return '<label for="' . $this->getHtmlId() . '-' . $this->escapeConfiguration($value) . '">' . $label . '</label>';
+        return '<label for="' . $this->getHtmlId() . '-' . $this->escapeConfiguration($value) . '">'
+            . $this->renderLabelContent($label) . '</label>';
     }
 
     protected function getChoiceAttributes(): string
