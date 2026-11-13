@@ -7,27 +7,19 @@ namespace Ameos\AmeosForm\Widgets;
 use Ameos\AmeosForm\Elements\ElementInterface;
 use Ameos\AmeosForm\Form\Form;
 
-abstract class WidgetAbstract
+abstract class WidgetAbstract implements WidgetInterface
 {
-    /**
-     * @param ElementInterface $element
-     * @param Form $form
-     */
-    public function __construct(protected ElementInterface $element, protected Form $form)
-    {
-    }
+    public function __construct(protected ElementInterface $element, protected Form $form) {}
 
-    /**
-     * @param array $dataFromElement
-     * @return array
-     */
     public function getRenderingInformation(array $dataFromElement): array
     {
         return $dataFromElement;
     }
 
-    /**
-     * @return string
-     */
     abstract public function toHtml(): string;
+
+    protected function escape(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
 }

@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Constraints;
 
-use Ameos\AmeosForm\Elements\Upload;
+use Ameos\AmeosForm\Constraints\Traits\DisableGlobalErrorMessage;
+use Ameos\AmeosForm\Constraints\Traits\UploadedFiles;
 
+/**
+ * Checks that the real mime type of each uploaded file matches its extension. Message placeholder: %file_name%
+ */
 class Filemime extends ConstraintAbstract
 {
-    use Traits\DisableGlobalErrorMessage;
+    use DisableGlobalErrorMessage;
+    use UploadedFiles;
 
     /**
-     * @var Upload $element element
+     * @var array<array-key, string|list<string>> extension => allowed mime type(s)
      */
-    protected $element;
-
-    /**
-     * @var array<string|array>
-     */
-    private $mimesMap = [
+    private const array MIME_TYPES = [
         '123' => 'application/vnd.lotus-1-2-3',
         '3dml' => 'text/vnd.in3d.3dml',
         '3g2' => 'video/3gpp2',
@@ -76,7 +76,7 @@ class Filemime extends ConstraintAbstract
         'cab' => 'application/vnd.ms-cab-compressed',
         'car' => 'application/vnd.curl.car',
         'cat' => 'application/vnd.ms-pki.seccat',
-        'ccxml' => 'application/ccxml+xml,',
+        'ccxml' => 'application/ccxml+xml',
         'cdbcmsg' => 'application/vnd.contact.cmsg',
         'cdkey' => 'application/vnd.mediastation.cdkey',
         'cdmia' => 'application/cdmi-capability',
@@ -702,45 +702,26 @@ class Filemime extends ConstraintAbstract
         'yin' => 'application/yin+xml',
         'zaz' => 'application/vnd.zzazz.deck+xml',
         'zip' => 'application/zip',
-        'zir' => 'application/vnd.zul'
+        'zir' => 'application/vnd.zul',
     ];
 
-    /**
-     * @param array|string $value
-     */
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
-        if (!is_array($value) && empty($value)) {
-            return true;
-        }
-
+        $temporaryDirectory = $this->getUploadElement()->getTemporaryDirectory();
         $valid = true;
-        /** @var array */
-        $values = $value;
-
-        foreach ($values as $fileKey => $fileName) {
-            $pathInfo = pathinfo($fileName);
-            $filePath = $this->element->getTemporaryDirectory() . $fileName;
-            $fileMime = mime_content_type($filePath);
-            $extension = strtolower($pathInfo['extension']);
-            $authorizedMimes = $this->mimesMap[$extension];
-
-            if (is_array($authorizedMimes)) {
-                $mimeValid = in_array($fileMime, $authorizedMimes);
-            } else {
-                $mimeValid = ($authorizedMimes == $fileMime);
-            }
-
-            if (!$mimeValid) {
-                $this->element->removeFileFromValue($fileName);
-                $this->form->getErrorManager()->add(
-                    str_replace('%file_name%', $fileName, $this->message),
-                    $this->element->getName()
-                );
+        foreach ($this->getFileNames($value) as $fileName) {
+            if (!$this->hasValidMimeType($fileName, $temporaryDirectory . $fileName)) {
+                $this->rejectFile($fileName, ['%file_name%' => $fileName]);
                 $valid = false;
             }
         }
-
         return $valid;
+    }
+
+    private function hasValidMimeType(string $fileName, string $filePath): bool
+    {
+        $authorizedMimes = self::MIME_TYPES[strtolower(pathinfo($fileName, PATHINFO_EXTENSION))] ?? [];
+        $fileMime = is_file($filePath) ? mime_content_type($filePath) : false;
+        return $fileMime !== false && in_array($fileMime, (array) $authorizedMimes, true);
     }
 }

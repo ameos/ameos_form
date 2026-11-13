@@ -10,80 +10,66 @@ use Ameos\AmeosForm\Widgets\Date\DateChoice;
 use Ameos\AmeosForm\Widgets\Date\DateText;
 use Ameos\AmeosForm\Widgets\WidgetInterface;
 
+/**
+ * Options: widget ("choice" or "text"), input ("datetime" or "timestamp"), format-display (e.g. "dmy")
+ */
 class Date extends ElementAbstract
 {
     protected WidgetInterface $widget;
 
     /**
-     * @constuctor
-     *
-     * @param string $absolutename absolutename
-     * @param string $name name
-     * @param array $configuration configuration
-     * @param Form $form form
+     * @param array<string, mixed>|null $configuration
      */
     public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
-
-        $widget = $this->getConfigurationItem('widget') ?? 'choice';
-        switch ($widget) {
-            case 'text':
-                $this->widget = new DateText($this, $form);
-                break;
-            case 'choice':
-                $this->widget = new DateChoice($this, $form);
-                break;
-            default:
-                throw new BadConfigurationException('Invalid widget type');
-        }
+        $this->widget = match ($this->getConfigurationItem('widget') ?? 'choice') {
+            'text' => new DateText($this, $form),
+            'choice' => new DateChoice($this, $form),
+            default => throw new BadConfigurationException('Invalid widget type', 1731340806),
+        };
     }
 
-    /**
-     * return rendering information
-     *
-     * @return  array rendering information
-     */
     public function getRenderingInformation(): array
     {
-        return $this->widget->getRenderingInformation(
-            parent::getRenderingInformation()
-        );
+        return $this->widget->getRenderingInformation(parent::getRenderingInformation());
     }
 
-    /**
-     * form to html
-     *
-     * @return  string the html
-     */
     public function toHtml(): string
     {
         return $this->widget->toHtml();
     }
 
     /**
-     * set the value
-     *
-     * @param   mixed $value
-     * @return  self this
+     * Accepts a timestamp, a Y-m-d string, an array [year, month, day] or a date object
      */
     public function setValue(mixed $value): self
     {
-        $inputMode = $this->getConfigurationItem('input') ?? 'datetime';
-        if (is_numeric($value)) {
-            $value = new \DateTime('@' . $value);
-        } elseif (is_string($value)) {
-            $value = \DateTime::createFromFormat('Y-m-d', $value);
-        } elseif (is_array($value)) {
-            $value = new \DateTime($value['year'] . '-' . $value['month'] . '-' . $value['day']);
-        }
-
-        if ($inputMode === 'timestamp') {
-            $value = $value->getTimestamp();
-        }
-
-        parent::setValue($value);
-
+        $date = $this->toDateTime($value);
+        $timestampInput = $date !== null && $this->getConfigurationItem('input') === 'timestamp';
+        parent::setValue($timestampInput ? $date->getTimestamp() : $date);
         return $this;
+    }
+
+    private function toDateTime(mixed $value): ?\DateTimeInterface
+    {
+        return match (true) {
+            $value instanceof \DateTimeInterface => $value,
+            is_numeric($value) => (new \DateTime('@' . (int) $value))->setTimezone(new \DateTimeZone(date_default_timezone_get())),
+            is_string($value) => \DateTime::createFromFormat('!Y-m-d', $value) ?: null,
+            is_array($value) => $this->fromDateParts($value),
+            default => null,
+        };
+    }
+
+    /**
+     * @param array<array-key, mixed> $parts
+     */
+    private function fromDateParts(array $parts): ?\DateTimeInterface
+    {
+        $year = (int) $this->stringify($parts['year'] ?? 0);
+        $month = (int) $this->stringify($parts['month'] ?? 0);
+        $day = (int) $this->stringify($parts['day'] ?? 0);
+        return checkdate($month, $day, $year) ? new \DateTime(sprintf('%04d-%02d-%02d', $year, $month, $day)) : null;
     }
 }

@@ -6,120 +6,106 @@ namespace Ameos\AmeosForm\EventListener;
 
 use Ameos\AmeosForm\Elements\Upload;
 use Ameos\AmeosForm\Event\BindValueFromRequestEvent;
-use TYPO3\CMS\Core\Http\UploadedFile;
+use Psr\Http\Message\UploadedFileInterface;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
+use TYPO3\CMS\Core\Resource\Security\FileNameValidator;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-final class UploadTemporaryFile
+/**
+ * Store the uploaded files in the temporary directory. When no file is uploaded, keep the already uploaded
+ * (temporary) files. Option "maxSize" (default "5M", units K/KO, M/MO, G/GO, or bytes)
+ */
+#[AsEventListener(identifier: 'uploadTemporaryFile')]
+final readonly class UploadTemporaryFile
 {
+    private const string DEFAULT_MAX_SIZE = '5M';
+    private const array UNITS = ['K' => 1024, 'M' => 1024 ** 2, 'G' => 1024 ** 3];
+
+    public function __construct(private FileNameValidator $fileNameValidator) {}
+
     public function __invoke(BindValueFromRequestEvent $event): void
     {
-        /** @var Upload */
         $element = $event->getElement();
-        if (is_a($element, Upload::class)) {
-            /** @var array */
-            $value = $event->getValue();
-            $newValue = [];
+        $value = $event->getValue();
+        if (!$element instanceof Upload || !is_array($value)) {
+            return;
+        }
 
-            $elementConfiguration = $element->getConfiguration();
-            $maxSize = array_key_exists('maxSize', $elementConfiguration) ? $elementConfiguration['maxSize'] : '5M';
-            $maxSizeValue = $this->convertMaxSize($maxSize);
+        $uploadedFiles = $this->getSuccessfulUploads($value['upload'] ?? null);
+        $temporaryFiles = $value['temporary'] ?? null;
 
-            if (isset($value['upload']) && is_array($value['upload'])) {
-                foreach ($value['upload'] as $uploadedFile) {
-                    /** @var UploadedFile $uploadedFile */
-                    $fileName = $uploadedFile->getClientFilename();
-                    if ($this->isFileSizeValid($uploadedFile, $maxSizeValue)) {
-                        $temporaryFilepath = $this->getTemporaryUpdateFilepath(
-                            $element,
-                            $fileName
-                        );
-                        $uploadedFile->moveTo($temporaryFilepath);
-                        $newValue[] = basename($temporaryFilepath);
-                    } else {
-                        $event->getForm()->getErrorManager()->add(
-                            str_replace(
-                                [
-                                    '%file_name%',
-                                    '%max_size%'
-                                ],
-                                [
-                                    $fileName,
-                                    $maxSize
-                                ],
-                                LocalizationUtility::translate('fileSizeError', 'ameos_form')
-                            ),
-                            $element->getName()
-                        );
-                    }
-                }
+        $fileNames = $uploadedFiles !== []
+            ? $this->storeUploadedFiles($event, $element, $uploadedFiles)
+            : $element->filterTemporaryFileNames(is_array($temporaryFiles) ? $temporaryFiles : []);
 
-                if (!empty($newValue)) {
-                    $element->updateState(Upload::STATE_PENDING);
-                }
-            } elseif (isset($value['temporary']) && is_array($value['temporary'])) {
-                $newValue = $value['temporary'];
-                if (!empty($newValue)) {
-                    $element->updateState(Upload::STATE_PENDING);
-                }
+        if ($fileNames !== []) {
+            $element->updateState(Upload::STATE_PENDING);
+        }
+        $event->setValue($fileNames);
+    }
+
+    /**
+     * @return list<UploadedFileInterface>
+     */
+    private function getSuccessfulUploads(mixed $uploads): array
+    {
+        $uploadedFiles = [];
+        foreach (is_array($uploads) ? $uploads : [] as $file) {
+            if ($file instanceof UploadedFileInterface && $file->getError() === UPLOAD_ERR_OK) {
+                $uploadedFiles[] = $file;
             }
-
-            $event->setValue($newValue);
         }
+        return $uploadedFiles;
     }
 
     /**
-     * return converted string size in bytes
-     * @param string $maxSizeStr
-     * @return int
+     * @param list<UploadedFileInterface> $uploadedFiles
+     * @return list<string> temporary file names
      */
-    private function convertMaxSize(string $maxSizeStr): int
+    private function storeUploadedFiles(BindValueFromRequestEvent $event, Upload $element, array $uploadedFiles): array
     {
-        $intValue = intval($maxSizeStr);
-        $oneLetter = strtoupper(substr($maxSizeStr, -1));
-        $twoLetters = strtoupper(substr($maxSizeStr, -2));
-        $maxSize = 0;
-        if ($oneLetter == 'K' || $twoLetters == 'KO') {
-            $maxSize = $intValue * 1024;
-        } elseif ($oneLetter == 'M' || $twoLetters == 'MO') {
-            $maxSize = $intValue * 1024 * 1024;
-        } elseif ($oneLetter == 'G' || $twoLetters == 'GO') {
-            $maxSize = $intValue * 1024 * 1024 * 1024;
-        }
+        $configuredMaxSize = $element->getConfigurationItem('maxSize');
+        $maxSize = is_scalar($configuredMaxSize) ? (string) $configuredMaxSize : self::DEFAULT_MAX_SIZE;
+        $maxBytes = $this->convertMaxSize($maxSize);
 
-        return $maxSize;
+        $fileNames = [];
+        foreach ($uploadedFiles as $uploadedFile) {
+            $fileName = basename((string) $uploadedFile->getClientFilename());
+            $error = match (true) {
+                (int) $uploadedFile->getSize() > $maxBytes => 'fileSizeError',
+                $fileName === '' || !$this->fileNameValidator->isValid($fileName) => 'fileNameError',
+                default => null,
+            };
+            if ($error !== null) {
+                $this->addError($event, $element, $error, ['%file_name%' => $fileName, '%max_size%' => $maxSize]);
+                continue;
+            }
+            $fileName = $element->createTemporaryFileName($fileName);
+            $uploadedFile->moveTo($element->getTemporaryDirectory() . $fileName);
+            $fileNames[] = $fileName;
+        }
+        return $fileNames;
     }
 
     /**
-     * return if the size is valid for an uploaded file
-     * @param UploadedFile $uploadedFile
-     * @param int $maxSize
-     * @return bool
+     * Convert "5M", "500Ko", "1G"... to bytes, a plain number is a size in bytes
      */
-    private function isFileSizeValid(UploadedFile $uploadedFile, int $maxSize): bool
+    private function convertMaxSize(string $maxSize): int
     {
-        $fileSize = $uploadedFile->getSize();
-        return $fileSize <= $maxSize;
+        if (preg_match('/^\s*(\d+)\s*([KMG])?O?\s*$/i', $maxSize, $matches) !== 1) {
+            return 0;
+        }
+        $unit = strtoupper($matches[2] ?? '');
+        return (int) $matches[1] * (self::UNITS[$unit] ?? 1);
     }
 
     /**
-     * return temporary file path
-     * @param Upload $element
-     * @param string $clientFilename
-     * @return string
+     * @param array<string, string> $replacements
      */
-    private function getTemporaryUpdateFilepath(Upload $element, string $clientFilename)
+    private function addError(BindValueFromRequestEvent $event, Upload $element, string $key, array $replacements): void
     {
-        $directory = $element->getTemporaryDirectory();
-        if (file_exists($directory . $clientFilename)) {
-            $fileIndex = 1;
-            do {
-                $fileExtension = substr($clientFilename, strrpos($clientFilename, '.') + 1);
-                $filename = basename($clientFilename, '.' . $fileExtension) . '_' . $fileIndex . '.' . $fileExtension;
-                $fileIndex++;
-            } while (file_exists($directory . $filename));
-        } else {
-            $filename = $clientFilename;
-        }
-        return $directory . $filename;
+        $form = $event->getForm();
+        $message = LocalizationUtility::translate($key, 'ameos_form', null, null, $form->getCurrentRequest()) ?? $key;
+        $form->getErrorManager()->add(strtr($message, $replacements), $element->getName());
     }
 }

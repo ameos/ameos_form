@@ -6,22 +6,13 @@ namespace Ameos\AmeosForm\Event;
 
 use Ameos\AmeosForm\Form\Form;
 
-final class ValidFormEvent
+/**
+ * Dispatched once, the first time a submitted form is found valid.
+ */
+final readonly class ValidFormEvent
 {
-    /**
-     * construct
-     *
-     * @param Form $form
-     */
-    public function __construct(private readonly Form $form)
-    {
-    }
+    public function __construct(private Form $form) {}
 
-    /**
-     * return form
-     *
-     * @return Form
-     */
     public function getForm(): Form
     {
         return $this->form;

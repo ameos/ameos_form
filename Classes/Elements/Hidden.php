@@ -6,17 +6,12 @@ namespace Ameos\AmeosForm\Elements;
 
 class Hidden extends ElementAbstract
 {
-    /**
-     * form to html
-     *
-     * @return string
-     */
     public function toHtml(): string
     {
         return '<input type="hidden" '
-            . 'id="' . $this->getHtmlId() . '" ' .
-            'name="' . $this->absolutename . '" ' .
-            'value="' . $this->getValue() . '"'
+            . 'id="' . $this->getHtmlId() . '" '
+            . 'name="' . $this->absolutename . '" '
+            . 'value="' . $this->getEscapedValue() . '"'
             . $this->getAttributes() . ' />';
     }
 }

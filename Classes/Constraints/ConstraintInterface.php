@@ -6,18 +6,10 @@ namespace Ameos\AmeosForm\Constraints;
 
 interface ConstraintInterface
 {
-    /**
-     * return true if the element is valide
-     *
-     * @param   string $value value to test
-     * @return  bool true if the element is valide
-     */
-    public function isValid($value);
+    public function isValid(mixed $value): bool;
 
     /**
-     * return the message
-     *
-     * @return  string the message
+     * Error message, NULL if the constraint adds its own messages to the error manager
      */
-    public function getMessage();
+    public function getMessage(): ?string;
 }

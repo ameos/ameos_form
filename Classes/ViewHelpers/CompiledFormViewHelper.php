@@ -4,38 +4,26 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\ViewHelpers;
 
+use Ameos\AmeosForm\Form\Form;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class CompiledFormViewHelper extends AbstractViewHelper
+/**
+ * Render all the elements of a form (to be used inside <form:form>)
+ */
+final class CompiledFormViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var boolean
-     */
     protected $escapeChildren = false;
 
-    /**
-     * @var boolean
-     */
     protected $escapeOutput = false;
 
-    /**
-     * Arguments initialization
-     *
-     * @return void
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
-        parent::initializeArguments();
-        $this->registerArgument('form', \Ameos\AmeosForm\Form\Form::class, 'form instance', false);
+        $this->registerArgument('form', Form::class, 'form instance', false);
     }
 
-    /**
-     * Renders form
-     *
-     * @return string html
-     */
-    public function render()
+    public function render(): string
     {
-        return $this->arguments['form']->toHtml();
+        $form = $this->arguments['form'];
+        return $form instanceof Form ? $form->toHtml() : '';
     }
 }

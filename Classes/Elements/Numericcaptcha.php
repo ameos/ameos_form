@@ -4,84 +4,68 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Constraints\Numericcaptcha as NumericcaptchaConstraint;
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
+/**
+ * Simple "a + b" captcha, digits are stored in the frontend user session
+ */
 class Numericcaptcha extends ElementAbstract
 {
     /**
-     * @constuctor
-     *
-     * @param string $absolutename absolutename
-     * @param string $name name
-     * @param array $configuration configuration
-     * @param Form $form form
+     * @param array<string, mixed>|null $configuration
      */
     public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
+
         if (!$this->form->isSubmitted()) {
             $this->reloadDigit(1);
             $this->reloadDigit(2);
         }
-        $errorMessage = isset($configuration['errormessage'])
-            ? $configuration['errormessage']
-            : 'Numeric captcha is not valid';
-        $constraint = GeneralUtility::makeInstance(NumericcaptchaConstraint::class, $errorMessage, [], $this, $form);
-        $this->addConstraint($constraint);
+
+        $errorMessage = $this->stringify($this->configuration['errormessage'] ?? 'Numeric captcha is not valid');
+        $this->addConstraint(new NumericcaptchaConstraint($errorMessage, [], $this, $form));
     }
 
-    public function reloadDigit($key): void
+    public function reloadDigit(int $key): void
     {
-        $sessionKey = 'form-' . $this->form->getIdentifier() . '-' . $this->getHtmlId() . '-digit-' . $key;
-
-        /** @var FrontendUserAuthentication */
-        $frontendUser = $this->form->getCurrentRequest()->getAttribute('frontend.user');
-        $frontendUser->setAndSaveSessionData($sessionKey, false);
-
+        $this->getFrontendUser()->setAndSaveSessionData($this->getSessionKey($key), false);
         $this->getDigit($key);
     }
 
-    public function getDigit($key): int
+    public function getDigit(int $key): int
     {
-        $sessionKey = 'form-' . $this->form->getIdentifier() . '-' . $this->getHtmlId() . '-digit-' . $key;
-
-        /** @var FrontendUserAuthentication */
-        $frontendUser = $this->form->getCurrentRequest()->getAttribute('frontend.user');
-        $digit = $frontendUser->getSessionData($sessionKey);
-
-        if (!$digit) {
-            $digit = rand(1, 9);
-            $frontendUser->setAndSaveSessionData($sessionKey, $digit);
+        $frontendUser = $this->getFrontendUser();
+        $digit = (int) $this->stringify($frontendUser->getSessionData($this->getSessionKey($key)));
+        if ($digit === 0) {
+            $digit = random_int(1, 9);
+            $frontendUser->setAndSaveSessionData($this->getSessionKey($key), $digit);
         }
         return $digit;
     }
 
-    /**
-     * form to html
-     *
-     * @return string
-     */
     public function toHtml(): string
     {
-        $sid = md5(uniqid());
         return $this->renderLabel() . $this->renderCaptchaInput();
     }
 
+    public function getRenderingInformation(): array
+    {
+        $data = parent::getRenderingInformation();
+        $data['input'] = $this->renderCaptchaInput();
+        $data['label'] = $this->renderLabel();
+        $data['operation'] = $this->renderOperation();
+        return $data;
+    }
 
-    /**
-     * render captcha picture
-     *
-     * @return string
-     */
     protected function renderCaptchaInput(): string
     {
         return '<input type="text" '
             . 'id="' . $this->getHtmlId() . '" '
             . 'name="' . $this->absolutename . '" '
-            . 'value="' . $this->getValue() . '"'
+            . 'value="' . $this->getEscapedValue() . '"'
             . $this->getAttributes() . ' />';
     }
 
@@ -95,17 +79,17 @@ class Numericcaptcha extends ElementAbstract
         return $this->getDigit(1) . ' + ' . $this->getDigit(2);
     }
 
-    /**
-     * return rendering information
-     *
-     * @return array
-     */
-    public function getRenderingInformation(): array
+    private function getSessionKey(int $key): string
     {
-        $data = parent::getRenderingInformation();
-        $data['input']   = $this->renderCaptchaInput();
-        $data['label']   = $this->renderLabel();
-        $data['operation']   = $this->renderOperation();
-        return $data;
+        return 'form-' . $this->form->getIdentifier() . '-' . $this->getHtmlId() . '-digit-' . $key;
+    }
+
+    private function getFrontendUser(): FrontendUserAuthentication
+    {
+        $frontendUser = $this->form->getCurrentRequest()->getAttribute('frontend.user');
+        if (!$frontendUser instanceof FrontendUserAuthentication) {
+            throw new \RuntimeException('The numeric captcha requires a frontend request', 1731340808);
+        }
+        return $frontendUser;
     }
 }

@@ -6,6 +6,7 @@ namespace Ameos\AmeosForm\Form;
 
 use Ameos\AmeosForm\Domain\Repository\SearchableRepositoryInterface;
 use Ameos\AmeosForm\Elements\Button;
+use Ameos\AmeosForm\Elements\ElementAbstract;
 use Ameos\AmeosForm\Elements\ElementInterface;
 use Ameos\AmeosForm\Elements\Submit;
 use Ameos\AmeosForm\Enum\Constraint;
@@ -14,222 +15,120 @@ use Ameos\AmeosForm\ErrorManager;
 use Ameos\AmeosForm\Event\BindValueFromRequestEvent;
 use Ameos\AmeosForm\Event\ValidFormEvent;
 use Ameos\AmeosForm\Exception\RepositoryNotFoundException;
-use Ameos\AmeosForm\Exception\RepositoryNotValidException;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use TYPO3\CMS\Core\Context\Context;
-use TYPO3\CMS\Core\Http\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Mvc\RequestInterface as ExtbaseRequestInterface;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
+/**
+ * Form model: holds the elements, binds the submitted values and validates them.
+ * Not final: it is mocked in unit tests and may be extended or XCLASSed by projects.
+ */
 class Form
 {
-    /**
-     * @var string $identifer identifier
-     */
-    protected $identifier;
+    /** Key used in the error manager for errors not related to an element (CSRF token, honeypot) */
+    public const string FORM_ERROR_KEY = '__form';
+    private const string NO_CSRF_TOKEN = 'notoken';
 
-    /**
-     * @var array $elements elements
-     */
-    protected $elements = [];
+    protected readonly ServerRequestInterface $request;
+    protected readonly EventDispatcherInterface $eventDispatcher;
+    protected readonly ErrorManager $errorManager;
 
-    /**
-     * @var bool $enableCrsftoken enable crsf token
-     */
-    protected $enableCsrftoken = true;
+    /** @var array<string, ElementInterface> */
+    protected array $elements = [];
+    protected bool $enableCsrftoken = true;
+    protected bool $enableHoneypot = true;
+    protected bool $storeSearchInSession = true;
+    protected ?SearchableRepositoryInterface $repository = null;
+    protected ?AbstractEntity $entity = null;
+    /** @var list<array<string, mixed>> */
+    protected array $defaultClause = [];
+    /** @var array<array-key, mixed> */
+    protected array $bodyData;
+    /** @var array<array-key, mixed> */
+    protected array $uploadedFiles;
+    protected ?bool $validity = null;
+    /** true while the value read from the attached entity is bound (no need to write it back) */
+    protected bool $isBindingEntity = false;
+    protected bool $protectionVerified = false;
 
-    /**
-     * @var bool $enableHoneypot enable honey pot
-     */
-    protected $enableHoneypot = true;
-
-    /**
-     * @var bool $enableHoneypot store search in session
-     */
-    protected $storeSearchInSession = true;
-
-    /**
-     * @var bool $elementsConstraintsAreChecked true if elements constraints are checked
-     */
-    protected $elementsConstraintsAreChecked = false;
-
-    /**
-     * @var array $errorsByElement errorsByElement
-     */
-    protected $errorsByElement = [];
-
-    /**
-     * @var ErrorManager $errorManager
-     */
-    protected $errorManager;
-
-    /**
-     * @var ServerRequest $request
-     */
-    protected $request;
-
-    /**
-     * @var SearchableRepositoryInterface $repository
-     */
-    protected $repository = null;
-
-    /**
-     * @var AbstractEntity $entity
-     */
-    protected $entity = null;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var Context
-     */
-    protected $context;
-
-    /**
-     * @var array
-     */
-    protected $defaultClause;
-
-    /**
-     * @var array $bodyData
-     */
-    protected $bodyData;
-
-    /**
-     * @var array $uploadedFiles
-     */
-    protected $uploadedFiles;
-
-    /**
-     * @constuctor
-     *
-     * @param string $identifier form identifier
-     */
-    public function __construct(string $identifier)
-    {
-        $this->identifier = $identifier;
+    public function __construct(
+        protected readonly string $identifier,
+        ?ServerRequestInterface $request = null,
+        ?EventDispatcherInterface $eventDispatcher = null,
+    ) {
+        $this->request = $request ?? self::getGlobalRequest();
+        $this->eventDispatcher = $eventDispatcher ?? GeneralUtility::makeInstance(EventDispatcherInterface::class);
         $this->errorManager = GeneralUtility::makeInstance(ErrorManager::class, $this);
-        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcherInterface::class);
-        $this->context = GeneralUtility::makeInstance(Context::class);
-        $this->request = $GLOBALS['TYPO3_REQUEST'];
-        $this->defaultClause = [];
 
         $parsedBody = $this->request->getParsedBody();
-        $uploadedFiles = $this->request->getUploadedFiles();
-
-        $this->bodyData = isset($parsedBody[$identifier]) ? $parsedBody[$identifier] : [];
-        $this->uploadedFiles = isset($uploadedFiles[$identifier]) ? $uploadedFiles[$identifier] : [];
+        $this->bodyData = is_array($parsedBody) && is_array($parsedBody[$identifier] ?? null)
+            ? $parsedBody[$identifier]
+            : [];
+        $this->uploadedFiles = $this->readUploadedFiles();
     }
 
-    /**
-     * return identifier
-     * @return string identifier
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * enable csrf token
-     * @return self
-     */
     public function enableCsrftoken(): self
     {
         $this->enableCsrftoken = true;
-
         return $this;
     }
 
-    /**
-     * disable csrf token
-     * @return self
-     */
     public function disableCsrftoken(): self
     {
         $this->enableCsrftoken = false;
-
         return $this;
     }
 
-    /**
-     * return TRUE if csrf token is enabled
-     * @return bool
-     */
     public function csrftokenIsEnabled(): bool
     {
         return $this->enableCsrftoken;
     }
 
-    /**
-     * enable honeypot
-     * @return self
-     */
     public function enableHoneypot(): self
     {
         $this->enableHoneypot = true;
-
         return $this;
     }
 
-    /**
-     * disable honeypot
-     * @return self
-     */
     public function disableHoneypot(): self
     {
         $this->enableHoneypot = false;
-
         return $this;
     }
 
-    /**
-     * return TRUE if honeypot is enabled
-     * @return bool
-     */
     public function honeypotIsEnabled(): bool
     {
         return $this->enableHoneypot;
     }
 
-    /**
-     * store search in session
-     * @return self
-     */
     public function storeSearchInSession(): self
     {
         $this->storeSearchInSession = true;
-
         return $this;
     }
 
-    /**
-     * disable search in session
-     * @return self
-     */
     public function disableSearchStoringInSession(): self
     {
         $this->storeSearchInSession = false;
-
         return $this;
     }
 
-    /**
-     * return TRUE if search is stored in session
-     * @return bool
-     */
     public function searchIsStoredInSession(): bool
     {
         return $this->storeSearchInSession;
     }
 
     /**
-     * return elements
-     * @return array<ElementInterface> elements
+     * @return array<string, ElementInterface>
      */
     public function getElements(): array
     {
@@ -237,48 +136,31 @@ class Form
     }
 
     /**
-     * return elements
-     * @return array<Submit|Button> elements
+     * @return list<Submit|Button>
      */
     public function getSubmitterElements(): array
     {
         $submitters = [];
         foreach ($this->elements as $element) {
-            if (
-                is_a($element, Submit::class)
-                || (is_a($element, Button::class) && $element->getType() === Button::TYPE_SUBMIT)
-            ) {
+            if ($element instanceof Submit || ($element instanceof Button && $element->getType() === Button::TYPE_SUBMIT)) {
                 $submitters[] = $element;
             }
         }
         return $submitters;
     }
 
-    /**
-     * return element
-     * @param string $name element name
-     * @return ElementInterface|false
-     */
     public function getElement(string $name): ElementInterface|false
     {
-        return $this->hasElement($name) ? $this->elements[$name] : false;
+        return $this->elements[$name] ?? false;
     }
 
-    /**
-     * return TRUE if element exist
-     * @param string $name element name
-     * @return bool
-     */
     public function hasElement(string $name): bool
     {
         return array_key_exists($name, $this->elements);
     }
 
     /**
-     * return element
-     * alias getElement
-     * @param string $name element name
-     * @return ElementInterface|false
+     * Alias of getElement()
      */
     public function get(string $name): ElementInterface|false
     {
@@ -286,10 +168,7 @@ class Form
     }
 
     /**
-     * return TRUE if element exist
-     * alias hasElement
-     * @param string $name element name
-     * @return bool
+     * Alias of hasElement()
      */
     public function has(string $name): bool
     {
@@ -297,53 +176,32 @@ class Form
     }
 
     /**
-     * add element fo the form
+     * Add an element to the form
      *
-     * @param   string  $type element type
-     * @param   string  $name element name
-     * @param   array  $configuration element configuration
-     * @return  self
+     * @param string $type one of the Element::* constants
+     * @param array<string, mixed> $configuration
      */
     public function add(string $name, string $type = '', array $configuration = []): self
     {
-        $absolutename = $this->identifier . '[' . $name . ']';
-
-        /** @var ElementInterface */
+        /** @var ElementInterface $element */
         $element = GeneralUtility::makeInstance(
             Element::getElementClassName($type),
-            $absolutename,
+            $this->identifier . '[' . $name . ']',
             $name,
             $configuration,
-            $this
+            $this,
         );
 
-        if ($this->entity !== null) {
-            $method = 'get' . GeneralUtility::underscoredToUpperCamelCase($name);
-            if (method_exists($this->entity, $method)) {
-                $element->setValue($this->entity->$method());
-            }
+        $this->isBindingEntity = true;
+        try {
+            $this->bindEntityValue($element, $name);
+        } finally {
+            $this->isBindingEntity = false;
         }
-
-        if ($type !== Element::UPLOAD) {
-            if (isset($this->bodyData[$name])) {
-                $bindEvent = new BindValueFromRequestEvent($this, $element, $this->bodyData[$name]);
-                $this->eventDispatcher->dispatch($bindEvent);
-    
-                $element->setValue($bindEvent->getValue());
-            } elseif ($this->repository !== null && $this->storeSearchInSession()) {
-                /** @var FrontendUserAuthentication */
-                $frontendUser = $this->request->getAttribute('frontend.user');
-                $clauses = $frontendUser->getSessionData('form-' . $this->getIdentifier() . '-clauses');
-    
-                if (is_array($clauses) && isset($clauses[$name])) {
-                    $element->setValue($clauses[$name]['elementvalue']);
-                }
-            }
-        } elseif (isset($this->uploadedFiles[$name])) {
-            $bindEvent = new BindValueFromRequestEvent($this, $element, $this->uploadedFiles[$name]);
-            $this->eventDispatcher->dispatch($bindEvent);
-
-            $element->setValue($bindEvent->getValue());
+        if ($type === Element::UPLOAD) {
+            $this->bindUploadValue($element, $name);
+        } else {
+            $this->bindRequestValue($element, $name);
         }
 
         $this->elements[$name] = $element;
@@ -351,173 +209,121 @@ class Form
         return $this;
     }
 
-    /**
-     * return request
-     *
-     * @return ServerRequest
-     */
-    public function getCurrentRequest(): ServerRequest
+    public function getCurrentRequest(): ServerRequestInterface
     {
         return $this->request;
     }
 
-    /**
-     * return true if submitted
-     *
-     * @return bool
-     */
     public function isSubmitted(): bool
     {
-        return isset($this->bodyData['issubmitted']) && $this->bodyData['issubmitted'] == 1;
+        $isSubmitted = $this->bodyData['issubmitted'] ?? null;
+        return is_scalar($isSubmitted) && (int) $isSubmitted === 1;
     }
 
-    /**
-     * return submitter
-     * @return ElementInterface|false
-     */
-    public function getSubmitter(): ElementInterface|false
+    public function getSubmitter(): Submit|Button|false
     {
-        if ($this->isSubmitted()) {
-            foreach ($this->getSubmitterElements() as $element) {
-                if ($element->isClicked()) {
-                    return $element;
-                }
+        if (!$this->isSubmitted()) {
+            return false;
+        }
+        foreach ($this->getSubmitterElements() as $element) {
+            if ($element->isClicked()) {
+                return $element;
             }
         }
-
         return false;
     }
 
-    /**
-     * attach entity to update
-     *
-     * @param AbstractEntity $entity
-     * @return self
-     */
     public function attachEntity(AbstractEntity $entity): self
     {
         $this->entity = $entity;
-
         return $this;
     }
 
-    /**
-     * return entity
-     *
-     * @return ?AbstractEntity
-     */
     public function getAttachedEntity(): ?AbstractEntity
     {
         return $this->entity;
     }
 
     /**
-     * update entity property
-     *
-     * @param string $property
-     * @param mixed $value
-     * @return self
+     * Call the entity setter. Request values (strings) are cast to the scalar type of the setter parameter
+     * (int, float, bool, string), an empty string becomes NULL for nullable parameters.
      */
     public function updateEntityProperty(string $property, mixed $value): self
     {
-        if ($this->entity !== null) {
-            // todo reflection + cast ?
-            $method = 'set' . GeneralUtility::underscoredToUpperCamelCase($property);
-            if (method_exists($this->entity, $method)) {
-                $this->entity->$method($value);
-            }
+        if ($this->entity === null || $this->isBindingEntity) {
+            return $this;
         }
-
+        $method = 'set' . GeneralUtility::underscoredToUpperCamelCase($property);
+        $setter = [$this->entity, $method];
+        if (is_callable($setter)) {
+            $setter($this->castForSetter(new \ReflectionMethod($this->entity, $method), $value));
+        }
         return $this;
     }
 
-    /**
-     * attach repository for search
-     *
-     * @param SearchableRepositoryInterface $repository
-     * @return self
-     */
     public function attachRepository(SearchableRepositoryInterface $repository): self
     {
         $this->repository = $repository;
-
         return $this;
     }
 
-
     /**
-     * add validator
+     * Alias of addConstraint()
      *
-     * @param   string  $elementName element name
-     * @param   string  $type validator type
-     * @param   string  $message message
-     * @param   array   $configuration configuration
-     * @return  self
-     * alias    addConstraint
+     * @param array<string, mixed> $configuration
      */
-    public function validator($elementName, $type, $message, $configuration = [])
+    public function validator(string $elementName, string $type, string $message, array $configuration = []): self
     {
         return $this->addConstraint($elementName, $type, $message, $configuration);
     }
 
     /**
-     * add element constraint
+     * Add a constraint to an element
      *
-     * @param   string  $elementName element name
-     * @param   string  $type constraint type
-     * @param   string  $message message
-     * @param   array   $configuration configuration
-     * @return  self
+     * @param string $type one of the Constraint::* constants
+     * @param array<string, mixed> $configuration
      */
-    public function addConstraint($elementName, $type, $message, $configuration = [])
+    public function addConstraint(string $elementName, string $type, string $message, array $configuration = []): self
     {
-        if ($this->has($elementName)) {
-            $constraint = GeneralUtility::makeInstance(
+        $element = $this->elements[$elementName] ?? null;
+        if ($element !== null) {
+            $element->addConstraint(GeneralUtility::makeInstance(
                 Constraint::getConstraintClassName($type),
                 $message,
                 $configuration,
-                $this->getElement($elementName),
-                $this
-            );
-
-            $this->get($elementName)->addConstraint($constraint);
+                $element,
+                $this,
+            ));
         }
-
         return $this;
     }
 
     /**
-     * add where clause
-     *
-     * @param array $clause
-     * @return self
+     * @param array<string, mixed> $clause
      */
-    public function addWhereClause($clause): self
+    public function addWhereClause(array $clause): self
     {
         $this->defaultClause[] = $clause;
-
         return $this;
     }
 
     /**
-     * return true if the form is valide
-     *
-     * @return bool true if is a valid form
+     * Return TRUE if the form is valid. ValidFormEvent is dispatched only once, on the first valid check
+     * of a submitted form.
      */
     public function isValid(): bool
     {
-        $isValid = $this->errorManager->isValid();
-        if ($isValid) {
-            $this->eventDispatcher->dispatch(new ValidFormEvent($this));
+        if ($this->validity === null) {
+            $this->validity = $this->errorManager->isValid();
+            if ($this->validity && $this->isSubmitted()) {
+                $this->eventDispatcher->dispatch(new ValidFormEvent($this));
+            }
         }
-
-        return $isValid;
+        return $this->validity;
     }
 
     /**
-     * Return errors
-     *
-     * @return array errors
+     * @return list<string>
      */
     public function getErrors(): array
     {
@@ -525,59 +331,247 @@ class Form
     }
 
     /**
-     * return results of seach
+     * Return the search results of the attached repository, filtered with the searchable elements
      *
-     * @param ?string $orderby
-     * @param string $direction
-     * @return iterable
+     * @return iterable<mixed>
+     * @throws RepositoryNotFoundException
      */
     public function getResults(?string $orderby = null, string $direction = 'ASC'): iterable
     {
         if ($this->repository === null) {
-            throw new RepositoryNotFoundException('Repository not found');
-        }
-
-        if (!is_a($this->repository, SearchableRepositoryInterface::class)) {
-            throw new RepositoryNotValidException('Repository must implements ' . SearchableRepositoryInterface::class);
+            throw new RepositoryNotFoundException('Repository not found', 1731340802);
         }
 
         $clauses = [];
         foreach ($this->elements as $element) {
-            if ($element->isSearchable()) {
-                if ($element->getValue() == '') {
-                    unset($clauses[$element->getName()]);
-                }
-                if (($clause = $element->getClause()) !== false) {
-                    $clauses[$clause['elementname']] = $clause;
-                }
+            $clause = $element->isSearchable() ? $element->getClause() : false;
+            if ($clause !== false) {
+                $clauses[$element->getName()] = $clause;
             }
         }
 
-        /** @var FrontendUserAuthentication */
-        $frontendUser = $this->request->getAttribute('frontend.user');
-        $frontendUser->setAndSaveSessionData('form-' . $this->getIdentifier() . '-clauses', $clauses);
+        if ($this->searchIsStoredInSession()) {
+            $this->getFrontendUser()?->setAndSaveSessionData($this->getSessionClausesKey(), $clauses);
+        }
 
-        $clauses = array_merge($clauses, $this->defaultClause);
-        return $this->repository->findByClausesArray($clauses, $orderby, $direction);
+        return $this->repository->findByClausesArray(
+            array_merge(array_values($clauses), $this->defaultClause),
+            $orderby,
+            $direction,
+        );
     }
 
     /**
-     * return error manager
-     *
-     * @return ErrorManager
+     * CSRF token of the form, stored in the frontend user session ("notoken" without frontend user)
      */
+    public function getCsrfToken(): string
+    {
+        $frontendUser = $this->getFrontendUser();
+        if ($frontendUser === null) {
+            return self::NO_CSRF_TOKEN;
+        }
+        $token = $frontendUser->getSessionData($this->getSessionCsrfTokenKey());
+        if (!is_string($token) || $token === '') {
+            $token = bin2hex(random_bytes(32));
+            $frontendUser->setAndSaveSessionData($this->getSessionCsrfTokenKey(), $token);
+        }
+        return $token;
+    }
+
+    /**
+     * Check the CSRF token and the honeypot of a submitted form, errors are added to the error manager
+     * (with the FORM_ERROR_KEY key). Called once by the error manager.
+     *
+     * @internal
+     */
+    public function verifyProtection(): void
+    {
+        if ($this->protectionVerified || !$this->isSubmitted()) {
+            return;
+        }
+        $this->protectionVerified = true;
+
+        if ($this->enableCsrftoken && !$this->isCsrfTokenValid()) {
+            $this->errorManager->add($this->translate('error.csrf', 'The form has expired, please submit it again.'), self::FORM_ERROR_KEY);
+        }
+        $honeypot = $this->bodyData['winnie'] ?? '';
+        if ($this->enableHoneypot && (!is_string($honeypot) || $honeypot !== '')) {
+            $this->errorManager->add($this->translate('error.honeypot', 'The form could not be sent.'), self::FORM_ERROR_KEY);
+        }
+    }
+
     public function getErrorManager(): ErrorManager
     {
         return $this->errorManager;
     }
 
     /**
-     * return bodyData
-     *
-     * @return array
+     * @return array<array-key, mixed>
      */
     public function getBodyData(): array
     {
         return $this->bodyData;
+    }
+
+    /**
+     * Render all elements (used by the CompiledForm ViewHelper)
+     */
+    public function toHtml(): string
+    {
+        return implode('', array_map(static fn(ElementInterface $element): string => $element->toHtml(), $this->elements));
+    }
+
+    protected function bindEntityValue(ElementInterface $element, string $name): void
+    {
+        if ($this->entity === null) {
+            return;
+        }
+        $getter = [$this->entity, 'get' . GeneralUtility::underscoredToUpperCamelCase($name)];
+        if (is_callable($getter)) {
+            $element->setValue($getter());
+        }
+    }
+
+    protected function bindRequestValue(ElementInterface $element, string $name): void
+    {
+        if (array_key_exists($name, $this->bodyData)) {
+            $element->setValue($this->dispatchBindEvent($element, $this->bodyData[$name]));
+            return;
+        }
+
+        if ($this->isSubmitted()) {
+            // e.g. unchecked checkboxes are not sent by the browser: the element is emptied
+            if ($element instanceof ElementAbstract && $element->isOmittedFromRequestWhenEmpty()) {
+                $element->setValue('');
+            }
+            return;
+        }
+
+        if ($this->repository === null || !$this->searchIsStoredInSession()) {
+            return;
+        }
+        $clauses = $this->getFrontendUser()?->getSessionData($this->getSessionClausesKey());
+        if (is_array($clauses) && is_array($clauses[$name] ?? null) && array_key_exists('elementvalue', $clauses[$name])) {
+            $element->setValue($clauses[$name]['elementvalue']);
+        }
+    }
+
+    /**
+     * Uploaded files come from the request files, already uploaded (temporary) files from the request body
+     */
+    protected function bindUploadValue(ElementInterface $element, string $name): void
+    {
+        $files = is_array($this->uploadedFiles[$name] ?? null) ? $this->uploadedFiles[$name] : [];
+        $body = is_array($this->bodyData[$name] ?? null) ? $this->bodyData[$name] : [];
+        if ($files === [] && $body === []) {
+            return;
+        }
+        $value = [
+            'upload' => is_array($files['upload'] ?? null) ? $files['upload'] : [],
+            'temporary' => is_array($body['temporary'] ?? null) ? $body['temporary'] : [],
+        ];
+        $element->setValue($this->dispatchBindEvent($element, $value));
+    }
+
+    protected function dispatchBindEvent(ElementInterface $element, mixed $value): mixed
+    {
+        $event = new BindValueFromRequestEvent($this, $element, $value);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getValue();
+    }
+
+    protected function getFrontendUser(): ?FrontendUserAuthentication
+    {
+        $frontendUser = $this->request->getAttribute('frontend.user');
+        return $frontendUser instanceof FrontendUserAuthentication ? $frontendUser : null;
+    }
+
+    protected function isCsrfTokenValid(): bool
+    {
+        $submittedToken = $this->bodyData['csrftoken'] ?? null;
+        if (!is_string($submittedToken) || $submittedToken === '') {
+            return false;
+        }
+        $frontendUser = $this->getFrontendUser();
+        $expectedToken = $frontendUser === null
+            ? self::NO_CSRF_TOKEN
+            : $frontendUser->getSessionData($this->getSessionCsrfTokenKey());
+        return is_string($expectedToken) && $expectedToken !== '' && hash_equals($expectedToken, $submittedToken);
+    }
+
+    protected function getSessionCsrfTokenKey(): string
+    {
+        return $this->identifier . '-csrftoken';
+    }
+
+    /**
+     * Cast a value to the type of the first parameter of the entity setter (strict_types is enabled here)
+     */
+    protected function castForSetter(\ReflectionMethod $setter, mixed $value): mixed
+    {
+        $type = ($setter->getParameters()[0] ?? null)?->getType();
+        if (!$type instanceof \ReflectionNamedType) {
+            return $value;
+        }
+        if ($type->allowsNull() && ($value === null || $value === '')) {
+            return null;
+        }
+        $isScalar = is_scalar($value) || $value === null;
+        return match ($type->getName()) {
+            'int' => $isScalar ? (int) $value : $value,
+            'float' => $isScalar ? (float) $value : $value,
+            'bool' => $isScalar ? (bool) $value : $value,
+            'string' => match (true) {
+                $isScalar, $value instanceof \Stringable => (string) $value,
+                is_array($value) => implode(',', array_map(static fn(mixed $item): string => is_scalar($item) ? (string) $item : '', $value)),
+                default => $value,
+            },
+            \DateTimeImmutable::class => $value instanceof \DateTime ? \DateTimeImmutable::createFromMutable($value) : $value,
+            \DateTime::class => $value instanceof \DateTimeImmutable ? \DateTime::createFromImmutable($value) : $value,
+            default => $value,
+        };
+    }
+
+    protected function translate(string $key, string $default): string
+    {
+        return LocalizationUtility::translate($key, 'ameos_form', null, null, $this->request) ?? $default;
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    private function readUploadedFiles(): array
+    {
+        $files = $this->request->getUploadedFiles()[$this->identifier] ?? null;
+        if (is_array($files)) {
+            return $files;
+        }
+        if (!$this->request instanceof ExtbaseRequestInterface) {
+            return [];
+        }
+        // Since TYPO3 13, an Extbase request only contains the uploaded files of the plugin namespace, without it
+        $globalRequest = $GLOBALS['TYPO3_REQUEST'] ?? null;
+        if ($globalRequest instanceof ServerRequestInterface && !$globalRequest instanceof ExtbaseRequestInterface) {
+            $files = $globalRequest->getUploadedFiles()[$this->identifier] ?? null;
+            if (is_array($files)) {
+                return $files;
+            }
+        }
+        $pluginNamespace = strtolower('tx_' . $this->request->getControllerExtensionName() . '_' . $this->request->getPluginName());
+        return $pluginNamespace === $this->identifier ? $this->request->getUploadedFiles() : [];
+    }
+
+    protected function getSessionClausesKey(): string
+    {
+        return 'form-' . $this->identifier . '-clauses';
+    }
+
+    private static function getGlobalRequest(): ServerRequestInterface
+    {
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+        if (!$request instanceof ServerRequestInterface) {
+            throw new \RuntimeException('No request available, pass it to the form constructor', 1731340803);
+        }
+        return $request;
     }
 }

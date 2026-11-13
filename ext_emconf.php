@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 $EM_CONF['ameos_form'] = [
-    'title'            => 'Form API',
-    'description'      => 'Form API for extbase and fluid',
-    'category'         => 'misc',
-    'author'           => 'Ameos team',
-    'author_email'     => 'typo3dev@ameos.com',
-    'author_company'   => 'Ameos',
-    'state'            => 'beta',
-    'version'          => '3.0.2',
-    'constraints'      => [
+    'title' => 'Form API',
+    'description' => 'Form API for extbase and fluid',
+    'category' => 'misc',
+    'author' => 'Ameos team',
+    'author_email' => 'typo3dev@ameos.com',
+    'author_company' => 'Ameos',
+    'state' => 'stable',
+    'version' => '4.0.0',
+    'constraints' => [
         'depends' => [
-            'typo3' => '13.4.0-13.4.99',
-            'php'   => '8.0.0-8.3.99'
+            'typo3' => '14.3.0-14.3.99',
+            'php' => '8.3.0-8.5.99',
         ],
         'conflicts' => [],
-        'suggests'  => [],
+        'suggests' => [],
     ],
 ];

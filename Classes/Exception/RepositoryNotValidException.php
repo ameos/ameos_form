@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Exception;
 
-class RepositoryNotValidException extends \RuntimeException
-{
-}
+final class RepositoryNotValidException extends \RuntimeException {}

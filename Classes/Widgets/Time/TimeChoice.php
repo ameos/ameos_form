@@ -5,81 +5,65 @@ declare(strict_types=1);
 namespace Ameos\AmeosForm\Widgets\Time;
 
 use Ameos\AmeosForm\Widgets\WidgetAbstract;
-use Ameos\AmeosForm\Widgets\WidgetInterface;
 
-class TimeChoice extends WidgetAbstract implements WidgetInterface
+/**
+ * Hour and minute text inputs with datalists, minutes listed with the "minutestep" option
+ */
+final class TimeChoice extends WidgetAbstract
 {
-    /**
-     * @param array $dataFromElement
-     * @return array
-     */
     public function getRenderingInformation(array $dataFromElement): array
     {
-        $data = $dataFromElement;
-        $data['hour']   = $this->renderHour();
-        $data['minute'] = $this->renderMinute();
-        return $data;
+        $dataFromElement['hour'] = $this->renderHour();
+        $dataFromElement['minute'] = $this->renderMinute();
+        return $dataFromElement;
     }
 
-    /**
-     * form to html
-     *
-     * @return  string the html
-     */
     public function toHtml(): string
     {
         return $this->renderHour() . ':' . $this->renderMinute();
     }
 
-    /**
-     * return hour html selector
-     *
-     * @return string
-     */
     public function renderHour(): string
     {
-        $values = explode(':', $this->element->getValue());
-        $output = '<input type="text" '
-            . 'id="' . $this->element->getHtmlId() . '-hour" '
-            . 'list="' . $this->element->getHtmlId() . '-hour-datalist" '
-            . 'size="2" '
-            . 'name="' . $this->element->getAbsoluteName() . '[hour]" '
-            . 'value="' . $values[0] . '"'
-            . $this->element->getAttributes() . ' '
-            . 'placeholder="hh" />';
-        $output .= '<datalist id="' . $this->element->getHtmlId() . '-hour-datalist">';
-        for ($hour = 0; $hour < 24; $hour++) {
-            $output .= '<option value="' . str_pad((string)$hour, 2, '0', STR_PAD_LEFT) . '">'
-                . str_pad((string)$hour, 2, '0', STR_PAD_LEFT)
-                . '</option>';
-        }
-        $output .= '</datalist>';
-        return $output;
+        return $this->renderPart('hour', 'hh', $this->getTimeParts()[0], range(0, 23));
+    }
+
+    public function renderMinute(): string
+    {
+        $step = $this->element->getConfigurationItem('minutestep');
+        $step = max(1, is_numeric($step) ? (int) $step : 1);
+        return $this->renderPart('minute', 'mm', $this->getTimeParts()[1], range(0, 59, $step));
     }
 
     /**
-     * return minute html selector
-     *
-     * @return string
+     * @param list<int> $options
      */
-    public function renderMinute(): string
+    private function renderPart(string $part, string $placeholder, string $value, array $options): string
     {
-        $values = explode(':', $this->element->getValue());
+        $id = $this->element->getHtmlId() . '-' . $part;
         $output = '<input type="text" '
-            . 'id="' . $this->element->getHtmlId() . '-minute" '
-            . 'list="' . $this->element->getHtmlId() . '-minute-datalist" '
+            . 'id="' . $id . '" '
+            . 'list="' . $id . '-datalist" '
             . 'size="2" '
-            . 'name="' . $this->element->getAbsoluteName() . '[minute]" '
-            . 'value="' . (isset($values[1]) ? $values[1] : '') . '"'
+            . 'name="' . $this->element->getAbsoluteName() . '[' . $part . ']" '
+            . 'value="' . $this->escape($value) . '"'
             . $this->element->getAttributes() . ' '
-            . 'placeholder="mm" />';
-        $output .= '<datalist id="' . $this->element->getHtmlId() . '-minute-datalist">';
-        for ($minute = 0; $minute < 60; $minute += $this->element->getConfigurationItem('minutestep')) {
-            $output .= '<option value="' . str_pad((string)$minute, 2, '0', STR_PAD_LEFT) . '">'
-                . str_pad((string)$minute, 2, '0', STR_PAD_LEFT)
-                . '</option>';
+            . 'placeholder="' . $placeholder . '" />';
+        $output .= '<datalist id="' . $id . '-datalist">';
+        foreach ($options as $option) {
+            $option = str_pad((string) $option, 2, '0', STR_PAD_LEFT);
+            $output .= '<option value="' . $option . '">' . $option . '</option>';
         }
-        $output .= '</datalist>';
-        return $output;
+        return $output . '</datalist>';
+    }
+
+    /**
+     * @return array{0: string, 1: string} hour and minute
+     */
+    private function getTimeParts(): array
+    {
+        $value = $this->element->getValue();
+        $parts = explode(':', is_string($value) ? $value : '');
+        return [$parts[0], $parts[1] ?? ''];
     }
 }

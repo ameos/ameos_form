@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Exception;
 
-class RepositoryNotFoundException extends \RuntimeException
-{
-}
+final class RepositoryNotFoundException extends \RuntimeException {}

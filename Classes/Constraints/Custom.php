@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Constraints;
 
+use Ameos\AmeosForm\Exception\BadConfigurationException;
+
+/**
+ * Configuration: method, a callable fn(mixed $value, Form $form): bool
+ */
 class Custom extends ConstraintAbstract
 {
-    /**
-     * return true if the element is valide
-     *
-     * @param   string $value value to test
-     * @return  bool true if the element is valide
-     */
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
-        if (!isset($this->configuration['method']) && !is_callable($this->configuration['method'])) {
-            throw new \Exception('Custom constraint must have a callable method for validation');
+        $method = $this->configuration['method'] ?? null;
+        if (!is_callable($method)) {
+            throw new BadConfigurationException('Custom constraint must have a callable method for validation', 1731340811);
         }
-        return $this->configuration['method']($value, $this->form);
+        return (bool) $method($value, $this->form);
     }
 }

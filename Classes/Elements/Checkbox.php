@@ -4,140 +4,87 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use Ameos\AmeosForm\Elements\Traits\Choices;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\BadConstraintException;
 
 class Checkbox extends ElementAbstract
 {
-    /**
-     * form to html
-     *
-     * @return string
-     */
-    public function toHtml(): string
-    {
-        $attributes = '';
-        $attributes .= $this->getClassAttribute();
-        $attributes .= $this->getAttribute('style');
-        $attributes .= $this->getAttribute('disabled', 'bool');
-        $attributes .= $this->getCustomAttribute();
-
-        if (!isset($this->configuration['items'])) {
-            throw new BadConstraintException('No items defined for this checkbox');
-        }
-
-        $output = '';
-        $separator = $this->getConfigurationItem('separator') ?? '';
-        foreach ($this->configuration['items'] as $value => $label) {
-            $output .= $this->renderSingleInput($value, $label) . $this->renderSingleLabel($value, $label) . $separator;
-        }
-        return $output;
-    }
-
-    protected function renderSingleInput(string|int $value, string $label): string
-    {
-        $currentValue = $this->getValue();
-        if ($currentValue === null) {
-            $currentValue = $this->configuration['defaultValue'];
-        }
-        $checked = in_array($value, $currentValue) ? ' checked="checked"' : '';
-        return  '<input '
-            . 'id="' . $this->getHtmlId() . '-' . $value . '" '
-            . 'name="' . $this->absolutename . '[]" '
-            . 'type="checkbox" '
-            . 'value="' . $value . '"'
-            . $checked . ' />';
-    }
-
-    protected function renderSingleLabel(string|int $value, string $label): string
-    {
-        return '<label for="' . $this->getHtmlId() . '-' . $value . '">' . $label . '</label>';
-    }
+    use Choices;
 
     /**
-     * return rendering information
-     *
-     * @return array
-     */
-    public function getRenderingInformation(): array
-    {
-        $data = parent::getRenderingInformation();
-        $data['choices'] = [];
-
-        if (!isset($this->configuration['items'])) {
-            throw new BadConstraintException('No items defined for this checkbox');
-        }
-
-        foreach ($this->configuration['items'] as $value => $label) {
-            $data['choices'][$value] = [
-                'input' => $this->renderSingleInput($value, $label),
-                'label' => $this->renderSingleLabel($value, $label),
-            ];
-        }
-        return $data;
-    }
-
-    /**
-     * set the value
-     *
-     * @param mixed $value value
-     * @return self
+     * Stored as comma separated list
      */
     public function setValue(mixed $value): self
     {
         if (is_array($value)) {
-            $value = implode(',', $value);
+            $value = implode(',', array_map($this->stringify(...), $value));
         }
         parent::setValue($value);
         return $this;
     }
 
     /**
-     * return the value
-     *
-     * @return mixed
+     * @return list<string> checked values
      */
     public function getValue(): mixed
     {
         $value = parent::getValue();
-        if (!is_array($value)) {
-            $value = GeneralUtility::trimExplode(',', $value);
+        if (is_array($value)) {
+            return array_values(array_map($this->stringify(...), $value));
+        }
+        return GeneralUtility::trimExplode(',', $this->stringify($value), true);
+    }
+
+    public function isOmittedFromRequestWhenEmpty(): bool
+    {
+        return !$this->isDisabled();
+    }
+
+    public function getClause(): array|false
+    {
+        /** @var list<string> $values */
+        $values = $this->getValue();
+        if ($values === []) {
+            return false;
+        }
+        if ($this->overrideClause !== null) {
+            return $this->buildOverriddenClause();
         }
 
-        return $value;
+        $clause = $this->buildClause('logicalOr', null);
+        unset($clause['value']);
+        $clause['clauses'] = array_map(
+            fn(string $value): array => ['field' => $this->getSearchField(), 'type' => $this->getClauseType(), 'value' => $value],
+            $values,
+        );
+        return $clause;
     }
 
     /**
-     * return where clause
-     *
-     * @return array|false
+     * Option "clausetype": "contains" (default, relation field) or "inList" (comma separated values in a string field)
      */
-    public function getClause(): array|false
+    protected function getClauseType(): string
     {
-        $values = $this->getValue();
-        if (!empty($values)) {
-            if ($this->overrideClause !== false) {
-                return parent::getClause();
-            } else {
-                $clauses = [];
-                if (is_array($values)) {
-                    foreach ($values as $value) {
-                        $clauses[] = [
-                            'field' => $this->getSearchField(),
-                            'type'  => 'contains',
-                            'value' => $value,
-                        ];
-                    }
-                }
-                return [
-                    'elementname'  => $this->getName(),
-                    'elementvalue' => $this->getValue(),
-                    'field'   => $this->getSearchField(),
-                    'type'    => 'logicalOr',
-                    'clauses' => $clauses,
-                ];
-            }
-        }
-        return false;
+        $type = $this->configuration['clausetype'] ?? null;
+        return is_string($type) && $type !== '' ? $type : 'contains';
+    }
+
+    protected function renderSingleInput(string|int $value, string $label): string
+    {
+        /** @var list<string> $checkedValues */
+        $checkedValues = $this->getValue();
+        $checked = in_array((string) $value, $checkedValues, true) ? ' checked="checked"' : '';
+        return '<input '
+            . 'id="' . $this->getHtmlId() . '-' . $this->escapeConfiguration($value) . '" '
+            . 'name="' . $this->absolutename . '[]" '
+            . 'type="checkbox" '
+            . 'value="' . $this->escapeConfiguration($value) . '"'
+            . $checked
+            . $this->getChoiceAttributes() . ' />';
+    }
+
+    protected function getNoItemsErrorMessage(): string
+    {
+        return 'No items defined for this checkbox';
     }
 }
