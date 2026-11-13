@@ -4,47 +4,24 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use Ameos\AmeosForm\Elements\Traits\NumericBounds;
+
 class Number extends ElementAbstract
 {
-    /**
-     * form to html
-     *
-     * @return string
-     */
+    use NumericBounds;
+
     public function toHtml(): string
     {
-        $additionnalAttributes = '';
-        $additionnalAttributes .= $this->getAttribute('min');
-        $additionnalAttributes .= $this->getAttribute('max');
-        $additionnalAttributes .= $this->getAttribute('step');
-
         return '<input type="number" '
             . 'id="' . $this->getHtmlId() . '" '
             . 'name="' . $this->absolutename . '" '
-            . 'value="' . $this->getValue() . '"'
+            . 'value="' . $this->getEscapedValue() . '"'
             . $this->getAttributes()
-            . $additionnalAttributes . ' />';
+            . $this->getBoundsAttributes() . ' />';
     }
 
-    /**
-     * return rendering information
-     *
-     * @return array
-     */
     public function getRenderingInformation(): array
     {
-        $data = parent::getRenderingInformation();
-
-        if (isset($this->configuration['min'])) {
-            $data['min']  = $this->configuration['min'];
-        }
-        if (isset($this->configuration['max'])) {
-            $data['max']  = $this->configuration['max'];
-        }
-        if (isset($this->configuration['step'])) {
-            $data['step'] = $this->configuration['step'];
-        }
-
-        return $data;
+        return $this->addBoundsRenderingInformation(parent::getRenderingInformation());
     }
 }

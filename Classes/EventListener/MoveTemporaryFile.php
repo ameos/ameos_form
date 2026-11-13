@@ -6,69 +6,51 @@ namespace Ameos\AmeosForm\EventListener;
 
 use Ameos\AmeosForm\Elements\Upload;
 use Ameos\AmeosForm\Event\ValidFormEvent;
+use Ameos\AmeosForm\Utility\FileNameUtility;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Move the uploaded files from the temporary directory to the element directory once the form is valid
+ */
+#[AsEventListener(identifier: 'moveTemporaryFile')]
 final class MoveTemporaryFile
 {
     public function __invoke(ValidFormEvent $event): void
     {
-        /** @var Upload[] $elements */
-        $elements = $event->getForm()->getElements();
-        foreach ($elements as $element) {
-            if (
-                is_a($element, Upload::class)
-                && !empty($element->getValue())
-                && $element->getState() === Upload::STATE_PENDING
-            ) {
-                /** @var array */
-                $values = $element->getValue();
-                $newValues = [];
-
-                foreach ($values as $value) {
-                    $temporaryFilepath = $element->getTemporaryDirectory() . $value;
-                    $destinationFilepath = $this->getFinalUpdateFilepath($element, $value);
-
-                    rename($temporaryFilepath, $destinationFilepath);
-
-                    $newValues[] = basename($destinationFilepath);
-                }
-                $element->setValue($newValues);
-                $element->updateState(Upload::STATE_DONE);
+        foreach ($event->getForm()->getElements() as $element) {
+            if ($element instanceof Upload && $element->getState() === Upload::STATE_PENDING) {
+                $this->moveFiles($element);
             }
         }
     }
 
-    /**
-     * return final file path
-     * @param Upload $element
-     * @param string $clientFilename
-     * @return string
-     */
-    private function getFinalUpdateFilepath(Upload $element, string $clientFilename)
+    private function moveFiles(Upload $element): void
     {
         $directory = $element->getUploadDirectory();
-        if ($element->getForcedFilename()) {
-            return $directory . $element->getForcedFilename();
+        if (!is_dir($directory)) {
+            GeneralUtility::mkdir_deep($directory);
         }
 
-        if (!file_exists($directory)) {
-            mkdir(
-                $directory,
-                (int)$GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask'],
-                true
-            );
+        $movedFiles = [];
+        foreach ($element->filterTemporaryFileNames($element->getFileNames()) as $fileName) {
+            $destination = $this->getDestinationPath($element, $directory, $element->getOriginalFileName($fileName));
+            if (rename($element->getTemporaryDirectory() . $fileName, $destination)) {
+                GeneralUtility::fixPermissions($destination);
+                $movedFiles[] = basename($destination);
+            }
         }
 
-        if (file_exists($directory . $clientFilename) && !$element->canOverwrite()) {
-            $fileIndex = 1;
-            do {
-                $fileExtension = substr($clientFilename, strrpos($clientFilename, '.') + 1);
-                $filename = basename($clientFilename, '.' . $fileExtension) . '_' . $fileIndex . '.' . $fileExtension;
-                $fileIndex++;
-            } while (file_exists($directory . $filename));
-        } else {
-            $filename = $clientFilename;
-        }
+        $element->setValue($movedFiles);
+        $element->updateState(Upload::STATE_DONE);
+    }
 
-        return $directory . $filename;
+    private function getDestinationPath(Upload $element, string $directory, string $fileName): string
+    {
+        $forcedFilename = $element->getForcedFilename();
+        if ($forcedFilename !== false) {
+            return $directory . $forcedFilename;
+        }
+        return $element->canOverwrite() ? $directory . $fileName : $directory . FileNameUtility::getAvailableName($directory, $fileName);
     }
 }

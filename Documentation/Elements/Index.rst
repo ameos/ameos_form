@@ -112,7 +112,11 @@ custom        custom html attribute                                        custo
 class         css class for the html tag                                   big
 errorclass    css class when there is an error                             error
 items         avalaible choice for checkbox                                array('1' => 'Item 1', '2' => 'Item 2');
+separator     html between the choices                                     <br />
+clausetype    search clause type for each value    contains                contains (relation) or inList (comma separated list)
 ============  ===================================  ======================  ===================================================
+
+The value is the list of the checked values (stored as a comma separated list).
 
 
 .. _elements-checksingle:
@@ -183,57 +187,56 @@ You can add a date like this.
 
 	$form->add('birthdate', 'date', $configuration);
 
+The value is a ``\DateTime`` (or ``null``). It accepts a ``\DateTimeInterface``, a timestamp, a ``Y-m-d`` string
+or an array ``['year' => .., 'month' => .., 'day' => ..]``.
+
 Available configuration
 
 ===================  =================================================  ======================  ===================================================
 Property             Description                                        Default value           Example
 ===================  =================================================  ======================  ===================================================
-class                css class for the html tag                                                 big
+class                css class for the html tags                                                big
 errorclass           css class when there is an error                                           error
-format-display       sort field.d for day, m for month and y for year   dmy                     dmy, mdy, ymd 
-year-minimum-limit   minimum availaible year                            1900                    1970
-year-maximum-limit   maximum availaible year                            current year + 20       2050
-format-output        format of the result                               timestamp               timestamp or format compatible with strftime
+widget               "choice" (3 select boxes) or "text" (date input)   choice                  text
+format-display       order of the select boxes (choice widget)          ymd                     dmy, mdy, ymd
+input                "timestamp" to get a timestamp as value                                    timestamp
 ===================  =================================================  ======================  ===================================================
 
+With the choice widget, an empty date displays the current date.
 
-.. _elements-datepicker:
 
-Datepicker
-----------
+.. _elements-textdate:
 
-.. figure:: ../Images/datepicker.png
+Textdate
+--------
 
-You can add a date picker like this.
+A date rendered as html date input (same as the date element with ``widget`` = ``text``). An empty value
+is rendered empty.
 
 ::
 
-	$form->add('startdate', 'datepicker', $configuration);
+	$form->add('startdate', 'textdate', $configuration);
 
-Available configuration
 
-===================  ============================================================  ======================  ======================================================
-Property             Description                                                    Default value           Example
-===================  ============================================================  ======================  ======================================================
-format               date format (http://momentjs.com/docs/#/displaying/format/)   D MMM YYYY              MMM D YYYY
-placeholder          place holder for the html tag                                                         my firstname
-style                css style for the html tag                                                            width: 150px;
-disabled             true if the html field is disabled                            false                   true or false
-title                html tag title                                                                        my field title
-custom               custom html attribute                                                                 customattr="customvalue"
-class                css class for the html tag                                                            big
-errorclass           css class when there is an error                                                      error
-firstDay             define which day of the week must be the first                0 (sunday)              1
-landingDate          unix timestamp from which will be extracted year and month    current day             1484152522 (for january 2017)
-                     that will be displayed upon user click
-yearRange            array of start and end year to display in the year dropdown   [Year - 10, Year]       [2015, 2020]
-minDate              unix timestamp for minimum date available                                             1583836842
-maxDate              unix timestamp for maximum date available                                             1589107240
-disableDays          array of array of specific days, days of week, months, years                          ['d' => [1, 2]] for mondays and tuesdays (0 = sunday)
-				                                                                                           ['m' => [1, 4]] for february and may (0 = january)
-				 																						   ['y' => [2015]] for year 2015
-				                                                                                           ['ts' => [1582215827]] for specific days (20/02/2020)
-===================  ============================================================  ======================  ======================================================
+.. _elements-time:
+
+Time
+----
+
+You can add a time like this.
+
+::
+
+	$form->add('meeting', 'time', $configuration);
+
+The value is a ``hh:mm`` string (empty when no time is given).
+
+===================  =================================================  ======================  ===================================================
+Property             Description                                        Default value           Example
+===================  =================================================  ======================  ===================================================
+widget               "choice" (hour and minute fields) or "text"        choice                  text
+minutestep           step of the proposed minutes (choice widget)       1                       15
+===================  =================================================  ======================  ===================================================
 
 
 .. _elements-dropdown:
@@ -628,11 +631,14 @@ Upload
 
 .. figure:: ../Images/upload.png
 
-You can add a textarea like this
+You can add an upload field like this
 
 ::
 
-	$form->add('my-file', 'update', $configuration);
+	$form->add('my-file', 'upload', $configuration);
+
+Files are first stored in ``typo3temp/ameos_form/tempupload/`` with a random prefix, and moved to ``directory``
+with their original name when the form is valid. Files rejected by a constraint are deleted.
 
 Available configuration
 
@@ -645,7 +651,9 @@ title         html tag title                                                 my 
 custom        custom html attribute                                          customattr="customvalue"
 class         css class for the html tag                                     big
 errorclass    css class when there is an error                               error
-directory     target upload directory                                        fileadmin/user_upload/my_ext/
+directory     target upload directory (required)                             fileadmin/user_upload/my_ext/
+multiple      if true, several files are allowed     false                   true or false
+maxSize       maximum size of a file                 5M                      500K, 2M, 1G or a size in bytes
 filename      target upload file name                                        my-file.pdf
 canoverwrite  if true, overwrite existing file                               true or false
 show_link     if true, display an link to the file                           true or false

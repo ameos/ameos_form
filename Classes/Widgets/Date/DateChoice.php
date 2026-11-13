@@ -5,162 +5,70 @@ declare(strict_types=1);
 namespace Ameos\AmeosForm\Widgets\Date;
 
 use Ameos\AmeosForm\Widgets\WidgetAbstract;
-use Ameos\AmeosForm\Widgets\WidgetInterface;
 
-class DateChoice extends WidgetAbstract implements WidgetInterface
+/**
+ * Three select boxes (day, month, year), ordered with the "format-display" option (default "ymd")
+ */
+final class DateChoice extends WidgetAbstract
 {
-    /**
-     * @param array $dataFromElement
-     * @return array
-     */
+    use DateValue;
+
+    private const int FIRST_YEAR = 1900;
+    private const int FUTURE_YEARS = 20;
+
     public function getRenderingInformation(array $dataFromElement): array
     {
-        $data = $dataFromElement;
-        $data['year']  = $this->renderYear();
-        $data['month'] = $this->renderMonth();
-        $data['day']   = $this->renderDay();
-        return $data;
+        $dataFromElement['year'] = $this->renderYear();
+        $dataFromElement['month'] = $this->renderMonth();
+        $dataFromElement['day'] = $this->renderDay();
+        return $dataFromElement;
     }
 
-    /**
-     * form to html
-     *
-     * @return  string the html
-     */
     public function toHtml(): string
     {
-        $formatDisplay = $this->element->getConfigurationItem('format-display') ?? 'ymd';
+        $format = $this->element->getConfigurationItem('format-display');
+        $format = is_string($format) && $format !== '' ? $format : 'ymd';
+
         $output = '';
-        switch (substr($formatDisplay, 0, 1)) {
-            case 'd':
-                $output .= $this->renderDay();
-                break;
-            case 'm':
-                $output .= $this->renderMonth();
-                break;
-            case 'y':
-                $output .= $this->renderYear();
-                break;
+        foreach (str_split(substr($format, 0, 3)) as $part) {
+            $output .= match ($part) {
+                'd' => $this->renderDay(),
+                'm' => $this->renderMonth(),
+                'y' => $this->renderYear(),
+                default => '',
+            };
         }
-
-        switch (substr($formatDisplay, 1, 1)) {
-            case 'd':
-                $output .= $this->renderDay();
-                break;
-            case 'm':
-                $output .= $this->renderMonth();
-                break;
-            case 'y':
-                $output .= $this->renderYear();
-                break;
-        }
-
-        switch (substr($formatDisplay, 2, 1)) {
-            case 'd':
-                $output .= $this->renderDay();
-                break;
-            case 'm':
-                $output .= $this->renderMonth();
-                break;
-            case 'y':
-                $output .= $this->renderYear();
-                break;
-        }
-
         return $output;
     }
 
-    /**
-     * return year html selector
-     *
-     * @return  string
-     */
-    protected function renderYear()
+    protected function renderYear(): string
     {
-        $value = $this->element->getValue();
-        if ($value === '') {
-            $value = new \DateTime();
-        } elseif (is_numeric($value)) {
-            $value = new \DateTime('@' . $value);
-        }
+        $lastYear = (int) date('Y') + self::FUTURE_YEARS;
+        return $this->renderItem(range(self::FIRST_YEAR, $lastYear), (int) $this->getDateValue()->format('Y'), 'year');
+    }
 
-        return $this->renderItem($this->getYearsItems(), $value->format('Y'), 'year');
+    protected function renderMonth(): string
+    {
+        return $this->renderItem(range(1, 12), (int) $this->getDateValue()->format('n'), 'month');
+    }
+
+    protected function renderDay(): string
+    {
+        return $this->renderItem(range(1, 31), (int) $this->getDateValue()->format('j'), 'day');
     }
 
     /**
-     * return month html selector
-     *
-     * @return  string
+     * @param list<int> $items
      */
-    protected function renderMonth()
-    {
-        $value = $this->element->getValue();
-        if ($value === '') {
-            $value = new \DateTime();
-        } elseif (is_numeric($value)) {
-            $value = new \DateTime('@' . $value);
-        }
-
-        return $this->renderItem($this->getMonthsItems(), $value->format('n'), 'month');
-    }
-
-    /**
-     * return day html selector
-     *
-     * @return  string
-     */
-    protected function renderDay()
-    {
-        $value = $this->element->getValue();
-        if ($value === '') {
-            $value = new \DateTime();
-        } elseif (is_numeric($value)) {
-            $value = new \DateTime('@' . $value);
-        }
-
-        return $this->renderItem($this->getDaysItems(), $value->format('j'), 'day');
-    }
-
-    private function renderItem($items, $currentValue, $type)
+    private function renderItem(array $items, int $currentValue, string $type): string
     {
         $output = '<select id="' . $this->element->getHtmlId() . '-' . $type . '" '
             . 'name="' . $this->element->getAbsoluteName() . '[' . $type . ']"'
-            . $this->element->getClassAttribute()  . '>';
+            . $this->element->getClassAttribute() . '>';
         foreach ($items as $item) {
-            $selected = $currentValue == $item ? ' selected="selected"' : '';
+            $selected = $currentValue === $item ? ' selected="selected"' : '';
             $output .= '<option value="' . $item . '"' . $selected . '>' . $item . '</option>';
         }
-        $output .= '</select>';
-        return $output;
-    }
-
-    /**
-     * return available years value
-     */
-    protected function getYearsItems()
-    {
-        for ($year = 1900; $year <= date('Y') + 20; $year++) {
-            yield $year;
-        }
-    }
-
-    /**
-     * return available months value
-     */
-    protected function getMonthsItems()
-    {
-        for ($month = 1; $month <= 12; $month++) {
-            yield $month;
-        }
-    }
-
-    /**
-     * return available days value
-     */
-    protected function getDaysItems()
-    {
-        for ($day = 1; $day <= 31; $day++) {
-            yield $day;
-        }
+        return $output . '</select>';
     }
 }

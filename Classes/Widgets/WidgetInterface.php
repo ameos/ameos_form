@@ -9,20 +9,13 @@ use Ameos\AmeosForm\Form\Form;
 
 interface WidgetInterface
 {
-    /**
-     * @param ElementInterface $element
-     * @param Form $form
-     */
     public function __construct(ElementInterface $element, Form $form);
 
     /**
-     * @param array $dataFromElement
-     * @return array
+     * @param array<string, mixed> $dataFromElement
+     * @return array<string, mixed>
      */
     public function getRenderingInformation(array $dataFromElement): array;
 
-    /**
-     * @return string
-     */
     public function toHtml(): string;
 }

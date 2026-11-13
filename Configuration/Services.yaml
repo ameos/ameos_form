@@ -5,19 +5,15 @@ services:
     public: false
 
   Ameos\AmeosForm\:
-    resource: "../Classes/*"
+    resource: '../Classes/*'
+    # Value objects / runtime-instantiated classes (created with constructor arguments, not services)
+    exclude:
+      - '../Classes/{Constraints,Domain,Elements,Enum,Event,Exception,Utility,Widgets}/*'
+      - '../Classes/Form/Form.php'
+      - '../Classes/ErrorManager.php'
 
-  Ameos\AmeosForm\EventListener\EncryptPassword:
-    tags:
-      - name: event.listener
-        identifier: 'encryptPassword'
+  # Public so it can also be fetched with GeneralUtility::makeInstance() by consumers
+  Ameos\AmeosForm\Service\FormService:
+    public: true
 
-  Ameos\AmeosForm\EventListener\MoveTemporaryFile:
-    tags:
-      - name: event.listener
-        identifier: 'moveTemporaryFile'
-
-  Ameos\AmeosForm\EventListener\UploadTemporaryFile:
-    tags:
-      - name: event.listener
-        identifier: 'uploadTemporaryFile'
+  # Event listeners are registered with the #[AsEventListener] attribute

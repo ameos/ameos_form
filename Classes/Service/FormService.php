@@ -6,27 +6,31 @@ namespace Ameos\AmeosForm\Service;
 
 use Ameos\AmeosForm\Domain\Repository\SearchableRepositoryInterface;
 use Ameos\AmeosForm\Form\Form;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-class FormService
+final readonly class FormService
 {
+    public function __construct(private EventDispatcherInterface $eventDispatcher) {}
+
     /**
-     * create and return FORM
-     *
-     * @return Form the form
+     * Create a form. The optional subject is attached as search repository or as entity to update.
+     * Pass the current request (e.g. $this->request in an Extbase controller), it defaults to $GLOBALS['TYPO3_REQUEST'].
      */
-    public function create(...$arguments): Form
-    {
-        $form = GeneralUtility::makeInstance(Form::class, $arguments[0]);
-        if (isset($arguments[1]) && is_a($arguments[1], SearchableRepositoryInterface::class)) {
-            $form->attachRepository($arguments[1]);
+    public function create(
+        string $identifier,
+        SearchableRepositoryInterface|AbstractEntity|null $subject = null,
+        ?ServerRequestInterface $request = null,
+    ): Form {
+        /** @var Form $form XCLASS-able */
+        $form = GeneralUtility::makeInstance(Form::class, $identifier, $request, $this->eventDispatcher);
+        if ($subject instanceof SearchableRepositoryInterface) {
+            $form->attachRepository($subject);
+        } elseif ($subject instanceof AbstractEntity) {
+            $form->attachEntity($subject);
         }
-
-        if (isset($arguments[1]) && is_a($arguments[1], AbstractEntity::class)) {
-            $form->attachEntity($arguments[1]);
-        }
-
         return $form;
     }
 }

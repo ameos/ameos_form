@@ -10,219 +10,227 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
+/**
+ * File upload. Files are first stored in a temporary directory, then moved to "directory" when the form is valid.
+ * Options: directory (required, relative to the public path), multiple, maxSize (e.g. "5M"), canoverwrite,
+ * filename (forced file name), show_link
+ */
 class Upload extends ElementAbstract
 {
-    public const STATE_EMPTY = 'empty';
-    public const STATE_PENDING = 'pending';
-    public const STATE_DONE = 'done';
+    public const string STATE_EMPTY = 'empty';
+    public const string STATE_PENDING = 'pending';
+    public const string STATE_DONE = 'done';
+
+    protected const string TEMPORARY_PATH = 'typo3temp/ameos_form/tempupload/';
+    /** Temporary files are named "<16 hex chars>_<original name>", the random part cannot be guessed */
+    protected const string TEMPORARY_NAME_PATTERN = '/^[0-9a-f]{16}_(.+)$/';
+
+    protected bool $searchable = false;
+    protected string $uploadState = self::STATE_EMPTY;
 
     /**
-     * @var bool
-     */
-    protected $searchable = false;
-
-    /**
-     * @var string
-     */
-    protected $uploadState = self::STATE_EMPTY;
-
-    /**
-     * @constuctor
-     *
-     * @param string $absolutename absolutename
-     * @param string $name name
-     * @param array $configuration configuration
-     * @param Form $form form
+     * @param array<string, mixed>|null $configuration
      */
     public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
-        if (!isset($this->configuration['directory'])) {
-            throw new BadConfigurationException('Directory is missing');
+        if (!is_string($this->configuration['directory'] ?? null) || $this->configuration['directory'] === '') {
+            throw new BadConfigurationException('Directory is missing', 1731340809);
         }
-        if (!file_exists(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/')) {
-            GeneralUtility::mkdir_deep(Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/');
+        if (!is_dir($this->getTemporaryDirectory())) {
+            GeneralUtility::mkdir_deep($this->getTemporaryDirectory());
         }
+    }
+
+    /**
+     * @return list<string> file names
+     */
+    public function getFileNames(): array
+    {
+        $value = $this->getValue();
+        $values = is_array($value) ? $value : [$value];
+        return array_values(array_filter(array_map($this->stringify(...), $values), static fn(string $file): bool => $file !== ''));
     }
 
     public function removeFileFromValue(string $fileName): void
     {
-        if (($key = array_search($fileName, $this->value)) !== false) {
-            unset($this->value[$key]);
+        if (is_array($this->value)) {
+            $this->value = array_values(array_filter($this->value, static fn(mixed $file): bool => $file !== $fileName));
         }
     }
 
-    /**
-     * return true if show link
-     * @return bool
-     */
     public function showLink(): bool
     {
-        return !isset($this->configuration['show_link']) || (bool)$this->configuration['show_link'] === true;
+        return (bool) ($this->configuration['show_link'] ?? true);
     }
 
-    /**
-     * return true if is a multiple upload
-     * @return bool
-     */
     public function isMultiple(): bool
     {
-        return isset($this->configuration['multiple']) && (bool)$this->configuration['multiple'] === true;
+        return (bool) ($this->configuration['multiple'] ?? false);
     }
 
-    /**
-     * return true if upload can overwrite existing file
-     * @return bool
-     */
     public function canOverwrite(): bool
     {
-        return isset($this->configuration['canoverwrite']) && (bool)$this->configuration['canoverwrite'] === true;
+        return (bool) ($this->configuration['canoverwrite'] ?? false);
     }
 
-    /**
-     * Return directory
-     * @return string
-     */
-    public function getUploadDirectory($absolute = true): string
+    public function getUploadDirectory(bool $absolute = true): string
     {
-        $directory = '';
-        if ($absolute) {
-            $directory .= Environment::getPublicPath() . '/';
-        }
-        return $directory . trim($this->configuration['directory'], '/') . '/';
+        return ($absolute ? Environment::getPublicPath() . '/' : '') . $this->getRelativeUploadDirectory();
     }
 
-    /**
-     * Return directory
-     * @return string
-     */
     public function getTemporaryDirectory(): string
     {
-        return Environment::getPublicPath() . '/typo3temp/ameos_form/tempupload/';
+        return Environment::getPublicPath() . '/' . self::TEMPORARY_PATH;
     }
 
     /**
-     * return forced filename or false
-     *
-     * @return string|false
+     * Unique and unguessable name for a new temporary file
      */
+    public function createTemporaryFileName(string $originalFileName): string
+    {
+        return bin2hex(random_bytes(8)) . '_' . $originalFileName;
+    }
+
+    /**
+     * Original name of a temporary file (the name itself for other files)
+     */
+    public function getOriginalFileName(string $fileName): string
+    {
+        return preg_match(self::TEMPORARY_NAME_PATTERN, $fileName, $matches) === 1 ? $matches[1] : $fileName;
+    }
+
+    /**
+     * Delete a temporary file (e.g. rejected by a constraint) so that it is not kept in the public directory
+     */
+    public function deleteTemporaryFile(string $fileName): void
+    {
+        if ($this->filterTemporaryFileNames([$fileName]) !== []) {
+            unlink($this->getTemporaryDirectory() . $fileName);
+        }
+    }
+
+    /**
+     * Keep only temporary file names (random prefix) that exist in the temporary directory.
+     * Protects against path traversal and against the use of temporary files uploaded by other visitors.
+     *
+     * @param array<array-key, mixed> $fileNames
+     * @return list<string>
+     */
+    public function filterTemporaryFileNames(array $fileNames): array
+    {
+        $validFileNames = [];
+        foreach ($fileNames as $fileName) {
+            $fileName = $this->stringify($fileName);
+            if ($fileName === basename($fileName)
+                && preg_match(self::TEMPORARY_NAME_PATTERN, $fileName) === 1
+                && is_file($this->getTemporaryDirectory() . $fileName)
+            ) {
+                $validFileNames[] = $fileName;
+            }
+        }
+        return $validFileNames;
+    }
+
     public function getForcedFilename(): string|false
     {
-        return isset($this->configuration['filename']) ? $this->configuration['filename'] : false;
+        $filename = $this->stringify($this->configuration['filename'] ?? '');
+        return $filename !== '' ? basename($filename) : false;
     }
 
-    /**
-     * update upload state
-     *
-     * @param string $state
-     * @return self
-     */
     public function updateState(string $state): self
     {
         $this->uploadState = $state;
-
         return $this;
     }
 
-    /**
-     * update upload state
-     *
-     * @return string
-     */
     public function getState(): string
     {
         return $this->uploadState;
     }
 
-    /**
-     * form to html
-     *
-     * @return    string the html
-     */
     public function toHtml(): string
     {
-        $multiple = $this->isMultiple() ? ' multiple="multiple" ' : '';
-
         $output = '';
-
-        /** @var string|array */
-        $values = $this->getValue();
-
-        if ($values) {
-            if (!is_array($values)) {
-                $values = [$values];
-            }
-
-            if ($this->uploadState == self::STATE_PENDING) {
-                foreach ($values as $value) {
-                    $output .= '<a id="' . $this->getHtmlId() . '-temporary-' . $value . '-viewlink" '
-                        . 'target="_blank" href="/typo3temp/ameos_form/tempupload/' . $value . '" '
-                        . 'class="ameos-form-elementupload-viewlink">'
-                        . '<span class="ameos-form-elementupload-viewlink-inner">'
-                        . LocalizationUtility::translate('view-file', 'ameos_form')
-                        . '&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">'
-                        . $value . '</span></span></a> ';
-                    $output .= '<button type="button" '
-                        . 'id="' . $this->getHtmlId() . '-temporary-' . $value . '-deletebutton" '
-                        . 'class="ameos-form-elementupload-deletebutton" title="'
-                        . LocalizationUtility::translate('delete-file', 'ameos_form')
-                        . '&nbsp;: ' . $value . '"><span class="ameos-form-elementupload-deletebutton-inner">'
-                        . LocalizationUtility::translate('delete-file', 'ameos_form') . '</span></button>';
-                    $output .= '<input type="hidden" value="' . $value . '" '
-                        . 'id="' . $this->getHtmlId() . '-temporary-' . $value . '" '
-                        . 'name="' . $this->absolutename . '[temporary][]" />';
-                }
-            } elseif ($this->showLink()) {
-                foreach ($values as $value) {
-                    $output .= '<a target="_blank" href="' . $this->getUploadDirectoryUri() . $value . '" '
-                        . 'class="ameos-form-elementupload-viewlink">'
-                        . '<span class="ameos-form-elementupload-viewlink-inner">'
-                        . LocalizationUtility::translate('view-file', 'ameos_form')
-                        . '&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">'
-                        . $value . '</span></span></a> ';
-                }
-            }
+        foreach ($this->getFileNames() as $fileName) {
+            $output .= $this->renderFile($fileName);
         }
 
-        $output .= '<input type="file" ' . $multiple . 'id="' . $this->getHtmlId()
-            . '-upload" name="' . $this->absolutename . '[upload][]"' . $this->getAttributes() . ' />';
-        $output .= '<button type="button" id="' . $this->getHtmlId()
-            . '-uploadreset" class="ameos-form-elementupload-resetbutton" title="'
-            . LocalizationUtility::translate('reset-upload', 'ameos_form')
-            . '"><span class="ameos-form-elementupload-resetbutton-inner">'
-            . LocalizationUtility::translate('reset-upload', 'ameos_form') . '</span></button>';
+        $output .= '<input type="file" ' . ($this->isMultiple() ? ' multiple="multiple" ' : '')
+            . 'id="' . $this->getHtmlId() . '-upload" '
+            . 'name="' . $this->absolutename . '[upload][]"' . $this->getAttributes() . ' />';
+        $resetLabel = $this->translate('reset-upload');
+        $output .= '<button type="button" id="' . $this->getHtmlId() . '-uploadreset" '
+            . 'class="ameos-form-elementupload-resetbutton" title="' . $resetLabel . '">'
+            . '<span class="ameos-form-elementupload-resetbutton-inner">' . $resetLabel . '</span></button>';
 
-        $this->assetCollector->addJavaScript(
-            'ameos-form-elementupload',
-            'EXT:ameos_form/Resources/Public/Elements/upload.js'
-        );
+        $this->assetCollector->addJavaScript('ameos-form-elementupload', 'EXT:ameos_form/Resources/Public/Elements/upload.js');
 
         return $output;
     }
 
-    /**
-     * return rendering information
-     *
-     * @return    array rendering information
-     */
     public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
-        if ($this->uploadState == self::STATE_PENDING) {
-            $data['filepath'] = '/typo3temp/ameos_form/tempupload/' . $this->getValue();
-        } elseif (file_exists($this->getUploadDirectory() . $this->getValue())) {
-            $data['filepath'] = $this->getUploadDirectoryUri() . $this->getValue();
+        $filePaths = [];
+        foreach ($this->getFileNames() as $fileName) {
+            if ($this->uploadState === self::STATE_PENDING) {
+                $filePaths[] = '/' . self::TEMPORARY_PATH . rawurlencode($fileName);
+            } elseif (is_file($this->getUploadDirectory() . $fileName)) {
+                $filePaths[] = $this->getUploadDirectoryUri() . rawurlencode($fileName);
+            }
         }
-
+        if ($filePaths !== []) {
+            $data['filepath'] = $filePaths[0];
+            $data['filepaths'] = $filePaths;
+        }
         return $data;
     }
 
-    /**
-     * Return uri
-     * @return string
-     */
-    protected function getUploadDirectoryUri()
+    protected function renderFile(string $fileName): string
     {
-        return '/' . trim($this->configuration['directory'], '/') . '/';
+        if ($this->uploadState === self::STATE_PENDING) {
+            return $this->renderTemporaryFile($fileName);
+        }
+        if ($this->showLink()) {
+            return $this->renderViewLink($this->getUploadDirectoryUri() . rawurlencode($fileName), $fileName, '');
+        }
+        return '';
+    }
+
+    protected function renderTemporaryFile(string $fileName): string
+    {
+        $id = $this->getHtmlId() . '-temporary-' . $this->escape($fileName);
+        $deleteLabel = $this->translate('delete-file');
+        return $this->renderViewLink('/' . self::TEMPORARY_PATH . rawurlencode($fileName), $this->getOriginalFileName($fileName), $id . '-viewlink')
+            . '<button type="button" id="' . $id . '-deletebutton" class="ameos-form-elementupload-deletebutton" '
+            . 'title="' . $deleteLabel . '&nbsp;: ' . $this->escape($this->getOriginalFileName($fileName)) . '">'
+            . '<span class="ameos-form-elementupload-deletebutton-inner">' . $deleteLabel . '</span></button>'
+            . '<input type="hidden" value="' . $this->escape($fileName) . '" id="' . $id . '" '
+            . 'name="' . $this->absolutename . '[temporary][]" />';
+    }
+
+    protected function renderViewLink(string $uri, string $fileName, string $id): string
+    {
+        return '<a ' . ($id !== '' ? 'id="' . $id . '" ' : '') . 'target="_blank" href="' . $this->escape($uri) . '" '
+            . 'class="ameos-form-elementupload-viewlink">'
+            . '<span class="ameos-form-elementupload-viewlink-inner">' . $this->translate('view-file')
+            . '&nbsp;: <span class="ameos-form-elementupload-viewlink-filename">' . $this->escape($fileName)
+            . '</span></span></a> ';
+    }
+
+    protected function getUploadDirectoryUri(): string
+    {
+        return '/' . $this->getRelativeUploadDirectory();
+    }
+
+    protected function translate(string $key): string
+    {
+        return LocalizationUtility::translate($key, 'ameos_form', null, null, $this->form->getCurrentRequest()) ?? $key;
+    }
+
+    private function getRelativeUploadDirectory(): string
+    {
+        return trim($this->stringify($this->configuration['directory'] ?? ''), '/') . '/';
     }
 }

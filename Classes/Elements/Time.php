@@ -10,73 +10,52 @@ use Ameos\AmeosForm\Widgets\Time\TimeChoice;
 use Ameos\AmeosForm\Widgets\Time\TimeText;
 use Ameos\AmeosForm\Widgets\WidgetInterface;
 
+/**
+ * Options: widget ("choice" or "text"), minutestep (default 1). Value is stored as "hh:mm"
+ */
 class Time extends ElementAbstract
 {
     protected WidgetInterface $widget;
 
     /**
-     * @constuctor
-     *
-     * @param string $absolutename absolutename
-     * @param string $name name
-     * @param array $configuration configuration
-     * @param Form $form form
+     * @param array<string, mixed>|null $configuration
      */
     public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
-        $configuration['minutestep'] = $configuration['minutestep'] ?? 1;
-
+        $configuration ??= [];
+        $configuration['minutestep'] ??= 1;
         parent::__construct($absolutename, $name, $configuration, $form);
-
-        $widget = $this->getConfigurationItem('widget') ?? 'choice';
-        switch ($widget) {
-            case 'text':
-                $this->widget = new TimeText($this, $form);
-                break;
-            case 'choice':
-                $this->widget = new TimeChoice($this, $form);
-                break;
-            default:
-                throw new BadConfigurationException('Invalid widget type');
-        }
+        $this->widget = match ($this->getConfigurationItem('widget') ?? 'choice') {
+            'text' => new TimeText($this, $form),
+            'choice' => new TimeChoice($this, $form),
+            default => throw new BadConfigurationException('Invalid widget type', 1731340807),
+        };
     }
 
-    /**
-     * return rendering information
-     *
-     * @return  array rendering information
-     */
     public function getRenderingInformation(): array
     {
-        return $this->widget->getRenderingInformation(
-            parent::getRenderingInformation()
-        );
+        return $this->widget->getRenderingInformation(parent::getRenderingInformation());
     }
 
-    /**
-     * form to html
-     *
-     * @return  string the html
-     */
     public function toHtml(): string
     {
         return $this->widget->toHtml();
     }
 
     /**
-     * set the value
-     *
-     * @param   mixed $value
-     * @return  self this
+     * Accepts "hh:mm" or ['hour' => .., 'minute' => ..]. Parts are zero-padded, empty parts give an empty value.
      */
     public function setValue(mixed $value): self
     {
         if (is_array($value)) {
-            $value = implode(':', $value);
+            $parts = array_values($value);
+            $hour = trim($this->stringify($value['hour'] ?? $parts[0] ?? ''));
+            $minute = trim($this->stringify($value['minute'] ?? $parts[1] ?? ''));
+            $value = $hour === '' && $minute === ''
+                ? ''
+                : str_pad($hour, 2, '0', STR_PAD_LEFT) . ':' . str_pad($minute === '' ? '0' : $minute, 2, '0', STR_PAD_LEFT);
         }
-
         parent::setValue($value);
-
         return $this;
     }
 }

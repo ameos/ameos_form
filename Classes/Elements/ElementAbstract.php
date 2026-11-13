@@ -9,447 +9,360 @@ use Ameos\AmeosForm\Constraints\Required;
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\BadConstraintException;
 
-abstract class ElementAbstract implements ElementInterface
+abstract class ElementAbstract implements ElementInterface, \Stringable
 {
-    /**
-     * @var AssetCollector
-     */
-    protected $assetCollector;
+    protected AssetCollector $assetCollector;
+    protected mixed $value = null;
+    /** @var array<string, mixed> */
+    protected array $configuration;
+    /** @var list<string> errors added by the element itself */
+    protected array $systemerror = [];
+    /** @var list<ConstraintInterface> */
+    protected array $constraints = [];
+    protected bool $searchable = true;
+    protected ?\Closure $overrideClause = null;
+    /** @var bool true if element constraints are checked */
+    protected bool $isVerified = false;
 
     /**
-     * @var mixed $value value
-     */
-    protected $value;
-
-    /**
-     * @var array $errors errors
-     */
-    protected $errors = null;
-
-    /**
-     * @var array $systemerror systemerror
-     */
-    protected $systemerror = [];
-
-    /**
-     * @var array $constraints constraints
-     */
-    protected $constraints = [];
-
-    /**
-     * @var bool $searchable searchable
-     */
-    protected $searchable = true;
-
-    /**
-     * @var    bool|callable $overrideClause override clause function
-     */
-    protected $overrideClause = false;
-
-    /**
-     * @var bool $isVerified true if element constraints are checked
-     */
-    protected $isVerified = false;
-
-    /**
-     * @constuctor
-     *
-     * @param string $absolutename absolutename
-     * @param string $name name
-     * @param array $configuration configuration
-     * @param Form $form form
+     * @param array<string, mixed>|null $configuration
      */
     public function __construct(
         protected string $absolutename,
         protected string $name,
-        protected ?array $configuration,
-        protected Form $form
+        ?array $configuration,
+        protected Form $form,
     ) {
+        $this->configuration = $configuration ?? [];
         $this->assetCollector = GeneralUtility::makeInstance(AssetCollector::class);
     }
 
-    /**
-     * return attribute based on configuration
-     *
-     * @param string $key
-     * @return string
-     */
+    abstract public function toHtml(): string;
+
     public function getAttribute(string $key, string $type = 'text'): string
     {
         $configuration = $this->getConfigurationItem($key);
-        if ($type === 'bool') {
-            return $configuration ? ' ' . $key : '';
+        // 0 is a valid value (e.g. min="0"), only empty values are skipped (and false values for boolean attributes)
+        if ($configuration === null || $configuration === '' || $configuration === false || ($type === 'bool' && !$configuration)) {
+            return '';
         }
-        return $configuration ? ' ' . $key . '="' . $configuration . '"' : '';
+        return $type === 'bool' ? ' ' . $key : ' ' . $key . '="' . $this->escapeConfiguration($configuration) . '"';
     }
 
-    /**
-     * return css class attribute
-     *
-     * @return string
-     */
     public function getClassAttribute(): string
     {
-        $cssclass = isset($this->configuration['class']) ? $this->configuration['class'] : '';
-        if (!$this->isValid()) {
-            $cssclass .= isset($this->configuration['errorclass']) ? ' ' . $this->configuration['errorclass'] : '';
+        $cssclass = $this->stringify($this->configuration['class'] ?? '');
+        if (isset($this->configuration['errorclass']) && !$this->isValid()) {
+            $cssclass .= ' ' . $this->stringify($this->configuration['errorclass']);
         }
-        return $cssclass !== '' ? ' class="' . $cssclass . '"' : '';
+        return $cssclass !== '' ? ' class="' . $this->escapeConfiguration($cssclass) . '"' : '';
     }
 
     /**
-     * return custom attribute
-     *
-     * @return string
+     * Raw attributes string (e.g. 'data-foo="bar"'), output unescaped on purpose
      */
     public function getCustomAttribute(): string
     {
         $configuration = $this->getConfigurationItem('custom');
-        return $configuration ? ' ' . $configuration : '';
+        return $configuration ? ' ' . $this->stringify($configuration) : '';
     }
 
-    /**
-     * return html attribute
-     *
-     * @return string
-     */
     public function getAttributes(): string
     {
-        $output = '';
-        $output .= $this->getAttribute('placeholder');
-        $output .= $this->getAttribute('style');
-        $output .= $this->getAttribute('disabled', 'bool');
-        $output .= $this->getAttribute('title');
-        $output .= $this->getAttribute('type');
-        $output .= $this->getClassAttribute();
-        $output .= $this->getCustomAttribute();
+        $output = $this->getAttribute('placeholder')
+            . $this->getAttribute('style')
+            . $this->getAttribute('disabled', 'bool')
+            . $this->getAttribute('title')
+            . $this->getAttribute('type')
+            . $this->getClassAttribute()
+            . $this->getCustomAttribute();
 
-        $output .= isset($this->configuration['datalist']) ? ' list="' . $this->getHtmlId() . '-datalist"' : '';
-
-        return $output;
-    }
-
-    /**
-     * return html datalist
-     *
-     * @return string
-     */
-    public function getDatalist(): string
-    {
-        $output = '';
-        if (isset($this->configuration['datalist']) && is_array($this->configuration['datalist'])) {
-            $output = '<datalist id="' . $this->getHtmlId() . '-datalist">';
-            foreach ($this->configuration['datalist'] as $value => $label) {
-                $output .= '<option value="' . $value . '" label="' . $label . '">' . $label . '</option>';
-            }
-            $output .= '</datalist>';
+        if (isset($this->configuration['datalist'])) {
+            $output .= ' list="' . $this->getHtmlId() . '-datalist"';
         }
         return $output;
     }
 
-    /**
-     * add configuration
-     *
-     * alias addConfiguration
-     * @param string $key configuration key
-     * @param mixed $value value
-     * @return self
-     */
+    public function getDatalist(): string
+    {
+        $datalist = $this->configuration['datalist'] ?? null;
+        if (!is_array($datalist)) {
+            return '';
+        }
+        $output = '<datalist id="' . $this->getHtmlId() . '-datalist">';
+        foreach ($datalist as $value => $label) {
+            $label = $this->escapeConfiguration($label);
+            $output .= '<option value="' . $this->escapeConfiguration($value) . '" label="' . $label . '">' . $label . '</option>';
+        }
+        return $output . '</datalist>';
+    }
+
     public function with(string $key, mixed $value): self
     {
         return $this->addConfiguration($key, $value);
     }
 
-    /**
-     * add configuration
-     *
-     * @param string $key configuration key
-     * @param mixed $value value
-     * @return self
-     */
     public function addConfiguration(string $key, mixed $value): self
     {
         $this->configuration[$key] = $value;
-
         return $this;
     }
 
-    /**
-     * set the value
-     *
-     * @param mixed $value value
-     * @return self
-     */
     public function setValue(mixed $value): self
     {
         $this->value = $value;
         $this->form->updateEntityProperty($this->name, $value);
-
         return $this;
     }
 
-    /**
-     * return the value
-     *
-     * @return mixed
-     */
     public function getValue(): mixed
     {
-        if (is_null($this->value)) {
-            return isset($this->configuration['defaultValue']) ? $this->configuration['defaultValue'] : '';
-        }
-        return $this->value;
+        return $this->value ?? $this->configuration['defaultValue'] ?? '';
     }
 
-    /**
-     * return the name
-     *
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * return the configuration
-     *
-     * @return array
-     */
     public function getConfiguration(): array
     {
         return $this->configuration;
     }
 
-    /**
-     * return configuration item
-     *
-     * @param string $key
-     * @return mixed
-     */
     public function getConfigurationItem(string $key): mixed
     {
-        return isset($this->configuration[$key]) ? $this->configuration[$key] : null;
+        return $this->configuration[$key] ?? null;
     }
 
-    /**
-     * return search field
-     *
-     * @return string
-     */
     public function getSearchField(): string
     {
-        if (isset($this->configuration['searchfield'])) {
-            return $this->configuration['searchfield'];
-        }
-        return $this->name;
+        $searchField = $this->configuration['searchfield'] ?? null;
+        return is_string($searchField) && $searchField !== '' ? $searchField : $this->name;
     }
 
-    /**
-     * return the html id
-     *
-     * @return string
-     */
     public function getHtmlId(): string
     {
         return str_replace(['.', '[', ']'], ['_', '_', ''], $this->absolutename);
     }
 
-    /**
-     * return the absolute name
-     *
-     * @return string
-     */
     public function getAbsoluteName(): string
     {
         return $this->absolutename;
     }
 
-    /**
-     * return where clause
-     *
-     * @return array|false
-     */
     public function getClause(): array|false
     {
-        if (!empty($this->getValue())) {
-            if ($this->overrideClause !== false) {
-                $function = $this->overrideClause;
-                $searchInformation = $function($this->getValue(), $this, $this->form);
-                $searchInformation['elementname']  = $this->getName();
-                $searchInformation['elementvalue'] = $this->getValue();
-                return $searchInformation;
-            } else {
-                return [
-                    'elementname'  => $this->getName(),
-                    'elementvalue' => $this->getValue(),
-                    'field' => $this->getSearchField(),
-                    'type'  => 'like',
-                    'value' => '%' . $this->getValue() . '%'
-                ];
-            }
+        if ($this->isEmptyValue($this->getValue())) {
+            return false;
         }
-        return false;
+        return $this->overrideClause !== null
+            ? $this->buildOverriddenClause()
+            : $this->buildClause('like', '%' . $this->stringify($this->getValue()) . '%');
     }
 
     /**
-     * set ovrride clause method
-     *
-     * @param \Closure $overrideClause function
-     * @return self
+     * Set a closure building the search clause: fn(mixed $value, ElementInterface $element, Form $form): array
      */
     public function setOverrideClause(\Closure $overrideClause): self
     {
         $this->overrideClause = $overrideClause;
-
         return $this;
     }
 
     /**
-     * add validator
-     *
-     * @param ConstraintInterface $constraint
-     * @return self
-     * @alias    addConstraint
+     * Alias of addConstraint()
      */
     public function validator(ConstraintInterface $constraint): self
     {
         return $this->addConstraint($constraint);
     }
 
-    /**
-     * add constraint
-     *
-     * @param ConstraintInterface $constraint
-     * @return self
-     */
     public function addConstraint(ConstraintInterface $constraint): self
     {
         $this->constraints[] = $constraint;
-
         return $this;
     }
 
-    /**
-     * determine errors
-     *
-     * @return self
-     */
     public function determineErrors(): self
     {
-        if ($this->isVerified === false) {
-            if ($this->form->isSubmitted()) {
-                $value = $this->getValue();
-                foreach ($this->constraints as $constraint) {
-                    if (!$constraint->isValid($value)) {
-                        $errorMessage = $constraint->getMessage();
-                        if ($errorMessage !== null) {
-                            $this->form->getErrorManager()->add($errorMessage, $this->getName());
-                        }
-                    }
-                }
-                foreach ($this->systemerror as $error) {
-                    $this->form->getErrorManager()->add($error, $this->getName());
-                }
-                $this->isVerified = true;
+        if ($this->isVerified || !$this->form->isSubmitted()) {
+            return $this;
+        }
+
+        $errorManager = $this->form->getErrorManager();
+        foreach ($this->constraints as $constraint) {
+            // value read for each constraint: upload constraints remove the rejected files from the value
+            $message = $constraint->isValid($this->getValue()) ? null : $constraint->getMessage();
+            if ($message !== null) {
+                $errorManager->add($message, $this->getName());
             }
         }
+        foreach ($this->systemerror as $error) {
+            $errorManager->add($error, $this->getName());
+        }
+        $this->isVerified = true;
+
         return $this;
     }
 
-    /**
-     * return true if the element is valide
-     *
-     * @return bool
-     */
     public function isValid(): bool
     {
         return $this->form->getErrorManager()->elementIsValid($this);
     }
 
-    /**
-     * return errors
-     *
-     * @return array
-     */
     public function getErrors(): array
     {
         return $this->form->getErrorManager()->getErrorsFor($this);
     }
 
-    /**
-     * return true if the element is valide
-     *
-     * @return bool
-     */
     public function getIsRequired(): bool
     {
         foreach ($this->constraints as $constraint) {
-            if (is_a($constraint, Required::class)) {
+            if ($constraint instanceof Required) {
                 return true;
             }
         }
         return false;
     }
 
-    /**
-     * return true if the element is valide
-     *
-     * @return bool
-     */
     public function isRequired(): bool
     {
         return $this->getIsRequired();
     }
 
-    /**
-     * return rendering information
-     *
-     * @return array
-     */
     public function getRenderingInformation(): array
     {
         $data = $this->configuration;
-        $data['__compiled']   = $this->toHtml();
-        $data['name']         = $this->name;
-        $data['value']        = $this->getValue();
+        $data['__compiled'] = $this->toHtml();
+        $data['name'] = $this->name;
+        $data['value'] = $this->getValue();
         $data['absolutename'] = $this->absolutename;
-        $data['htmlid']       = $this->getHtmlId();
-        $data['errors']       = $this->getErrors();
-        $data['isvalid']      = $this->isValid();
-        $data['required']     = $this->isRequired();
-        $data['hasError']     = !$this->isValid();
-        if (isset($this->configuration['datalist'])) {
-            $data['datalist'] = $this->configuration['datalist'];
-        }
+        $data['htmlid'] = $this->getHtmlId();
+        $data['errors'] = $this->getErrors();
+        $data['isvalid'] = $this->isValid();
+        $data['required'] = $this->isRequired();
+        $data['hasError'] = !$data['isvalid'];
         return $data;
     }
 
     /**
-     * return true if element is searchable
-     *
-     * @return bool
+     * TRUE if the browser does not send the field when it is empty (e.g. unchecked checkbox):
+     * the element is then emptied when the form is submitted, instead of keeping the entity value.
+     * Disabled elements are never sent, they are not emptied.
      */
+    public function isOmittedFromRequestWhenEmpty(): bool
+    {
+        return false;
+    }
+
     public function isSearchable(): bool
     {
         return $this->searchable;
     }
 
-    /**
-     * form to html
-     *
-     * @return string
-     */
-    abstract public function toHtml(): string;
-
-    /**
-     * to string
-     *
-     * @return string
-     */
     public function __toString(): string
     {
-        return (string)$this->toHtml();
+        return $this->toHtml();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function buildClause(string $type, mixed $value): array
+    {
+        return [
+            'elementname' => $this->getName(),
+            'elementvalue' => $this->getValue(),
+            'field' => $this->getSearchField(),
+            'type' => $type,
+            'value' => $value,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function buildOverriddenClause(): array
+    {
+        $clause = $this->overrideClause !== null
+            ? ($this->overrideClause)($this->getValue(), $this, $this->form)
+            : [];
+        $clause = is_array($clause) ? $clause : [];
+        $clause['elementname'] = $this->getName();
+        $clause['elementvalue'] = $this->getValue();
+        /** @var array<string, mixed> $clause */
+        return $clause;
+    }
+
+    protected function isEmptyValue(mixed $value): bool
+    {
+        return $value === null || $value === '' || $value === [] || $value === false;
+    }
+
+    protected function isDisabled(): bool
+    {
+        return (bool) ($this->configuration['disabled'] ?? false);
+    }
+
+    /**
+     * Convert a scalar or Stringable value to string, anything else to an empty string
+     */
+    protected function stringify(mixed $value): string
+    {
+        return match (true) {
+            is_string($value) => $value,
+            is_int($value), is_float($value) => (string) $value,
+            is_bool($value) => $value ? '1' : '',
+            $value instanceof \Stringable => (string) $value,
+            default => '',
+        };
+    }
+
+    /**
+     * Escape user input for HTML output
+     */
+    protected function escape(mixed $value): string
+    {
+        return htmlspecialchars($this->stringify($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+    /**
+     * Escape developer configuration for HTML attributes, existing entities are kept
+     */
+    protected function escapeConfiguration(mixed $value): string
+    {
+        return htmlspecialchars($this->stringify($value), ENT_QUOTES | ENT_HTML5, 'UTF-8', false);
+    }
+
+    /**
+     * Value used for the "value" attribute
+     */
+    protected function getEscapedValue(): string
+    {
+        return $this->escape($this->getValue());
+    }
+
+    /**
+     * Read a property of an object through its getter
+     */
+    protected function readProperty(mixed $object, string $property): mixed
+    {
+        $getter = is_object($object) ? [$object, 'get' . ucfirst($property)] : null;
+        return $getter !== null && is_callable($getter) ? $getter() : null;
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    protected function getItems(string $errorMessage): array
+    {
+        $items = $this->configuration['items'] ?? null;
+        if (!is_array($items)) {
+            throw new BadConstraintException($errorMessage, 1731340804);
+        }
+        return $items;
     }
 }

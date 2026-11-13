@@ -40,6 +40,9 @@
 			<trans-unit id="previousMonth" xml:space="preserve"><source>Previous month</source><target>Mois précédent</target></trans-unit>
 			<trans-unit id="nextMonth" xml:space="preserve"><source>Next month</source><target>Mois suivant</target></trans-unit>
 			<trans-unit id="fileSizeError" xml:space="preserve"><source>The size of the file "%file_name%" exceeds the allowed limit of %max_size%.</source><target>La taille du fichier "%file_name%" excéde la limite autorisée de %max_size%.</target></trans-unit>
+			<trans-unit id="fileNameError" xml:space="preserve"><source>The file "%file_name%" is not allowed.</source><target>Le fichier "%file_name%" n'est pas autorisé.</target></trans-unit>
+			<trans-unit id="error.csrf" xml:space="preserve"><source>The form has expired, please submit it again.</source><target>Le formulaire a expiré, merci de le soumettre à nouveau.</target></trans-unit>
+			<trans-unit id="error.honeypot" xml:space="preserve"><source>The form could not be sent.</source><target>Le formulaire n'a pas pu être envoyé.</target></trans-unit>
 
 			<trans-unit id="view-file" xml:space="preserve"><source><![CDATA[View the file]]></source><target><![CDATA[Voir le fichier]]></target></trans-unit>
 			<trans-unit id="delete-file" xml:space="preserve"><source><![CDATA[Delete the file]]></source><target><![CDATA[Supprimer le fichier]]></target></trans-unit>

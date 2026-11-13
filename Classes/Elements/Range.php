@@ -4,71 +4,34 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
+use Ameos\AmeosForm\Elements\Traits\NumericBounds;
+
 class Range extends ElementAbstract
 {
-    /**
-     * form to html
-     *
-     * @return string
-     */
+    use NumericBounds;
+
     public function toHtml(): string
     {
-        $additionnalAttributes = '';
-        $additionnalAttributes .= $this->getAttribute('min');
-        $additionnalAttributes .= $this->getAttribute('max');
-        $additionnalAttributes .= $this->getAttribute('step');
-
         return '<input type="range" '
             . 'id="' . $this->getHtmlId() . '" '
             . 'name="' . $this->absolutename . '" '
-            . 'value="' . $this->getValue() . '"'
+            . 'value="' . $this->getEscapedValue() . '"'
             . $this->getAttributes()
-            . $additionnalAttributes . ' />'
+            . $this->getBoundsAttributes() . ' />'
             . $this->getDatalist();
     }
 
-    /**
-     * return rendering information
-     *
-     * @return array
-     */
     public function getRenderingInformation(): array
     {
-        $data = parent::getRenderingInformation();
-
-        if (isset($this->configuration['min'])) {
-            $data['min']  = $this->configuration['min'];
-        }
-        if (isset($this->configuration['max'])) {
-            $data['max']  = $this->configuration['max'];
-        }
-        if (isset($this->configuration['step'])) {
-            $data['step'] = $this->configuration['step'];
-        }
-
-        return $data;
+        return $this->addBoundsRenderingInformation(parent::getRenderingInformation());
     }
 
-    /**
-     * return where clause
-     *
-     * @return array|false
-     */
     public function getClause(): array|false
     {
-        if ($this->getValue() != '') {
-            if ($this->overrideClause !== false) {
-                return parent::getClause();
-            } else {
-                return [
-                    'elementname'  => $this->getName(),
-                    'elementvalue' => $this->getValue(),
-                    'field' => $this->getSearchField(),
-                    'type'  => 'equals',
-                    'value' => $this->getValue()
-                ];
-            }
+        $value = $this->getValue();
+        if ($value === '' || $value === null) {
+            return false;
         }
-        return false;
+        return $this->overrideClause !== null ? $this->buildOverriddenClause() : $this->buildClause('equals', $value);
     }
 }

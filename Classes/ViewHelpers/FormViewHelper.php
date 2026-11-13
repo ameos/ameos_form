@@ -5,109 +5,87 @@ declare(strict_types=1);
 namespace Ameos\AmeosForm\ViewHelpers;
 
 use Ameos\AmeosForm\Form\Form;
-use TYPO3\CMS\Core\Http\ApplicationType;
-use TYPO3\CMS\Core\Http\ServerRequest;
-use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class FormViewHelper extends AbstractViewHelper
+/**
+ * Render the form tag. The form elements (and "errors") are available as variables inside the tag:
+ *
+ * <form:form form="{form}">{myElement}</form:form>
+ */
+final class FormViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var boolean
-     */
     protected $escapeChildren = false;
 
-    /**
-     * @var boolean
-     */
     protected $escapeOutput = false;
 
-    /**
-     * Arguments initialization
-     *
-     * @return void
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
-        parent::initializeArguments();
         $this->registerArgument('form', Form::class, 'form instance', false);
-        $this->registerArgument('method', 'string', 'method attribute', false);
-        $this->registerArgument('enctype', 'string', 'method attribute', false);
-        $this->registerArgument('action', 'string', 'action attribute', false);
-        $this->registerArgument('class', 'string', 'class attribute', false);
-        $this->registerArgument('id', 'string', 'id attribute', false);
+        $this->registerArgument('method', 'string', 'method attribute', false, 'POST');
+        $this->registerArgument('enctype', 'string', 'enctype attribute', false, 'multipart/form-data');
+        $this->registerArgument('action', 'string', 'action attribute', false, '');
+        $this->registerArgument('class', 'string', 'class attribute', false, '');
+        $this->registerArgument('id', 'string', 'id attribute', false, '');
     }
 
-    /**
-     * Renders form
-     *
-     * @return string html
-     */
-    public function render()
+    public function render(): string
     {
         $form = $this->arguments['form'];
-        $method  = $this->arguments['method']  == '' ? 'POST' : $this->arguments['method'];
-        $enctype = $this->arguments['enctype'] == ''
-            ? ' enctype="multipart/form-data"'
-            : ' enctype="' . $this->arguments['enctype'] . '"';
-        $action  = $this->arguments['action']  == '' ? '' : ' action="' . $this->arguments['action'] . '"';
-        $class   = $this->arguments['class']   == '' ? '' : ' class="' . $this->arguments['class'] . '"';
-        $id      = $this->arguments['id']      == '' ? '' : ' id="' . $this->arguments['id'] . '"';
-
-        if (!is_object($form)) {
+        if (!$form instanceof Form) {
             return 'Form is not valid. May be it\'s not assigned to the view.';
         }
 
-        foreach ($form->getElements() as $elementName => $element) {
-            $this->templateVariableContainer->add($elementName, $element);
+        $variableProvider = $this->renderingContext?->getVariableProvider();
+        if ($variableProvider === null) {
+            return '';
         }
-
+        foreach ($form->getElements() as $elementName => $element) {
+            $variableProvider->add($elementName, $element);
+        }
         $errors = $form->getErrors();
-        if (!empty($errors)) {
-            $this->templateVariableContainer->add('errors', $errors);
+        if ($errors !== []) {
+            $variableProvider->add('errors', $errors);
         }
 
-        $output = $this->renderChildren();
+        $content = $this->renderChildren();
 
-        foreach ($form->getElements() as $elementName => $element) {
-            $this->templateVariableContainer->remove($elementName);
+        foreach (array_keys($form->getElements()) as $elementName) {
+            $variableProvider->remove($elementName);
         }
+        $variableProvider->remove('errors');
 
-        $this->templateVariableContainer->remove('errors');
+        return '<form' . $this->renderAttributes() . '>' . (is_scalar($content) ? (string) $content : '')
+            . $this->renderHiddenFields($form)
+            . '</form>';
+    }
 
-        /** @var ServerRequest */
-        $request = $GLOBALS['TYPO3_REQUEST'];
-        if (ApplicationType::fromRequest($request)->isFrontend()) {
-            /** @var FrontendUserAuthentication */
-            $frontendUser = $request->getAttribute('frontend.user');
-
-            if (!$form->isSubmitted()) {
-                $csrftoken = sha1(time() . $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-                $frontendUser->setAndSaveSessionData($form->getIdentifier() . '-csrftoken', $csrftoken);
-            } else {
-                $csrftoken = $frontendUser->getSessionData($form->getIdentifier() . '-csrftoken');
+    private function renderAttributes(): string
+    {
+        $defaults = ['method' => 'POST', 'id' => '', 'enctype' => 'multipart/form-data', 'class' => '', 'action' => ''];
+        $attributes = '';
+        foreach ($defaults as $name => $default) {
+            $value = $this->arguments[$name] ?? '';
+            $value = is_string($value) && $value !== '' ? $value : $default;
+            if ($value !== '') {
+                $attributes .= ' ' . $name . '="' . htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8', false) . '"';
             }
-        } else {
-            $csrftoken = 'notoken';
         }
+        return $attributes;
+    }
 
-        $output = '<form method="' . $method . '" ' . $id . $enctype . $class . $action . '>' . $output . '
-			<input type="hidden" id="' . $form->getIdentifier() . '-issubmitted" '
-                . 'value="1" '
-                . 'name="' . $form->getIdentifier() . '[issubmitted]" />';
-
+    private function renderHiddenFields(Form $form): string
+    {
+        $identifier = htmlspecialchars($form->getIdentifier(), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $output = '<input type="hidden" id="' . $identifier . '-issubmitted" value="1" name="' . $identifier . '[issubmitted]" />';
         if ($form->csrftokenIsEnabled()) {
-            $output .= '<input type="hidden" '
-                . 'id="' . $form->getIdentifier() . '-csrftoken" '
-                . 'value="' . $csrftoken . '" '
-                . 'name="' . $form->getIdentifier() . '[csrftoken]" />';
+            $output .= '<input type="hidden" id="' . $identifier . '-csrftoken" '
+                . 'value="' . htmlspecialchars($form->getCsrfToken(), ENT_QUOTES | ENT_HTML5, 'UTF-8') . '" '
+                . 'name="' . $identifier . '[csrftoken]" />';
         }
         if ($form->honeypotIsEnabled()) {
             $output .= '<span style="position:absolute;left:-500000px">'
-                . '<input type="text" id="' . $form->getIdentifier() . '-winnie" '
-                . 'value="" name="' . $form->getIdentifier() . '[winnie]" /></span>';
+                . '<input type="text" id="' . $identifier . '-winnie" value="" name="' . $identifier . '[winnie]" /></span>';
         }
-        $output .= '</form>';
         return $output;
     }
 }

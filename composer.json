@@ -2,19 +2,14 @@
     "name": "ameos/ameos_form",
     "description": "This extension provides a form api for TYPO3 extension based on extbase and fluid with validation, list, search form, etc.",
     "type": "typo3-cms-extension",
+    "version": "4.0.0",
     "homepage": "https://github.com/ameos/ameos_form",
-    "require": {
-        "typo3/cms-core": "^13",
-        "typo3/cms-fluid": "^13",
-        "typo3/cms-extbase": "^13",
-        "php": ">=8.0.0"
-    },
+    "license": "GPL-3.0-or-later",
     "keywords": [
         "TYPO3",
         "CMS",
         "Form"
     ],
-    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Ameos Team",
@@ -22,9 +17,24 @@
             "homepage": "http://www.ameos.com/"
         }
     ],
+    "require": {
+        "php": "^8.3",
+        "typo3/cms-core": "^14.3",
+        "typo3/cms-extbase": "^14.3",
+        "typo3/cms-fluid": "^14.3",
+        "typo3/cms-frontend": "^14.3"
+    },
+    "suggest": {
+        "google/recaptcha": "Required by the \"recaptcha\" element"
+    },
     "autoload": {
         "psr-4": {
-            "Ameos\\AmeosForm\\": "Classes"
+            "Ameos\\AmeosForm\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ameos\\AmeosForm\\Tests\\": "Tests/"
         }
     },
     "extra": {
@@ -33,4 +43,3 @@
         }
     }
 }
-

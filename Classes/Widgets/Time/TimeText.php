@@ -5,21 +5,16 @@ declare(strict_types=1);
 namespace Ameos\AmeosForm\Widgets\Time;
 
 use Ameos\AmeosForm\Widgets\WidgetAbstract;
-use Ameos\AmeosForm\Widgets\WidgetInterface;
 
-class TimeText extends WidgetAbstract implements WidgetInterface
+final class TimeText extends WidgetAbstract
 {
-    /**
-     * form to html
-     *
-     * @return  string the html
-     */
     public function toHtml(): string
     {
+        $value = $this->element->getValue();
         return '<input type="time" '
             . 'id="' . $this->element->getHtmlId() . '" '
             . 'name="' . $this->element->getAbsoluteName() . '" '
-            . 'value="' . $this->element->getValue() . '"'
+            . 'value="' . $this->escape(is_string($value) ? $value : '') . '"'
             . $this->element->getAttributes() . ' />';
     }
 }

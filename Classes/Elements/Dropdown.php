@@ -6,19 +6,16 @@ namespace Ameos\AmeosForm\Elements;
 
 use Ameos\AmeosForm\Form\Form;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Persistence\Generic\QueryResult;
 use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Exception\BadConstraintException;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
+/**
+ * Options: items (array value => label, or iterable of models with optionValueField / optionLabelField),
+ * multiple, placeholder
+ */
 class Dropdown extends ElementAbstract
 {
     /**
-     * @constuctor
-     *
-     * @param string $absolutename absolutename
-     * @param string $name name
-     * @param array $configuration configuration
-     * @param Form $form form
+     * @param array<string, mixed>|null $configuration
      */
     public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
@@ -28,145 +25,122 @@ class Dropdown extends ElementAbstract
         }
     }
 
-    /**
-     * form to html
-     *
-     * @return string
-     */
     public function toHtml(): string
     {
-        if ($this->isMultiple()) {
-            $output = '<select id="' . $this->getHtmlId() . '" '
-                . 'name="' . $this->absolutename . '[]"' . $this->getAttributes() . '>';
-        } else {
-            $output = '<select id="' . $this->getHtmlId() . '" '
-                . 'name="' . $this->absolutename . '"' . $this->getAttributes() . '>';
-        }
+        $output = '<select id="' . $this->getHtmlId() . '" '
+            . 'name="' . $this->absolutename . ($this->isMultiple() ? '[]' : '') . '"'
+            . $this->getAttributes() . '>';
 
         if (isset($this->configuration['placeholder'])) {
-            $output .= '<option value="">' . $this->configuration['placeholder'] . '</option>';
+            $output .= '<option value="">' . $this->escapeConfiguration($this->configuration['placeholder']) . '</option>';
         }
 
-        $currentValue = $this->getValue();
-        if (!is_array($currentValue)) {
-            $currentValue = [$currentValue];
+        $selectedValues = $this->getSelectedValues();
+        foreach ($this->getOptions() as $value => $label) {
+            $selected = in_array((string) $value, $selectedValues, true) ? ' selected="selected"' : '';
+            $output .= '<option value="' . $this->escapeConfiguration($value) . '"' . $selected . '>'
+                . $this->escapeConfiguration($label) . '</option>';
         }
 
-        if (!isset($this->configuration['items'])) {
-            throw new BadConstraintException('No items defined for this dropdown');
-        }
-
-        if (is_array($this->configuration['items'])) {
-            $optionValueFieldMethod = 'get' . ucfirst($this->configuration['optionValueField']);
-            foreach ($currentValue as $currentValueKey => $currentValueItem) {
-                if (is_a($currentValueItem, AbstractEntity::class)) {
-                    $currentValue[$currentValueKey] = $currentValueItem->$optionValueFieldMethod();
-                } elseif (is_a($currentValueItem, ObjectStorage::class)) {
-                    foreach ($currentValueItem as $objects) {
-                        $currentValue[$currentValueKey] = $objects->$optionValueFieldMethod();
-                    }
-                }
-            }
-            foreach ($this->configuration['items'] as $value => $label) {
-                $selected = in_array($value, $currentValue) ? ' selected="selected"' : '';
-                $output .= '<option value="' . $value . '"' . $selected . '>' . $label . '</option>';
-            }
-        } elseif (is_object($this->configuration['items']) && is_a($this->configuration['items'], QueryResult::class)) {
-            $optionLabelFieldMethod = 'get' . ucfirst($this->configuration['optionLabelField']);
-            $optionValueFieldMethod = 'get' . ucfirst($this->configuration['optionValueField']);
-
-            foreach ($currentValue as $key => $value) {
-                if (is_object($value) && is_a($value, AbstractEntity::class)) {
-                    $currentValue[$key] = $this->getValue()->$optionValueFieldMethod();
-                } elseif (is_object($value) && is_a($value, ObjectStorage::class)) {
-                    $currentValue = [];
-                    foreach ($value as $subkey => $subvalue) {
-                        if (is_object($subvalue) && is_a($subvalue, AbstractEntity::class)) {
-                            $currentValue[] = $subvalue->$optionValueFieldMethod();
-                        }
-                    }
-                }
-            }
-
-            foreach ($this->configuration['items'] as $model) {
-                $selected = in_array($model->$optionValueFieldMethod(), $currentValue) ? ' selected="selected"' : '';
-                $output .= '<option value="' . $model->$optionValueFieldMethod() . '"' . $selected . '>'
-                    . $model->$optionLabelFieldMethod() . '</option>';
-            }
-        }
-        $output .= '</select>';
-        return $output;
+        return $output . '</select>';
     }
 
-
-    /**
-     * return rendering information
-     *
-     * @return array
-     */
     public function getRenderingInformation(): array
     {
         $data = parent::getRenderingInformation();
-        if (isset($this->configuration['items']) && is_array($this->configuration['items'])) {
+        if (is_array($this->configuration['items'] ?? null)) {
             $data['choices'] = $this->configuration['items'];
         }
-
         return $data;
     }
 
     /**
-     * return html attribute
-     *
-     * @return string
+     * "placeholder" is rendered as first empty option, it is not a valid attribute of select
      */
     public function getAttributes(): string
     {
-        $output = parent::getAttributes();
-        $output .= $this->getAttribute('multiple', 'bool');
-        return $output;
+        $placeholder = $this->configuration['placeholder'] ?? null;
+        unset($this->configuration['placeholder']);
+        try {
+            return parent::getAttributes() . $this->getAttribute('multiple', 'bool');
+        } finally {
+            if ($placeholder !== null) {
+                $this->configuration['placeholder'] = $placeholder;
+            }
+        }
     }
 
     /**
-     * return true if it's a multiple dropdown
-     *
-     * @return bool
+     * A multiple select without selected option is not sent by the browser
      */
+    public function isOmittedFromRequestWhenEmpty(): bool
+    {
+        return $this->isMultiple() && !$this->isDisabled();
+    }
+
     public function isMultiple(): bool
     {
-        return isset($this->configuration['multiple']) && $this->configuration['multiple'] == true;
+        return (bool) ($this->configuration['multiple'] ?? false);
     }
 
-    /**
-     * return where clause
-     *
-     * @return array|false
-     */
     public function getClause(): array|false
     {
         $value = $this->getValue();
-        if (!empty($value)) {
-            if ($this->overrideClause !== false) {
-                return parent::getClause();
-            } else {
-                if ($this->isMultiple()) {
-                    return [
-                        'elementname'  => $this->getName(),
-                        'elementvalue' => $this->getValue(),
-                        'field' => $this->getSearchField(),
-                        'type'  => 'in',
-                        'value' => $value
-                    ];
-                } else {
-                    return [
-                        'elementname'  => $this->getName(),
-                        'elementvalue' => $this->getValue(),
-                        'field' => $this->getSearchField(),
-                        'type'  => 'equals',
-                        'value' => $value
-                    ];
-                }
-            }
+        if ($this->isEmptyValue($value)) {
+            return false;
         }
-        return false;
+        if ($this->overrideClause !== null) {
+            return $this->buildOverriddenClause();
+        }
+        return $this->buildClause($this->isMultiple() ? 'in' : 'equals', $value);
+    }
+
+    /**
+     * @return array<array-key, string> option value => label
+     */
+    protected function getOptions(): array
+    {
+        $items = $this->configuration['items'] ?? null;
+        if (is_array($items)) {
+            return array_map($this->stringify(...), $items);
+        }
+        if (!is_iterable($items)) {
+            throw new BadConstraintException('No items defined for this dropdown', 1731340805);
+        }
+
+        $valueField = $this->getOptionField('optionValueField');
+        $labelField = $this->getOptionField('optionLabelField');
+        $options = [];
+        foreach ($items as $model) {
+            $options[$this->stringify($this->readProperty($model, $valueField))] = $this->stringify(
+                $this->readProperty($model, $labelField),
+            );
+        }
+        return $options;
+    }
+
+    /**
+     * Current value(s) as strings; entities and object storages are converted with the option value field
+     *
+     * @return list<string>
+     */
+    protected function getSelectedValues(): array
+    {
+        $value = $this->getValue();
+        $values = is_iterable($value) ? $value : [$value];
+        $valueField = $this->getOptionField('optionValueField');
+
+        $selectedValues = [];
+        foreach ($values as $item) {
+            $selectedValues[] = $item instanceof AbstractEntity
+                ? $this->stringify($this->readProperty($item, $valueField))
+                : $this->stringify($item);
+        }
+        return $selectedValues;
+    }
+
+    private function getOptionField(string $key): string
+    {
+        return $this->stringify($this->configuration[$key] ?? 'uid');
     }
 }

@@ -7,12 +7,8 @@ namespace Ameos\AmeosForm\Domain\Repository;
 interface SearchableRepositoryInterface
 {
     /**
-     * Return query result
-     *
-     * @param   array $clauses where clauses
-     * @param   string $orderby order by
-     * @param   string $direction direction
-     * @return  iterable
+     * @param array<array-key, array<string, mixed>> $clauses
+     * @return iterable<mixed>
      */
-    public function findByClausesArray($clauses, $orderby = null, $direction = 'ASC');
+    public function findByClausesArray(array $clauses, ?string $orderby = null, string $direction = 'ASC'): iterable;
 }

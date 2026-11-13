@@ -11,61 +11,31 @@ use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Collects the validation errors of a form. Not final: it is mocked in unit tests.
+ */
 class ErrorManager
 {
-    /**
-     * @var array
-     */
-    private $errors = [];
+    /** @var array<string, list<string>> errors by element name */
+    private array $errors = [];
+    /** @var array<string, true> */
+    private array $verifiedElements = [];
+    private bool $flashMessagesEnabled = true;
 
-    /**
-     * @var array
-     */
-    private $verifiedElements = [];
+    public function __construct(private readonly Form $form) {}
 
-    /**
-     * @var bool
-     */
-    private $flashMessagesEnabled = true;
-
-    /**
-     * constuctor
-     *
-     * @param Form $form
-     */
-    public function __construct(private Form $form)
-    {
-    }
-
-    /**
-     * disable flash message
-     *
-     * @return self
-     */
     public function disableFlashMessage(): self
     {
         $this->flashMessagesEnabled = false;
         return $this;
     }
 
-    /**
-     * add an error
-     *
-     * @param string $message
-     * @param string $element
-     * @return self
-     */
     public function add(string $message, string $element): self
     {
-        if (isset($this->errors[$element])) {
-            $this->errors[$element] = [];
-        }
-
         $this->errors[$element][] = $message;
 
         if ($this->flashMessagesEnabled) {
-            $flashMessageService = GeneralUtility::makeInstance(FlashMessageService::class);
-            $flashMessageService
+            GeneralUtility::makeInstance(FlashMessageService::class)
                 ->getMessageQueueByIdentifier('extbase.flashmessages.' . $this->form->getIdentifier())
                 ->addMessage(new FlashMessage($message, '', ContextualFeedbackSeverity::ERROR, true));
         }
@@ -74,92 +44,52 @@ class ErrorManager
     }
 
     /**
-     * return errors
-     *
-     * @return array
+     * @return array<string, list<string>>
      */
     public function getErrors(): array
     {
         $this->determineErrors();
-
         return $this->errors;
     }
 
     /**
-     * return errors flatten
-     *
-     * @return array
+     * @return list<string>
      */
     public function getFlatErrors(): array
     {
         $this->determineErrors();
-
-        $errors = [];
-        foreach ($this->errors as $elementErrors) {
-            $errors = array_merge($errors, $elementErrors);
-        }
-        return $errors;
+        return array_merge(...array_values($this->errors));
     }
 
     /**
-     * return errors for $element
-     *
-     * @param ElementInterface $element
-     * @return array
+     * @return list<string>
      */
     public function getErrorsFor(ElementInterface $element): array
     {
         $this->determineErrors();
-
-        $name = $element->getName();
-        return isset($this->errors[$name]) ? $this->errors[$name] : [];
+        return $this->errors[$element->getName()] ?? [];
     }
 
-    /**
-     * return true if no error
-     *
-     * @return bool
-     */
     public function isValid(): bool
     {
         $this->determineErrors();
-
-        return empty($this->errors);
+        return $this->errors === [];
     }
 
-    /**
-     * return true if $element no error
-     *
-     * @param ElementInterface $element
-     * @return bool
-     */
     public function elementIsValid(ElementInterface $element): bool
     {
-        $name = $element->getName();
-        return !isset($this->errors[$name]) || empty($this->errors[$name]);
+        $this->determineErrors();
+        return ($this->errors[$element->getName()] ?? []) === [];
     }
 
-    /**
-     * determine errors
-     */
-    protected function determineErrors()
+    protected function determineErrors(): void
     {
-        foreach ($this->form->getElements() as $element) {
-            $this->determineErrorsForElement($element);
-        }
-    }
-
-    /**
-     * determine errors for an element
-     * @param ElementInterface|string $element element
-     */
-    protected function determineErrorsForElement($element)
-    {
-        $elementName = is_string($element) ? $element : $element->getName();
-
-        if (!in_array($elementName, $this->verifiedElements)) {
-            $this->form->get($elementName)->determineErrors();
-            $this->verifiedElements[] = $elementName;
+        $this->form->verifyProtection();
+        foreach ($this->form->getElements() as $name => $element) {
+            if (!isset($this->verifiedElements[$name])) {
+                $element->determineErrors();
+                $this->verifiedElements[$name] = true;
+            }
         }
     }
 }

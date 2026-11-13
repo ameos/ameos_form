@@ -4,66 +4,52 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Elements;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Ameos\AmeosForm\Constraints\ReCaptcha as ReCaptchaConstraint;
 use Ameos\AmeosForm\Form\Form;
 
+/**
+ * Google reCAPTCHA v2. Options: publicKey, privateKey, theme, type, size, tabindex, callback,
+ * expired-callback, onload, render, language, errormessage
+ */
 class ReCaptcha extends ElementAbstract
 {
     /**
-     * @constuctor
-     *
-     * @param string $absolutename absolutename
-     * @param string $name name
-     * @param array $configuration configuration
-     * @param Form $form form
+     * @param array<string, mixed>|null $configuration
      */
     public function __construct(string $absolutename, string $name, ?array $configuration, Form $form)
     {
         parent::__construct($absolutename, $name, $configuration, $form);
 
-        $onload = isset($configuration['onload']) ? $configuration['onload'] : '';
-        $render = isset($configuration['render']) ? $configuration['render'] : 'onload';
-        $language = isset($configuration['language']) ? $configuration['language'] : '';
+        $query = http_build_query([
+            'onload' => $this->stringify($this->configuration['onload'] ?? ''),
+            'render' => $this->stringify($this->configuration['render'] ?? 'onload'),
+            'hl' => $this->stringify($this->configuration['language'] ?? ''),
+        ]);
+        $this->assetCollector->addJavaScript('recaptcha', 'https://www.google.com/recaptcha/api.js?' . $query);
 
-        $this->assetCollector->addJavaScript(
-            'recaptcha',
-            'https://www.google.com/recaptcha/api.js?onload=' . $onload . '&render=' . $render . '&hl=' . $language
-        );
-
-        $errorMessage = isset($configuration['errormessage'])
-            ? $configuration['errormessage']
-            : 'ReCaptcha is not valid';
-        $constraint = GeneralUtility::makeInstance(
-            ReCaptchaConstraint::class,
-            $errorMessage,
-            ['privateKey' => $configuration['privateKey'] ?? ''],
+        $this->addConstraint(new ReCaptchaConstraint(
+            $this->stringify($this->configuration['errormessage'] ?? 'ReCaptcha is not valid'),
+            ['privateKey' => $this->stringify($this->configuration['privateKey'] ?? '')],
             $this,
-            $form
-        );
-        $this->addConstraint($constraint);
+            $form,
+        ));
     }
 
-    /**
-     * form to html
-     *
-     * @return    string the html
-     */
     public function toHtml(): string
     {
-        $theme           = isset($this->configuration['theme']) ? $this->configuration['theme'] : 'light';
-        $type            = isset($this->configuration['type']) ? $this->configuration['type'] : 'image';
-        $size            = isset($this->configuration['size']) ? $this->configuration['size'] : 'normal';
-        $tabindex        = isset($this->configuration['tabindex']) ? $this->configuration['tabindex'] : '0';
-        $callback        = isset($this->configuration['callback']) ? $this->configuration['callback'] : '';
-        $expiredcallback = isset($this->configuration['expired-callback'])
-            ? $this->configuration['expired-callback']
-            : '';
-
-        return '<div class="g-recaptcha" data-sitekey="' . ($this->configuration['publicKey'] ?? '')
-            . '" data-theme="' . $theme . '" data-type="' . $type
-            . '" data-size="' . $size . '" data-tabindex="' . $tabindex
-            . '" data-callback="' . $callback
-            . '" data-expired-callback="' . $expiredcallback . '"></div>';
+        $dataAttributes = [
+            'sitekey' => $this->configuration['publicKey'] ?? '',
+            'theme' => $this->configuration['theme'] ?? 'light',
+            'type' => $this->configuration['type'] ?? 'image',
+            'size' => $this->configuration['size'] ?? 'normal',
+            'tabindex' => $this->configuration['tabindex'] ?? '0',
+            'callback' => $this->configuration['callback'] ?? '',
+            'expired-callback' => $this->configuration['expired-callback'] ?? '',
+        ];
+        $attributes = '';
+        foreach ($dataAttributes as $key => $value) {
+            $attributes .= ' data-' . $key . '="' . $this->escapeConfiguration($value) . '"';
+        }
+        return '<div class="g-recaptcha"' . $attributes . '></div>';
     }
 }

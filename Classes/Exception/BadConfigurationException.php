@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Exception;
 
-class BadConfigurationException extends \RuntimeException
-{
-}
+final class BadConfigurationException extends \RuntimeException {}

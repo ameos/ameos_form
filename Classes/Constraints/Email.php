@@ -8,17 +8,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Email extends ConstraintAbstract
 {
-    /**
-     * return true if the element is valide
-     *
-     * @param   string $value value to test
-     * @return  bool true if the element is valide
-     */
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
-        if ($value == '') {
+        if ($value === null || $value === '') {
             return true;
         }
-        return GeneralUtility::validEmail($value);
+        return is_string($value) && GeneralUtility::validEmail($value);
     }
 }

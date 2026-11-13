@@ -4,59 +4,30 @@ declare(strict_types=1);
 
 namespace Ameos\AmeosForm\Constraints;
 
-use Ameos\AmeosForm\Elements\ElementAbstract;
+use Ameos\AmeosForm\Elements\ElementInterface;
+use Ameos\AmeosForm\Form\Form;
 
 abstract class ConstraintAbstract implements ConstraintInterface
 {
     /**
-     * @var string $message message
+     * @param array<string, mixed> $configuration
      */
-    protected $message;
+    public function __construct(
+        protected string $message,
+        protected array $configuration,
+        protected ElementInterface $element,
+        protected Form $form,
+    ) {}
 
-    /**
-     * @var array $configuration configuration
-     */
-    protected $configuration;
-
-    /**
-     * @var \Ameos\AmeosForm\Form\Form $form form
-     */
-    protected $form;
-
-    /**
-     * @var ElementAbstract $element element
-     */
-    protected $element;
-
-    /**
-     * @constuctor
-     *
-     * @param   string  $message message
-     * @param   \Ameos\AmeosForm\Form\Form $form form
-     */
-    public function __construct($message, $configuration, $element, $form)
-    {
-        $this->configuration = $configuration;
-        $this->message       = $message;
-        $this->element       = $element;
-        $this->form          = $form;
-    }
-
-    /**
-     * return the message
-     *
-     * @return ?string the message
-     */
-    public function getMessage()
+    public function getMessage(): ?string
     {
         return $this->message;
     }
 
-    /**
-     * return true if the element is valide
-     *
-     * @param   string $value value to test
-     * @return  bool true if the element is valide
-     */
-    abstract public function isValid($value);
+    abstract public function isValid(mixed $value): bool;
+
+    protected function stringify(mixed $value): string
+    {
+        return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+    }
 }

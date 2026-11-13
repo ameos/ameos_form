@@ -22,11 +22,12 @@ Php code
 
 ::	
 	
-	$mymodel = $this->myModelRepository->findByUid($modelIdentifier);
-	$form = \Ameos\AmeosForm\Form\Factory::make('tx_myplugin', $mymodel);
-	$form->add('name', 'text')->addConstraint('name', 'required', 'Name is mandatory');
-	$form->add('email', 'email')->addConstraint('email', 'email', 'Email is not valid');
-	$form->add('submit', 'submit', array('label' => 'Send'));
+	$form = $this->formService->create('tx_myplugin', $mymodel, $this->request);
+	$form->add('name', 'text')->add('email', 'email')->add('submit', 'submit', ['label' => 'Send']);
+	if ($form->isSubmitted()) {
+		$form->addConstraint('name', 'required', 'Name is mandatory')->addConstraint('email', 'email', 'Email is not valid');
+		...
+	}
 	$this->view->assign('form', $form);
 
 Template html
@@ -60,36 +61,41 @@ Example :
 
 Php code (search action)
 
-::	
-	
-	$searchform = \Ameos\AmeosForm\Form\Factory::make('tx_myplugin', $this->myModelRepository);
+::
+
+	$searchform = $this->formService->create('tx_myplugin_search', $this->myModelRepository, $this->request);
 	$searchform->add('name', 'text');
 	$searchform->add('email', 'email');
-	$searchform->add('submit', 'submit', array('label' => 'Search'));
-	
-	$template = ExtensionManagementUtility::extPath('my_ext') . 'Resources/Private/Templates/Controller/List.html';
-	$list = $this->objectManager->create(\Ameos\AmeosForm\Library\RecordList::class, $searchform, $template, $this->controllerContext);
+	$searchform->add('submit', 'submit', ['label' => 'Search']);
 
-	$this->view->assign('my-searchform', $searchform);
-	$this->view->assign('my-list', $list);
+	$this->view->assign('searchform', $searchform);
+	$this->view->assign('results', $searchform->getResults('name'));
 
-Template html Search.html
+Template html
 
 ::
 
 	{namespace form=Ameos\AmeosForm\ViewHelpers}
-	<form:form form="{my-searchform}">
+	<form:form form="{searchform}">
 		<div class="form">
-			<p><label for="tx_myplugin_name"><f:translate key="name" /></label>{name}</p>
-			<p><label for="tx_myplugin_email"><f:translate key="email" /></label>{email}</p>
-			<p><form:element element="{submit}" class="button" />
+			<p><label for="tx_myplugin_search_name"><f:translate key="name" /></label>{name}</p>
+			<p><label for="tx_myplugin_search_email"><f:translate key="email" /></label>{email}</p>
+			<p><form:element element="{submit}" class="button" /></p>
 		</div>
 	</form:form>
-	<form:list list="{my-list}" />
+	<f:for each="{results}" as="record">
+		<p>{record.name}</p>
+	</f:for>
 
 
+.. _templating-compiled:
 
+Rendering all the elements
+--------------------------
 
+Inside the form tag, ``<form:compiledForm form="{form}" />`` renders all the elements in the order they were added.
 
-
-
+The element variables (``{name}``) render the HTML of the element. ``<form:element>`` accepts ``class``,
+``errorClass``, ``placeholder``, ``style`` and ``custom`` arguments overriding the element configuration.
+Each element also provides ``{name.renderingInformation}`` (value, errors, required, htmlid...) to build
+your own markup.
